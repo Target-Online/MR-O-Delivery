@@ -1,38 +1,46 @@
 /* eslint-disable react/prop-types */
 import React from "react";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import firebase from "firebase";
 import { isMobile } from "react-device-detect";
+
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Icon from "@material-ui/core/Icon";
-// @material-ui/icons
-import Email from "@material-ui/icons/Email";
+
 // core components
 import Header from "components/Header/Header.js";
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
-import CardFooter from "components/Card/CardFooter.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
 
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
 
 import logo from "assets/img/logo.png";
 import flier from "assets/img/Flier.jpg";
+import background from "assets/img/app-adverts/background-gif.gif";
+
+import * as api from "api/authApi.js";
 
 const useStyles = makeStyles(styles);
 
 export default function LoginPage(props) {
   const classes = useStyles();
   const { ...rest } = props;
+
   return (
-    <div>
+    <div
+      style={{
+        height: "155vh",
+        background:
+          "linear-gradient( rgb(0 0 0 / 27%), rgb(251 144 17 / 73%)),url(" +
+          background +
+          ")",
+      }}
+    >
       <Header absolute color="transparent" brand="Mr O Delivery" {...rest} />
-      <div style={{ marginTop: isMobile ? -30 : -50, background: "white" }}>
+      <div style={{ marginTop: isMobile ? -30 : -50 }}>
         <div className={classes.container}>
           <GridContainer justify="center">
             {!isMobile && (
@@ -41,7 +49,7 @@ export default function LoginPage(props) {
                   backgroundImage: "url(" + flier + ")",
                   backgroundSize: "cover",
                   borderRadius: 6,
-                  maxHeight: 463,
+                  maxHeight: 517,
                   marginTop: 30,
                   width: 350,
                   backgroundRepeat: "no-repeat",
@@ -54,7 +62,7 @@ export default function LoginPage(props) {
               />
             )}
             <GridItem xs={12} sm={12} md={4}>
-              <Card>
+              <Card style={{ marginBottom: "auto" }}>
                 <form className={classes.form}>
                   <CardHeader
                     style={{
@@ -64,56 +72,10 @@ export default function LoginPage(props) {
                     }}
                     className={classes.cardHeader}
                   />
-                  <CardBody>
-                    <CustomInput
-                      labelText="Email..."
-                      id="email"
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        type: "email",
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <Email className={classes.inputIconsColor} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    <CustomInput
-                      labelText="Password"
-                      id="pass"
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        type: "password",
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <Icon className={classes.inputIconsColor}>
-                              lock_outline
-                            </Icon>
-                          </InputAdornment>
-                        ),
-                        autoComplete: "off",
-                      }}
-                    />
-                  </CardBody>
-                  <CardFooter className={classes.cardFooter}>
-                    <Button color="primary" size="lg">
-                      Login
-                    </Button>
-                  </CardFooter>
-                  <CardFooter className={classes.cardFooter}>
-                    <Button
-                      onClick={() => props.history.push("/signup-page")}
-                      simple
-                      color="primary"
-                      size="lg"
-                    >
-                      SIGN UP
-                    </Button>
-                  </CardFooter>
+                  <StyledFirebaseAuth
+                    uiConfig={api.uiConfig}
+                    firebaseAuth={firebase.auth()}
+                  />
                 </form>
               </Card>
             </GridItem>

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
@@ -24,25 +25,29 @@ export default function CustomInput(props) {
     error,
     white,
     inputRootCustomClasses,
-    success
+    success,
+    rows,
+    multiline,
+    value,
+    onChangeValue,
   } = props;
 
   const labelClasses = classNames({
     [" " + classes.labelRootError]: error,
-    [" " + classes.labelRootSuccess]: success && !error
+    [" " + classes.labelRootSuccess]: success && !error,
   });
   const underlineClasses = classNames({
     [classes.underlineError]: error,
     [classes.underlineSuccess]: success && !error,
     [classes.underline]: true,
-    [classes.whiteUnderline]: white
+    [classes.whiteUnderline]: white,
   });
   const marginTop = classNames({
-    [inputRootCustomClasses]: inputRootCustomClasses !== undefined
+    [inputRootCustomClasses]: inputRootCustomClasses !== undefined,
   });
   const inputClasses = classNames({
     [classes.input]: true,
-    [classes.whiteInput]: white
+    [classes.whiteInput]: white,
   });
   var formControlClasses;
   if (formControlProps !== undefined) {
@@ -69,9 +74,13 @@ export default function CustomInput(props) {
           input: inputClasses,
           root: marginTop,
           disabled: classes.disabled,
-          underline: underlineClasses
+          underline: underlineClasses,
         }}
         id={id}
+        value={value}
+        rows={rows}
+        multiline={multiline}
+        onChange={(event) => onChangeValue(event.target.value)}
         {...inputProps}
       />
     </FormControl>
@@ -87,5 +96,7 @@ CustomInput.propTypes = {
   inputRootCustomClasses: PropTypes.string,
   error: PropTypes.bool,
   success: PropTypes.bool,
-  white: PropTypes.bool
+  white: PropTypes.bool,
+  value: PropTypes.string,
+  onChangeValue: PropTypes.func,
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ScrollIntoView from "react-scroll-into-view";
 // nodejs library that concatenates classes
 import classNames from "classnames";
@@ -26,14 +26,22 @@ import AboutUsSection from "./Sections/AboutUs.js";
 import ContactUsSection from "./Sections/ContactUs.js";
 import DriveSection from "./Sections/Drive.js";
 import AppAdvertSection from "./Sections/FooterPoster.js";
+import UpdateUserName from "./Sections/UpdateUserName.js";
+import { CurrentUserContext } from "Store.js";
 
 const dashboardRoutes = [];
 
 const useStyles = makeStyles(styles);
 
 export default function LandingPage(props) {
+  const [currentUser] = useContext(CurrentUserContext);
+  const [UpdateUserNameVisible, setUpdateUserNameVisible] = useState(false);
   const classes = useStyles();
   const { ...rest } = props;
+
+  useEffect(() => {
+    if (currentUser && !currentUser.displayName) setUpdateUserNameVisible(true);
+  }, [currentUser]);
 
   return (
     <div>
@@ -41,7 +49,7 @@ export default function LandingPage(props) {
         color="transparent"
         routes={dashboardRoutes}
         brand="Material Kit React"
-        rightLinks={<HeaderLinks {...rest} />}
+        rightLinks={<HeaderLinks includeHomePageLinks {...rest} />}
         fixed
         changeColorOnScroll={{
           height: 400,
@@ -51,6 +59,10 @@ export default function LandingPage(props) {
       />
       <Parallax filter image={require("assets/img/banners/banner.jpeg")}>
         <div className={classes.container}>
+          <UpdateUserName
+            isVisible={UpdateUserNameVisible}
+            setVisible={setUpdateUserNameVisible}
+          />
           <GridContainer>
             <GridItem xs={12} sm={12} md={7} />
             <GridItem xs={12} sm={12} md={5}>

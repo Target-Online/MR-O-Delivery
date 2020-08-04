@@ -1,7 +1,7 @@
 import "./index.css";
 import React from "react";
 
-import appsettings from "components/FloatingBtn/node_modules/appsettings.json";
+import appsettings from "appsettings.json";
 
 export const WhatsAppFloatingButton = () => (
   <a

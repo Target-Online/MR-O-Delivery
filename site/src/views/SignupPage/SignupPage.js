@@ -1,13 +1,16 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState } from "react";
 import { isMobile } from "react-device-detect";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 // @material-ui/icons
 import TextFormat from "@material-ui/icons/TextFormat";
-import Email from "@material-ui/icons/Email";
+import DialpadIcon from "@material-ui/icons/Dialpad";
+
 // core components
 import Header from "components/Header/Header.js";
 import Footer from "components/Footer/Footer.js";
@@ -24,16 +27,30 @@ import styles from "assets/jss/material-kit-react/views/loginPage.js";
 
 import logo from "assets/img/logo.png";
 import flier from "assets/img/Flier.jpg";
+import background from "assets/img/app-adverts/background-gif.gif";
+
+import * as api from "api/authApi.js";
+import * as validations from "shared/utils/validations.js";
 
 const useStyles = makeStyles(styles);
 
 export default function LoginPage(props) {
+  const [user, setUser] = useState({});
+  const [inProgress, setInProgress] = useState(false);
   const classes = useStyles();
   const { ...rest } = props;
+
   return (
-    <div>
+    <div
+      style={{
+        background:
+          "linear-gradient( rgb(0 0 0 / 27%), rgb(251 144 17 / 73%)),url(" +
+          background +
+          ")",
+      }}
+    >
       <Header absolute color="transparent" brand="Mr O Delivery" {...rest} />
-      <div style={{ marginTop: isMobile ? -50 : -80, background: "white" }}>
+      <div style={{ marginTop: isMobile ? -50 : -80 }}>
         <div className={classes.container}>
           <GridContainer justify="center">
             {!isMobile && (
@@ -69,6 +86,10 @@ export default function LoginPage(props) {
                     <CustomInput
                       labelText="Name..."
                       id="name"
+                      value={user.name}
+                      onChangeValue={(value) =>
+                        setUser({ ...user, name: value })
+                      }
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -82,23 +103,31 @@ export default function LoginPage(props) {
                       }}
                     />
                     <CustomInput
-                      labelText="Email..."
-                      id="email"
+                      labelText="Phone number..."
+                      id="phoneNumber"
+                      value={user.email}
+                      onChangeValue={(value) =>
+                        setUser({ ...user, email: value })
+                      }
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        type: "email",
+                        type: "text",
                         endAdornment: (
                           <InputAdornment position="end">
-                            <Email className={classes.inputIconsColor} />
+                            <DialpadIcon className={classes.inputIconsColor} />
                           </InputAdornment>
                         ),
                       }}
                     />
                     <CustomInput
                       labelText="Password"
-                      id="pass"
+                      id="password"
+                      value={user.password}
+                      onChangeValue={(value) =>
+                        setUser({ ...user, password: value })
+                      }
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -116,9 +145,33 @@ export default function LoginPage(props) {
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button color="primary" size="lg">
-                      Submit
-                    </Button>
+                    {!inProgress ? (
+                      <Button
+                        color="primary"
+                        size="lg"
+                        disabled={inProgress}
+                        onClick={() => {
+                          if (
+                            validations.fields(user, [
+                              "name",
+                              "email",
+                              "password",
+                            ])
+                          ) {
+                            setInProgress(true);
+                            api.addUser(user, setInProgress, props);
+                          }
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    ) : (
+                      <CircularProgress
+                        style={{
+                          color: "#fb9011",
+                        }}
+                      />
+                    )}
                   </CardFooter>
                   <CardFooter className={classes.cardFooter}>
                     <Button

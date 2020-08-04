@@ -4,7 +4,7 @@ import React, { Component } from "react";
 
 import { Map, Marker, GoogleApiWrapper } from "google-maps-react";
 
-//import appsettings from "appsettings.json";
+import appsettings from "appsettings.json";
 
 export class MapContainer extends Component {
   render() {
@@ -26,5 +26,5 @@ export class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyDzcde0xnDy9VOeiRL8uS5o2vTEX7is-is"
+  apiKey: appsettings[appsettings.environment].firebaseConfig.apiKey,
 })(MapContainer);

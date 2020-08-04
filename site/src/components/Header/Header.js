@@ -64,6 +64,7 @@ export default function Header(props) {
   const brandComponent = (
     <img
       src={logo}
+      // eslint-disable-next-line react/prop-types
       onClick={() => props.history.push("/")}
       alt="Logo"
       style={{ width: 100, height: 50 }}

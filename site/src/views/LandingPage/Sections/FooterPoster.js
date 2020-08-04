@@ -31,7 +31,7 @@ export default function FooterPoster() {
     >
       <div className={classes.container}>
         <GridContainer>
-          <GridItem xs={12} sm={12} md={12} className={classes.marginAuto}>
+          <GridItem xs={12} sm={12} md={9} className={classes.marginAuto}>
             <Carousel {...settings}>
               <div>
                 <img
