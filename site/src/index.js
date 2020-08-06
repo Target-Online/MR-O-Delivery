@@ -12,10 +12,10 @@ import { ToastContainer } from "react-toastify";
 import "assets/scss/material-kit-react.scss?v=1.9.0";
 
 // pages
-import Components from "views/Components/Components.js";
 import LandingPage from "views/LandingPage/LandingPage.js";
-import DashBoard from "views/DashBoard/DashBoard.js";
 import LoginPage from "views/LoginPage/LoginPage.js";
+import DashBoard from "views/DashBoard/DashBoard.js";
+import DriversList from "views/DashBoard/Sections/Drivers/List.js";
 
 // Data Store
 import Store from "Store.js";
@@ -29,7 +29,7 @@ ReactDOM.render(
         <Route path="/" exact component={LandingPage} />
         <Route path="/dashboard" component={DashBoard} />
         <Route path="/login-page" component={LoginPage} />
-        <Route path="/components" component={Components} />
+        <Route path="/drivers-list" component={DriversList} />
       </Switch>
     </Router>
     <ToastContainer />

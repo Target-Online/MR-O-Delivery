@@ -28,14 +28,13 @@ const Store = ({ children }) => {
   useEffect(() => {
     api.getCollection("users", setUsers);
 
-    firebase.auth().onAuthStateChanged(async (user) => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log("user", user);
         var dbUser = users.data.find((u) => u.id == user.phoneNumber);
         dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);
       }
     });
-  }, []);
+  }, [users.inProgress]);
 
   return (
     <CurrentUserContext.Provider value={[currentUser, setCurrentUser]}>

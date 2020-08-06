@@ -8,7 +8,7 @@ if (!firebase.apps.length)
 
 const db = firebase.database();
 
-export const getCollection = (ref, dispatch) =>
+export const getCollection = async (ref, dispatch) =>
   db.ref(ref).on(
     "value",
     (data) => {

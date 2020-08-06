@@ -37,6 +37,7 @@ const useStyles = makeStyles(styles);
 
 const navigateSecuredTab = (currentUser, props, redirect) => {
   if (currentUser) {
+    console.log("currentUser", currentUser);
     if (currentUser.isAdmin) props.history.push(redirect);
     else toast.error("No Access.");
   } else if (!currentUser) props.history.push("/login");
@@ -80,7 +81,7 @@ export default function LandingPage(props) {
               md={4}
               lg={3}
               onClick={() =>
-                navigateSecuredTab(currentUser, props, "/dashboard")
+                navigateSecuredTab(currentUser, props, "/drivers-list")
               }
             >
               <Card className={"card-admins"}>

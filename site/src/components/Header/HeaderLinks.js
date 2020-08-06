@@ -32,8 +32,6 @@ export default function HeaderLinks(props) {
   const [currentUser] = useContext(CurrentUserContext);
   const classes = useStyles();
 
-  console.log("props", props);
-
   return (
     <List className={classes.list}>
       {props.includeHomePageLinks && <HomePageLinks />}
