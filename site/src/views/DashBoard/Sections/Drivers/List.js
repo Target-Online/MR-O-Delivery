@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { isMobile } from "react-device-detect";
 
 // nodejs library that concatenates classes
@@ -7,6 +7,7 @@ import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // @material-ui/icons
 import Search from "@material-ui/icons/Search";
@@ -24,25 +25,41 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 
 import logo from "assets/img/logo.png";
-import face from "assets/img/faces/christian.jpg";
-import face2 from "assets/img/faces/marc.jpg";
+import picPlaceHolder from "assets/img/faces/user.png";
 
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
+import { UsersContext } from "Store";
+
+import View from "./Modal";
+import Add from "./Add";
 
 const useStyles = makeStyles(styles);
 
 export default function ProfilePage(props) {
+  const [users] = useContext(UsersContext);
+  const [driver, setDriver] = useState({});
+  const [search, setSearch] = useState("");
+
+  const [isProfileVisible, setProfileVisible] = useState(false);
+  const [isAddVisible, setAddVisible] = useState(false);
+
   const classes = useStyles();
   const { ...rest } = props;
-  const imageClasses = classNames(
-    classes.imgRaised,
-    //classes.imgRoundedCircle,
-    classes.imgFluid
+  const imageClasses = classNames(classes.imgRaised, classes.imgFluid);
+
+  const drivers = users.data.filter(
+    (user) =>
+      user.isDriver &&
+      user.displayName.toLowerCase().includes(search.toLowerCase())
   );
+
+  const showProfile = (driver) => {
+    setDriver(driver);
+    setProfileVisible(true);
+  };
   return (
     <div>
       <Header
-        // color="transparent"
         brand="Material Kit React"
         rightLinks={<HeaderLinks />}
         fixed
@@ -73,73 +90,117 @@ export default function ProfilePage(props) {
                 </div>
               </GridItem>
             </GridContainer>
-            <GridContainer justify="center">
-              <GridItem
-                style={{ marginLeft: isMobile ? 0 : 100 }}
-                xs={10}
-                sm={10}
-                md={5}
-                lg={5}
-              >
-                <CustomInput
-                  labelText="Search"
-                  id="material"
-                  formControlProps={{
-                    fullWidth: true,
+            {!users.inProgress ? (
+              <span>
+                <GridContainer justify="center">
+                  <GridItem
+                    style={{ marginLeft: isMobile ? 0 : 100 }}
+                    xs={10}
+                    sm={10}
+                    md={5}
+                    lg={5}
+                  >
+                    <CustomInput
+                      labelText="Search"
+                      id="material"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      onChangeValue={(value) => setSearch(value)}
+                      inputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <Search />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem
+                    xs={1}
+                    sm={1}
+                    md={1}
+                    lg={1}
+                    style={{ marginTop: 35 }}
+                    onClick={() => setAddVisible(true)}
+                  >
+                    <AddOutlined style={{ color: "#fb9011" }} />
+                  </GridItem>
+                </GridContainer>
+                <GridItem
+                  style={{
+                    overflow: "auto",
+                    paddingBottom: 50,
+                    maxHeight: 350,
                   }}
-                  onChangeValue={(value) => console.log("value", value)}
-                  inputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search />
-                      </InputAdornment>
-                    ),
+                >
+                  {drivers
+                    .sort((a, b) => b.createdAt - a.createdAt)
+                    .map((driver, key) => (
+                      <GridItem
+                        key={key}
+                        xs={12}
+                        sm={5}
+                        md={5}
+                        lg={5}
+                        className={classes.navWrapper}
+                        onClick={() => showProfile(driver)}
+                      >
+                        <CardHeader
+                          style={{
+                            ...custumStyles.cardHeader,
+                            background: `linear-gradient(60deg, #eee,${
+                              driver.isActive ? "#fb8c00" : "#555"
+                            })`,
+                          }}
+                          stats
+                          icon
+                        >
+                          <CardIcon
+                            style={{
+                              backgroundImage: `url(${
+                                driver.profilePicUrl
+                                  ? driver.profilePicUrl
+                                  : picPlaceHolder
+                              })`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center center",
+                              width: 80,
+                              height: 60,
+                            }}
+                            color="warning"
+                          ></CardIcon>
+                          <h3
+                            className={classes.cardTitle}
+                            style={{ marginTop: -5, paddingRight: "inherit" }}
+                          >
+                            {driver.displayName}
+                          </h3>
+                        </CardHeader>
+                      </GridItem>
+                    ))}
+                  {drivers.length == 0 && (
+                    <h4 align="center ">No drivers found.</h4>
+                  )}
+                </GridItem>
+              </span>
+            ) : (
+              <GridContainer justify="center">
+                <CircularProgress
+                  style={{
+                    color: "#fb9011",
+                    marginTop: 50,
                   }}
                 />
-              </GridItem>
-              <GridItem xs={1} sm={1} md={1} lg={1} style={{ marginTop: 35 }}>
-                <AddOutlined style={{ color: "#fb9011" }} />
-              </GridItem>
-            </GridContainer>
-            <GridItem style={{ paddingBottom: 50 }}>
-              {[
-                { img: face, name: "John" },
-                { img: face2, name: "Luke" },
-              ].map((driver, key) => (
-                <GridItem
-                  key={key}
-                  xs={12}
-                  sm={5}
-                  md={5}
-                  lg={5}
-                  className={classes.navWrapper}
-                >
-                  <CardHeader
-                    style={custumStyles.cardHeader}
-                    color="warning"
-                    stats
-                    icon
-                  >
-                    <CardIcon
-                      style={{
-                        backgroundImage: `url(${driver.img})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center center",
-                        width: 80,
-                        height: 60,
-                      }}
-                      color="warning"
-                    ></CardIcon>
-                    <h3
-                      className={classes.cardTitle}
-                      style={{ marginTop: -5, paddingRight: "inherit" }}
-                    >
-                      {driver.name}
-                    </h3>
-                  </CardHeader>
-                </GridItem>
-              ))}
-            </GridItem>
+              </GridContainer>
+            )}
+            <View
+              isVisible={isProfileVisible}
+              setVisible={setProfileVisible}
+              driver={driver}
+              setDriver={setDriver}
+            />
+            <Add isVisible={isAddVisible} setVisible={setAddVisible} />
           </div>
         </div>
       </div>
@@ -155,7 +216,6 @@ const custumStyles = {
     marginLeft: 0,
     marginRight: 0,
     color: "#fff",
-    background: "linear-gradient(60deg, #eee, #fb8c00)",
   },
   cardAvatar: {
     backgroundImage:

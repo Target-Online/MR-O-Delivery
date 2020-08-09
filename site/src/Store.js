@@ -38,7 +38,9 @@ const Store = ({ children }) => {
 
   return (
     <CurrentUserContext.Provider value={[currentUser, setCurrentUser]}>
-      {children}
+      <UsersContext.Provider value={[users, setUsers]}>
+        {children}
+      </UsersContext.Provider>
     </CurrentUserContext.Provider>
   );
 };
