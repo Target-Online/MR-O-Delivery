@@ -14,7 +14,7 @@ export const _updateUserAvatar = async (image, user, setInProgress) => {
     var url = await upload(image, user.id);
     if (user) {
       authApi.updateAuthUser({ photoURL: url });
-      api.updateData("users", user.id, { profilePicUrl: url });
+      api.update("users", user.id, { profilePicUrl: url });
     }
   } catch (e) {
     toast.error(e.message);

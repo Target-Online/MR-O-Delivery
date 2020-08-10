@@ -40,7 +40,7 @@ export default function Edit(props) {
   const { isVisible, setVisible, driver, setDriver } = props;
 
   const toggleAccountStatus = (driver) => {
-    api.updateData("users", driver.id, {
+    api.update("users", driver.id, {
       ...driver,
       isActive: !driver.isActive,
     });
@@ -84,7 +84,11 @@ export default function Edit(props) {
                 style={{ maxWidth: "600px" }}
               >
                 {isModeEdit ? (
-                  <EditProfile driver={driver} setDriver={setDriver} />
+                  <EditProfile
+                    driver={driver}
+                    setDriver={setDriver}
+                    setVisible={setVisible}
+                  />
                 ) : (
                   <ViewProfile driver={driver} />
                 )}

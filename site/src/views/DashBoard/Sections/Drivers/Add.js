@@ -52,7 +52,7 @@ export default function AddModal(props) {
         "phoneNumber",
       ])
     ) {
-      api.setData("users", driver, driver.phoneNumber);
+      api.set("users", driver, driver.phoneNumber);
       setVisible(false);
       toast.success("Driver added successfully");
     }

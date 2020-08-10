@@ -29,7 +29,7 @@ ReactDOM.render(
         <Route path="/" exact component={LandingPage} />
         <Route path="/dashboard" component={DashBoard} />
         <Route path="/login-page" component={LoginPage} />
-        <Route path="/drivers-list" component={DriversList} />
+        <Route path="/drivers" component={DriversList} />
       </Switch>
     </Router>
     <ToastContainer />

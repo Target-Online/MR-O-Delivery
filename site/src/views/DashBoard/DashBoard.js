@@ -80,9 +80,7 @@ export default function LandingPage(props) {
               sm={6}
               md={4}
               lg={3}
-              onClick={() =>
-                navigateSecuredTab(currentUser, props, "/drivers-list")
-              }
+              onClick={() => navigateSecuredTab(currentUser, props, "/drivers")}
             >
               <Card className={"card-admins"}>
                 <CardHeader style={customeStyles.driverHeader} stats icon>

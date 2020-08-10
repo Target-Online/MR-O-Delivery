@@ -22,14 +22,14 @@ import picPlaceHolder from "assets/img/faces/user.png";
 
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 
-import * as api from "api/index.js";
+import * as api from "api";
 import * as validations from "shared/utils/validations.js";
 import { _updateUserAvatar } from "shared/utils/imagePicker";
 
 const useStyles = makeStyles(styles);
 
 export default function ProfilePage(props) {
-  const { driver, setDriver } = props;
+  const { driver, setDriver, setVisible } = props;
   const [profilePicUpdateInprogress, setProfilePicStatus] = useState(false);
 
   const classes = useStyles();
@@ -38,6 +38,27 @@ export default function ProfilePage(props) {
     classes.imgRoundedCircle,
     classes.imgFluid
   );
+
+  const update = () => {
+    if (
+      validations.fields(driver, [
+        "displayName",
+        "vehicleRegistration",
+        "address",
+        "phoneNumber",
+      ])
+    ) {
+      api.update("users", driver.id, driver);
+      toast.success("Driver updated successfully");
+    }
+  };
+
+  const remove = () => {
+    api.remove("users", driver.id);
+    setVisible(false);
+    toast.success("Driver deleted successfully");
+  };
+
   return (
     <div>
       <Parallax
@@ -143,23 +164,10 @@ export default function ProfilePage(props) {
                 />
               </GridItem>
               <DialogActions className={classes.modalFooter}>
-                <Button
-                  color="success"
-                  simple
-                  onClick={() => {
-                    if (
-                      validations.fields(driver, [
-                        "displayName",
-                        "vehicleRegistration",
-                        "address",
-                        "phoneNumber",
-                      ])
-                    ) {
-                      api.updateData("users", driver.id, driver);
-                      toast.success("Driver updated successfully");
-                    }
-                  }}
-                >
+                <Button color="danger" simple onClick={() => remove()}>
+                  DELETE
+                </Button>
+                <Button color="success" simple onClick={() => update()}>
                   UPDATE
                 </Button>
               </DialogActions>

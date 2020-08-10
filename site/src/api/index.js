@@ -21,7 +21,7 @@ export const getCollection = async (ref, dispatch) =>
     }
   );
 
-export const setData = (ref, data, key = 0) => {
+export const set = (ref, data, key = 0) => {
   var id = key == 0 ? firebase.database().ref().child(ref).push().key : key;
   db.ref(ref)
     .child(id)
@@ -32,22 +32,10 @@ export const setData = (ref, data, key = 0) => {
     });
 };
 
-export const getData = (ref, id, setData) =>
-  db
-    .ref(ref)
-    .child(id)
-    .on(
-      "value",
-      (data) => setData(data.val()),
-      (error) => {
-        console.log("Error getting document", error);
-      }
-    );
-
-export const updateData = (ref, id, data) =>
+export const update = (ref, id, data) =>
   db
     .ref(ref)
     .child(id)
     .update({ ...data });
 
-export const removeData = (ref, id) => db.ref(ref).child(id).remove();
+export const remove = (ref, id) => db.ref(ref).child(id).remove();

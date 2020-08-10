@@ -2,7 +2,7 @@ import firebase from "firebase";
 import { toast } from "react-toastify";
 
 import appsettings from "appsettings.json";
-import { setData } from "./index";
+import { set } from "./index";
 
 if (!firebase.apps.length)
   firebase.initializeApp(appsettings[appsettings.environment].firebaseConfig);
@@ -31,6 +31,6 @@ export const updateAuthUser = async (data) => {
 };
 
 export const newUser = (ref, data, key) => {
-  setData(ref, data, key);
+  set(ref, data, key);
   updateAuthUser(data);
 };
