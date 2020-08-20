@@ -23,7 +23,21 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier" : "com.mro.mrodelivery",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBhXyQeAVEtVLyVXsiQ06etVbJVk-Ue-_8"
+        }
+      }
+    },
+    "android": {
+      "package": "com.mro.mrodelivery",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBaHGSfahA2b9YS3Pvguelo2yN8heE41cw"
+        }
+      }
     },
     "packagerOpts": {
       "assetExts": [

@@ -3,5 +3,7 @@ import articles from './articles';
 import Images from './Images';
 import tabs from './tabs';
 import utils from './utils';
-
-export { articles, nowTheme, Images, tabs, utils };
+import Colors from './colors';
+import Metrics from './metrics';
+import Fonts from './fonts';
+export { articles, nowTheme, Images, tabs, utils, Colors, Metrics, Fonts };

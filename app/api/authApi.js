@@ -35,7 +35,7 @@ export const signInWithCredential = async (verificationId, verificationCode, nav
     navigation.navigate('App')
   } catch (err) {
     onError(err.message);
-    console.log(verificationCode)
+    // console.log(verificationCode)
   }
 }
 

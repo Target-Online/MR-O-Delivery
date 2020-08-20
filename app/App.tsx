@@ -6,9 +6,13 @@ import { Asset } from 'expo-asset';
 import { Block, GalioProvider } from 'galio-framework';
 import { NavigationContainer } from '@react-navigation/native';
 
-import Screens from './navigation/Screens';
 import { Images, articles, nowTheme } from './constants';
+import Entrypoint from './Entrypoint';
+import appsettings from "./appsettings.json";
+import * as firebase from "firebase";
 
+if (!firebase.apps.length)
+  firebase.initializeApp(appsettings[appsettings.environment].firebaseConfig);
 // cache app images
 const assetImages = [
   Images.Onboarding,
@@ -63,13 +67,13 @@ export default class App extends React.Component {
       );
     } else {
       return (
-        <NavigationContainer>
+        // <NavigationContainer>
           <GalioProvider theme={nowTheme}>
             <Block flex>
-              <Screens />
+              <Entrypoint />
             </Block>
           </GalioProvider>
-        </NavigationContainer>
+        // </NavigationContainer>
       );
     }
   }
