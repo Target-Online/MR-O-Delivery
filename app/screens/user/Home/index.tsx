@@ -68,9 +68,7 @@ class Home extends React.Component<Props, IState> {
               </Btn>
             </View>
             <View style={{flex :1}}>
-
             </View>
-
           </View>
         </Modal>
       )

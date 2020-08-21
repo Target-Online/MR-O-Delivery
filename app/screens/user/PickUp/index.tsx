@@ -87,8 +87,6 @@ class PickUp extends React.Component<Props, IState> {
     }
 
     componentDidMount(){
-
-      console.log(this.props)
       // const orderType = this.props.route.params
       // this.setState({orderType})
     }
@@ -112,8 +110,8 @@ class PickUp extends React.Component<Props, IState> {
           listViewDisplayed={false} // true/false/undefined
           fetchDetails={true}
           // renderDescription={row => row.description} // custom description render
-          onPress={(data, details = null) => {
-            // this.setState({[addressKey] :  data})
+          onPress={(data, details) => {
+            this.setState({[addressKey] :  data})
             this.setState({showPlaces:false})
             console.log("===== ", data);
             // console.log(details);c
@@ -249,6 +247,7 @@ class PickUp extends React.Component<Props, IState> {
 
     renderAddressSelector = (addressVariant:string , key : string ) =>{
 
+      console.log(this.state)
       const address = this.state[key].address || this.state[key].description
       
       return [

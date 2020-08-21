@@ -25,11 +25,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier" : "com.mro.mrodelivery",
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyBhXyQeAVEtVLyVXsiQ06etVbJVk-Ue-_8"
-        }
-      }
+
     },
     "android": {
       "package": "com.mro.mrodelivery",

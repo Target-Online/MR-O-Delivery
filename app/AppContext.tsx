@@ -67,6 +67,7 @@ export interface IAppContext{
         profile: IUser;
         showAlert:  boolean;
         order: IOrder;
+        isUserDriver : (phoneNumber : string) => boolean ;
         setOrder : (order : IOrder) => void;
         setShowAlert : (newState : boolean) => void ;
         setProfile : (profile : IUser) => void ;
@@ -81,7 +82,7 @@ export interface IAppContext{
         resetPassword : (email : string) => void;
 }
 
-type IUser = {
+export type IUser = {
     email : string;
     firstname : string;
     lastname : string;
@@ -112,8 +113,13 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const onAuthStateChanged = (user: any) => {
-          setUser(user);
-          if (initializing) setInitializing(false);
+
+            const { phoneNumber } = user
+            fetchUserProfile(phoneNumber)
+
+            console.log({profile})
+            setUser(user);
+            if (initializing) setInitializing(false);
         }
     
         useEffect(() => {
@@ -157,6 +163,15 @@ const AppContextProvider : React.SFC = ({children}) => {
                 })
         }
 
+        const isUserDriver = (phoneNumber : string) =>{
+            getAllDrivers()
+
+            console.log({phoneNumber})
+            console.log({drivers : drivers.map((d)=> d.phoneNumber)})
+            let isDriver = drivers.filter(driver => driver.phoneNumber === phoneNumber ).length > 0
+            return isDriver
+        }
+        
         const updateOrderStatus = (orderId : string, updatedOrder : IOrder) => {
             firebase.database()
             .ref(`/orders/`).child(orderId)
@@ -169,11 +184,10 @@ const AppContextProvider : React.SFC = ({children}) => {
             });
         }
       
-        const fetchUserProfile = async (email : string) => {
+        const fetchUserProfile = async (uid : string) => {
 
-            const id = getIDFromEmail(email)
             firebase.database()
-                .ref(`/users/${id}`)
+                .ref(`/users/${uid}`)
                 .once('value')
                 .then(snapshot => {
                     let userProfile = snapshot.val() 
@@ -254,8 +268,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         const login = (values: { email: string; password: string, firstname : string }) => {
 
             firebase.auth().signInWithEmailAndPassword(values.email, values.password).then(res => {
-
-                console.log({res})
                 fetchUserProfile(values.email)
                 
             }).catch(err => {
@@ -271,7 +283,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 value={{ 
                     user, showAlert, setShowAlert,updateOrderStatus,
                     alertBoxData, setAlertData, setUser,sendRequest,
-                    login, register, logout, fetchUserProfile,
+                    login, register, logout, fetchUserProfile,isUserDriver,
                     isDev : true,order,setOrder,drivers,getAllDrivers,
                     resetPassword, updateUserProfile,profile,setProfile
                 }}

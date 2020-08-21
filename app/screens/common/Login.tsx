@@ -2,8 +2,8 @@ import React from 'react';
 import { ImageBackground, Image, StyleSheet, StatusBar, Dimensions, Platform } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
 
-import { Images } from '../constants/';
-import { HeaderHeight } from '../constants/utils';
+import { Images } from '../../constants';
+import { HeaderHeight } from '../../constants/utils';
 
 import PhoneSignin from './PhoneSignIn';
 

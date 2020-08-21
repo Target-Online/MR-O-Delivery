@@ -16,7 +16,7 @@ export const getCollection = async (ref, dispatch) =>
       dispatch({ type: "setInProgress", inProgress: false });
     },
     (error) => {
-      console.log("Error getting document", error);
+ 
       dispatch({ type: "setInProgress", inProgress: false });
     }
   );

@@ -7,22 +7,22 @@ import React, { Component, useState, useEffect, createContext, useContext } from
 import Navigator from './navigation'
 import AuthNav from './screens/user/Auth'
 import { auth } from 'firebase'
-import AppContextProvider, { withAppContext, AppContext, ContextConsumer } from './AppContext'
+import AppContextProvider, { withAppContext, AppContext, ContextConsumer, IContextProps } from './AppContext'
 import AlertModal from './components/AlertModal'
 import ForgotPassword from './screens/user/Auth/ForgotPassword'
 
 
-
+type IProps = IContextProps
 
 console.disableYellowBox = true
-const App : React.SFC = (props) => {
+const App : React.SFC<IProps> = (props) => {
 
-    const {user,setUser,login , register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
+    const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
     // setShowAlert(true)
     return(
       <View style={{flex : 1}}>
         <AlertModal/>
-       <Navigator user={user}  />
+        <Navigator />
       </View>
     )
    

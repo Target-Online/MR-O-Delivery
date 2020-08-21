@@ -9,10 +9,10 @@ import Select from './Select';
 import BottomMenu from './bottombar'
 import Image from './image'
 import Text from './text'
-
+import TextInput from './TextInput'
 
 export {
-    Button, Card, DrawerItem,
+    Button, Card, DrawerItem,TextInput,
     Icon, Input, Header, Switch,
     Select, BottomMenu, Image, Text 
 };

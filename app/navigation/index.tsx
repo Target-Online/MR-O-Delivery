@@ -1,29 +1,34 @@
 import React, { Component } from 'react'
 import { Alert, Animated, Easing, Image, ImageBackground, Modal, StatusBar, View } from 'react-native'
-import { GetAllComms, StartUpAction, RequestBrochures, 
-  changeView, clearError,storeMetrics } from '../actions/appActions'
-import Images from '../assets/images'
 import { Colors, Fonts,Enums, Metrics, Strings } from '../constants'
-import { iPhoneLarge } from '../utils/screenSize'
+import Login from '../screens/common/Login'
 import NavigationStack  from './UserNavigationStack'
 import DriverNavigationStack  from './DriverNavigationStack'
 import AlertModal from '../components/AlertModal'
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { IUser, withAppContext, IContextProps } from '../AppContext'
 
-const AuthStack = () => <View />
+const AuthStack = () => <Login />
 
-interface IProps {
-  user : any;
-}
+type IProps =  IContextProps  & { user : any; profile : IUser; }
+
 class AppNavigator extends Component<IProps> {
 
     barPosition = new Animated.Value(0)
     barcodePosition = new Animated.Value(0)
 
     renderStack(){
-      const isDriver = false//true
+    
+      const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
+
+      const {phoneNumber} = user
+
+      const isDriver = isUserDriver(phoneNumber)//true
+      console.log("Test 2 +23476836796"  , isUserDriver("+23476836796"))
+
+      // console.log({isDriver})
       if(isDriver){
 
         return(
@@ -41,13 +46,13 @@ class AppNavigator extends Component<IProps> {
           //   NavigationService.setTopLevelNavigator(navigatorRef)
           // }}
         />
-      )
-
-      
+      )  
     }
+
     render () {
 
-      const {user} = this.props
+      const {user,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
+
       return [
         <StatusBar backgroundColor ={Colors.focusColor}
           barStyle = 'dark-content'
@@ -63,6 +68,6 @@ class AppNavigator extends Component<IProps> {
 
 
 
-export default (AppNavigator)
+export default withAppContext(AppNavigator)
 
 // FIXME: Use Strings and Metrics file. Rmoeve inline styles.
