@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Alert, Animated, Easing, Image, ImageBackground, Modal, StatusBar, View } from 'react-native'
 import { Colors, Fonts,Enums, Metrics, Strings } from '../constants'
-import Login from '../screens/common/Login'
+import Login from '../screens/login/Login'
 import NavigationStack  from './UserNavigationStack'
 import DriverNavigationStack  from './DriverNavigationStack'
 import AlertModal from '../components/AlertModal'

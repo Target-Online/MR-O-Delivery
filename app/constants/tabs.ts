@@ -1,4 +1,4 @@
-export default tabs = {
+export default {
   beauty: [
     { id: 'popular', title: 'Popular' },
     { id: 'beauty', title: 'Beauty' },

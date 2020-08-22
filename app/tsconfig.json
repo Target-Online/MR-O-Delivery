@@ -9,6 +9,9 @@
     "resolveJsonModule": true,
     "strict": true,
     "rootDir": "./",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "typeRoots": [
+      "./types",
+  ]
   }
 }

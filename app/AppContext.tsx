@@ -113,7 +113,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const onAuthStateChanged = (user: any) => {
-
             const { phoneNumber } = user
             fetchUserProfile(phoneNumber)
             setUser(user);
@@ -137,7 +136,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const getAllDrivers = () => {
-
             firebase.database()
                 .ref(`/users/`)
                 .once('value')
@@ -200,7 +198,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const sendRequest = async (id : string , onSuccess : () => void ,onFailure : () => void ) => {
-
             const orderID = generateOrderId(id)
 
             const order = {...mockOrder} //for testing purposes
@@ -240,7 +237,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const register = (values: { email: string; password: string, firstname : string, lastname : string } ) => {
-            
+
             firebase.auth().createUserWithEmailAndPassword(values.email,values.password).then((res) =>{ 
                 const {firstname , lastname, email} = values
                 updateUserProfile({firstname , lastname, email,profilePicURL : "" },true,true)
