@@ -1,7 +1,7 @@
 import { Body, Button, H1, Header, Left, Right, Text, View } from 'native-base';
 import * as React from 'react';
 import { Image, TouchableOpacity as Btn, TextStyle, SafeAreaView, ScrollView, BackHandler, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Ionicons} from '@expo/vector-icons'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
 
 interface IProps {
@@ -96,7 +96,7 @@ class BackScreen extends React.Component<Props, IState> {
       <SafeAreaView style={{flex : 1}}>
         <View style={styles.topBarStyles}>
                 <Btn style={styles.backBtnStyle} onPress={()=> this.navigateBack()}>
-                  <Icon name="arrow-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
+                  <Ionicons name="arrow-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
                 </Btn>
                 <View style={{alignItems : "center"}}>
                   <Text style={{fontSize : 16, fontWeight : "600"}}>{title}</Text>
