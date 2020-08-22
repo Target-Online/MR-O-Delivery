@@ -19,16 +19,26 @@ class AppNavigator extends Component<IProps> {
     barPosition = new Animated.Value(0)
     barcodePosition = new Animated.Value(0)
 
+    state = {
+      isDriver : false
+    }
+    componentWillMount = () => {
+
+      const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
+
+      console.log("will mount ",{user})
+      const {phoneNumber} = user || {}
+  
+      const isDriver = isUserDriver(phoneNumber)//true
+      this.setState({isDriver})
+
+    }
+
     renderStack(){
     
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
+      const {isDriver} = this.state
 
-      const {phoneNumber} = user
-
-      const isDriver = isUserDriver(phoneNumber)//true
-      console.log("Test 2 +23476836796"  , isUserDriver("+23476836796"))
-
-      // console.log({isDriver})
       if(isDriver){
 
         return(

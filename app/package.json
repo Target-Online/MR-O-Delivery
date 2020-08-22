@@ -22,7 +22,9 @@
     "expo-firebase-recaptcha": "^1.1.3",
     "expo-font": "~8.1.0",
     "firebase": "7.9.0",
+    "formik": "^2.1.5",
     "galio-framework": "^0.6.3",
+    "lodash": "^4.17.20",
     "native-base": "^2.13.13",
     "object-to-array-convert": "^1.1.0",
     "prop-types": "^15.7.2",
@@ -43,7 +45,8 @@
     "react-native-svg": "11.0.1",
     "react-native-webview": "8.1.1",
     "react-redux": "^7.2.1",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@types/react": "^16.9.46",

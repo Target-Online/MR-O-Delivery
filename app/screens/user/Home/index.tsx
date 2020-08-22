@@ -12,8 +12,10 @@ import OrderIcon from '../../../assets/icons/OrderIcon';
 import BikeIcon from '../../../assets/icons/BikeIcon';
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
+import _ from "lodash"
 import { withAppContext } from '../../../AppContext';
 import { StackNavigationProp } from '@react-navigation/stack';
+import ProfileLoad from '../Auth/ProfileLoad';
 
 const shadow =  {
     shadowColor: '#000000',
@@ -40,11 +42,13 @@ class Home extends React.Component<Props, IState> {
       authType: "signIn",
     }
     componentWillMount = async () =>{
-      const {context : {profile :{firstname}, user : {_user : {email}} ,fetchUserProfile, getAllDrivers } } = this.props
-      let userFetch = await  fetchUserProfile(email)
-      getAllDrivers()
-      console.log({userFetch})
+      const {context : {profile , user ,fetchUserProfile, getAllDrivers } } = this.props
+      const phoneNumber = user? user : {}
+      console.log({user})
+      console.log("===== ",{profile})
     }
+
+  
 
     closeModal = () =>{
       this.setState({isModalVisible : false})
@@ -74,6 +78,22 @@ class Home extends React.Component<Props, IState> {
       )
     }
 
+    renderNewUserModal = () => {
+      
+      const {context : {profile , user ,fetchUserProfile, getAllDrivers } } = this.props
+    
+      console.log({profile})
+      const noUser = _.isEmpty(profile)
+
+      console.log({profile})
+      return(
+        <Modal visible={noUser}>
+          <ProfileLoad   />
+        </Modal>
+      )
+
+    }
+
     openModal(authType : string){
         this.setState({authType, isModalVisible : true})
     }
@@ -83,14 +103,14 @@ class Home extends React.Component<Props, IState> {
       const {context : {profile :{firstname}, user}} = this.props
 
       return [
+          this.renderNewUserModal(),
           this.renderAuthModal(),      
             <View key="main" style={styles.container} >
             <StatusBar barStyle="dark-content" />    
             <ImageBackground source={images.homeBg} style={{width : "100%", height : "100%"}}>
 
               <View style={{width : "100%",justifyContent:"flex-end" ,alignItems : "flex-start",height: "35%",paddingHorizontal : 24,paddingBottom : 32}}>
-     
-
+    
                 <View style={{position: "absolute", bottom : 24,right:12}}>
                   <DeliveryGuyIcon />
                 </View>

@@ -45,7 +45,6 @@ class Cart extends Component {
     renderReceipt = () => {
 
         const {quantity , total} = this.state
-        console.log("foodies ", foodItems)
         return(
         <View style={[styles.viewCard , {alignSelf : "center" , marginTop : 30 , padding : 20}]}>
             <View style={{flexDirection : "row" , alignItems : "center"}}>

@@ -113,7 +113,7 @@ class PickUp extends React.Component<Props, IState> {
           onPress={(data, details) => {
             this.setState({[addressKey] :  data})
             this.setState({showPlaces:false})
-            console.log("===== ", data);
+            // console.log("===== ", data);
             // console.log(details);c
 
             Alert.alert("test",details?.name,

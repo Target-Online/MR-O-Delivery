@@ -52,7 +52,7 @@ class BottomMenu extends Component {
 
         {this.bottomButton(<Icons.HomeIcon fill={Colors.overlayDark20}/>,<Icons.HomeIcon fill={Colors.primaryOrange}/>,'Home')}
         {this.bottomButton(<Icons.ReceiptIcon fill={Colors.overlayDark20}/>,<Icons.ReceiptIcon fill={Colors.primaryOrange}/>, 'Receipts')}
-        { isDriver && this.bottomButton(<Icons.ProfileIcon fill={Colors.overlayDark20}/>,<Icons.ProfileIcon fill={Colors.primaryOrange}/>, 'Profile')} 
+        { !isDriver && this.bottomButton(<Icons.ProfileIcon fill={Colors.overlayDark20}/>,<Icons.ProfileIcon fill={Colors.primaryOrange}/>, 'Profile')} 
               
       </View>
     )

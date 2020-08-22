@@ -83,16 +83,16 @@ export interface IAppContext{
 }
 
 export type IUser = {
-    email : string;
-    firstname : string;
-    lastname : string;
+    email?: string;
+    firstname?: string;
+    lastname?: string;
     profilePicURL?: string;
 }
 
 const AppContextProvider : React.SFC = ({children}) => {
 
         const [user, setUser] = useState(null);
-        const [profile, setProfile] = useState<IUser>({email : "" , firstname : "", lastname : "",profilePicURL:""});
+        const [profile, setProfile] = useState<IUser>({});
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
         const [initializing, setInitializing] = useState(true);
@@ -116,8 +116,6 @@ const AppContextProvider : React.SFC = ({children}) => {
 
             const { phoneNumber } = user
             fetchUserProfile(phoneNumber)
-
-            console.log({profile})
             setUser(user);
             if (initializing) setInitializing(false);
         }
@@ -191,7 +189,8 @@ const AppContextProvider : React.SFC = ({children}) => {
                 .once('value')
                 .then(snapshot => {
                     let userProfile = snapshot.val() 
-                    userProfile && setProfile(userProfile)
+                    console.log(" this is the user profile  ", {userProfile})
+                    // userProfile && setProfile(userProfile)
                     return userProfile
                 }).catch((err)=>{
                     return {}
