@@ -133,14 +133,13 @@ class Home extends React.Component<Props, IState> {
               <View style={styles.btnStyle}  >
                 <OrderIcon fill={"#F57301"} />
                 <Text style={{ marginVertical: 8, fontWeight: "500", fontSize: 14, color: "#2B3135" }}>
-                  Make Order
+                  Order Bike
                       </Text>
                 <Text style={styles.serviceDescriptionText} >
-                  Text describing the make an order service...
+                  Send a bike to a local shop to buy and return your goods.  
                       </Text>
               </View>
             </Btn>
-
             <Btn
               onPress={() => this.props.navigation.navigate("PickUpRequest")}
               style={{ width: 150, height: 200 }}
@@ -148,11 +147,11 @@ class Home extends React.Component<Props, IState> {
               <View style={styles.btnStyle}  >
                 <BikeIcon fill={"#F57301"} />
                 <Text style={{ marginVertical: 8, fontWeight: "500", fontSize: 14, color: "#2B3135" }}>
-                  {"Request\nPick-up"}
+                  Pick-up
                 </Text>
                 <Text style={styles.serviceDescriptionText} >
-                  Text describing the pick-up service
-                        </Text>
+                  Send a bike to go collect and deliver a package to your location.
+                </Text>
               </View>
             </Btn>
           </View>
@@ -163,12 +162,9 @@ class Home extends React.Component<Props, IState> {
               <Btn style={[styles.btnStyle, { width: 64, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
                 <Icon size={24} style={{ fontSize: 34, color: "#fff" }} name="arrow-right" />
               </Btn>
-
             </View>
           </View>
-
         </View>
-
       </View>
     ]
   }
@@ -176,9 +172,6 @@ class Home extends React.Component<Props, IState> {
 };
 
 export default withAppContext(Home)
-
-
-
 
 const styles = StyleSheet.create({
   activeTextStyle: {
