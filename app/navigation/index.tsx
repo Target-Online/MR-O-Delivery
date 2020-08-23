@@ -26,7 +26,6 @@ class AppNavigator extends Component<IProps> {
 
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
 
-      console.log("will mount ",{user})
       const {phoneNumber} = user || {}
   
       const isDriver = isUserDriver(phoneNumber)//true

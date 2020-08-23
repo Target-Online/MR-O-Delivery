@@ -34,6 +34,7 @@ import seafood from './seafood.jpg'
 import bbq from './bbq.jpg'
 import african from './african.jpg'
 import logo from './generic/logo.png'
+import DeliveryGuy from './generic/DeliveryGuy.png'
 import fullScreenSplash from './splash/mrO.png'
 import bike from './home/motorcycle.png'
 import orderSchedule from './home/list.png'
@@ -71,5 +72,6 @@ export default {
   lock,
   mail,
   whiteStar,
-  brochure
+  brochure,
+  DeliveryGuy
 }
