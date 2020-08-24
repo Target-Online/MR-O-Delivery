@@ -10,7 +10,7 @@ import TextInput from "./TextInput"
 import withSignUpValidation,{WithSignUpFormProps} from './withSignUpValidation';
 import firebase from 'firebase';
 import { Colors } from '../../../constants';
-import {withAppContext} from '../../../AppContext';
+import {withAppContext, IContextProps} from '../../../AppContext';
 import BackScreen from '../../../layouts/BackScreen';
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
 // import firebase from 'firebase'
@@ -18,8 +18,10 @@ import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/typ
 interface IProps {
     title?: string;
     signIn() : () => void;
-  }
-type FormProps = IProps &  WithSignUpFormProps & StackScreenProps<{navigation : any}>
+}
+
+
+type FormProps = IProps & IContextProps &  WithSignUpFormProps & StackScreenProps<{navigation : any}>
 
 class ProfileLoad extends React.Component<FormProps> {
   
@@ -30,16 +32,15 @@ class ProfileLoad extends React.Component<FormProps> {
         passConfirm : null,
     }
 
-    submitForm = (values: { email: string; password: string; }) =>{
-        const { context : {register}} = this.props
+    submitForm = (values: { email: string; lastname: string; phoneNumber : string;   }) => {
+        const  { email, lastname, phoneNumber } = values
+        console.log({values})
 
-        register(values)
-        // firebase.auth().createUserWithEmailAndPassword(values.email,values.password).then((res) => console.log({res}))
-        // .catch(err => console.log({err}))
     }
 
     render(){
         const {errors, handleChange,navigation, touched,handleBlur,context,onBack, values } = this.props
+        const {updateUserProfile} = context
         const randomNum =  Math.floor(Math.random() * Math.floor(1000));
       
         return (

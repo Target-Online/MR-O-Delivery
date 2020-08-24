@@ -91,7 +91,9 @@ class BackScreen extends React.Component<Props, IState> {
   };
 
   render() {
+    
     const {onBackPress ,title, children,scroll } = this.props
+
     return (
       <SafeAreaView style={{flex : 1}}>
         <View style={styles.topBarStyles}>

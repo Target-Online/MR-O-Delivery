@@ -84,6 +84,7 @@ export interface IAppContext{
 
 export type IUser = {
     email?: string;
+    phoneNumber?: number;
     firstname?: string;
     lastname?: string;
     profilePicURL?: string;
@@ -216,18 +217,17 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const updateUserProfile = (profile : IUser, silentUpdate?: boolean, newUser?: boolean) => {
-                const {email} = profile
+                const {phoneNumber} = profile
                 // usersRef.doc(email).set(profile)
-                let userRef = getIDFromEmail(email)
 
                 if(newUser){
-                    const newRef = firebase.database().ref(`users/${userRef}`)
-                    newRef.set(profile)
+                    const newRef = firebase.database().ref(`users/${phoneNumber}`)
+                    newRef.set({...profile})
                     setProfile(profile)
                     
                 }
                 else{
-                    firebase.database().ref(`users/${email}`).update(profile).then((ref)=>{
+                    firebase.database().ref(`users/${phoneNumber}`).update(profile).then((ref)=>{
 
                     }).catch((err) => {
                     })

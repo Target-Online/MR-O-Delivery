@@ -25,7 +25,6 @@ const PhoneSignIn = ({props}) => {
 
   const onSignIn = () => {
       
-
   }
 
   console.log({phoneNumber, verificationCode, verificationId })
