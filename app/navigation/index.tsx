@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Alert, Animated, Easing, Image, ImageBackground, Modal, StatusBar, View } from 'react-native'
 import { Colors, Fonts,Enums, Metrics, Strings } from '../constants'
-import Login from '../screens/common/Login'
+import Login from '../screens/login/Login'
 import NavigationStack  from './UserNavigationStack'
 import DriverNavigationStack  from './DriverNavigationStack'
 import AlertModal from '../components/AlertModal'
@@ -26,7 +26,6 @@ class AppNavigator extends Component<IProps> {
 
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
 
-      console.log("will mount ",{user})
       const {phoneNumber} = user || {}
   
       const isDriver = isUserDriver(phoneNumber)//true

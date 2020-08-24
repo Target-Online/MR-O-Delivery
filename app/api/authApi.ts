@@ -24,7 +24,7 @@ export const verifyPhoneNumber = async (phoneNumber, recaptchaVerifier, setVerif
   }
 }
 
-export const signInWithCredential = async (verificationId, verificationCode, onCodeConfirmed) => {
+export const signInWithCredential = async (verificationId: string, verificationCode: string, navigation: any) => {
   try {
     const credential = firebase.auth.PhoneAuthProvider.credential(
       verificationId,
@@ -32,10 +32,9 @@ export const signInWithCredential = async (verificationId, verificationCode, onC
     );
     await firebase.auth().signInWithCredential(credential);
     onSuccess("Phone authentication successful 👍");
-    onCodeConfirmed && onCodeConfirmed()
+    navigation.navigate('Home')
   } catch (err) {
     onError(err.message);
-    // console.log(verificationCode)
   }
 }
 

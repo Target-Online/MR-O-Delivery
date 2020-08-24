@@ -33,16 +33,19 @@ class ProfileLoad extends React.Component<FormProps> {
     }
 
     submitForm = (values: { email: string; lastname: string; phoneNumber : string;   }) => {
-        const  { email, lastname, phoneNumber } = values
-        console.log({values})
+        const {errors, handleChange,navigation, touched,handleBlur,context } = this.props
+        const { updateUserProfile ,user } = context
+        const  { email, lastname,  } = values
+        const {phoneNumber} = user
+        console.log({email})
+        console.log({user})
+        updateUserProfile({phoneNumber,email,lastname},false, true)
 
     }
 
     render(){
-        const {errors, handleChange,navigation, touched,handleBlur,context,onBack, values } = this.props
-        const {updateUserProfile} = context
-        const randomNum =  Math.floor(Math.random() * Math.floor(1000));
       
+        const {errors, handleChange,navigation, touched,handleBlur,context,onBack, values } = this.props
         return (
 
             <BackScreen

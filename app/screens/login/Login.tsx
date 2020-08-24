@@ -1,3 +1,5 @@
+// @ts-ignore
+
 import React from 'react';
 import { ImageBackground, Image, StyleSheet, StatusBar, Dimensions, Platform } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
@@ -11,7 +13,7 @@ const { height, width } = Dimensions.get('screen');
 
 export default class Onboarding extends React.Component {
   render() {
-    const { navigation } = this.props;
+    // const { navigation } = this.props;
 
     return (
       <Block flex style={styles.container}>

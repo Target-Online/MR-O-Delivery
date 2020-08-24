@@ -1,51 +1,45 @@
 import React, { useRef, useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { Block, theme } from 'galio-framework';
+import { theme } from 'galio-framework';
 
-import { Button, Input,TextInput } from '../../components';
+import { Button,TextInput } from '../../components';
 
-import { firebaseConfig,verifyPhoneNumber, signInWithCredential } from '../../api/authApi'
+import { firebaseConfig, verifyPhoneNumber, signInWithCredential } from '../../api/authApi'
 import { withAppContext } from "../../AppContext";
 
 const { width } = Dimensions.get('screen');
 type StringNo = string | number
 
-const PhoneSignIn = ({props}) => {
-
+const PhoneSignIn = (props: any) => {
   const recaptchaVerifier = useRef(null);
   const [phoneNumber, setPhoneNumber] = useState<StringNo>("");
-  const [verificationId, setVerificationId] = useState<StringNo>("");
-  const [verificationCode, setVerificationCode] = useState<StringNo>("");
+  const [verificationId, setVerificationId] = useState<string>("");
+  const [verificationCode, setVerificationCode] = useState<string>("");
 
-  const numberConfirmed = (id : string | number) => {
+  const numberConfirmed = (id : string) => {
     setPhoneNumber("")
     setVerificationId(id)
   }
 
-  const onSignIn = () => {
-      
-  }
-
-  console.log({phoneNumber, verificationCode, verificationId })
   return (
-    <View style={{ padding: 20, marginTop: 50, marginBottom: 50 }}>
+    <View style={{ padding: 22, marginTop: 50 }}>
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
       />
       <View >
         <TextInput
-          type="phone-pad"
+          keyboardType="phone-pad"
+          onBlur={() => {}}
           label={!verificationId ? "+234..." : "Verification code"}
           onChangeText={(value) => !verificationId ? setPhoneNumber(value) : setVerificationCode(value)}
-          value={ !verificationId ? phoneNumber : verificationCode}
-          iconContent={<Block />}
+          value={!verificationId ? phoneNumber.toString() : verificationCode.toString() }
         />
         <Button
           textStyle={{ fontFamily: 'montserrat-regular', fontSize: 12 }}
           style={styles.button}
-          onPress={() => !verificationId ? verifyPhoneNumber(phoneNumber, recaptchaVerifier, numberConfirmed) : signInWithCredential(verificationId, verificationCode, onSignIn)}
+          onPress={() => !verificationId ? verifyPhoneNumber(phoneNumber, recaptchaVerifier, numberConfirmed) : signInWithCredential(verificationId, verificationCode, props.navigation)}
         >
           {!verificationId ? "Submit" : "Confirm Code"}
         </Button>
@@ -60,6 +54,5 @@ const styles = StyleSheet.create({
   button: {
     marginTop: theme.SIZES.BASE,
     width: width - theme.SIZES.BASE * 7,
-    borderRadius: 100
   }
 })
