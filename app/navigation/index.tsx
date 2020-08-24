@@ -34,28 +34,9 @@ class AppNavigator extends Component<IProps> {
     }
 
     renderStack(){
-    
-      const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
       const {isDriver} = this.state
 
-      if(isDriver){
-
-        return(
-          <DriverNavigationStack
-            // ref={navigatorRef => {
-            //   NavigationService.setTopLevelNavigator(navigatorRef)
-            // }}
-          />
-        )
-      }
-
-      return(
-        <NavigationStack
-          // ref={navigatorRef => {
-          //   NavigationService.setTopLevelNavigator(navigatorRef)
-          // }}
-        />
-      )  
+      return isDriver ? <DriverNavigationStack /> : <NavigationStack />
     }
 
     render () {

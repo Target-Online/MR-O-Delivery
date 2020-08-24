@@ -23,10 +23,10 @@ const noOptions = {
   header : null
 }
 
-function HomeStack(props) {
+function HomeStack() {
   return (
-    <Stack.Navigator initialRouteName="Components" mode="card" headerMode="screen">
-      <Stack.Screen name="Home" component={Home}  />
+    <Stack.Navigator  initialRouteName="Components" mode="card" headerMode="screen">
+      <Stack.Screen  name="Home" component={Home}  />
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="PickUpRequest" component={PickUp} />
@@ -48,5 +48,4 @@ function RNApp() {
   );
 }
   
-
 export default (RNApp)
