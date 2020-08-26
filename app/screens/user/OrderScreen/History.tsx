@@ -27,7 +27,7 @@ const OrderHistory = (props: any) => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={images.homeBg} style={{ width: "100%", height: "100%" }}>
+      <ImageBackground  source={images.homeBg} style={{ width: "100%", height: "100%", }}>
         <FlatList
           style={styles.eventList}
           data={state.data.reverse()}
@@ -63,10 +63,11 @@ export default OrderHistory;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#DCDCDC",
+    // backgroundColor: "#DCDCDC",
   },
   eventList: {
     marginTop: 20,
+    backgroundColor: 'rgba(0,0,0,0.3)'
   },
   tripDetails: {
     flexDirection: 'row',
