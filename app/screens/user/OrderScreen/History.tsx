@@ -10,7 +10,7 @@ import {
 
 import images from '../../../assets/images'
 
-const OrderHistory = () => {
+const OrderHistory = (props: any) => {
   const state = {
     data: [
       { id: 1, day: 1, month: 'Sep' },
@@ -30,13 +30,13 @@ const OrderHistory = () => {
       <ImageBackground source={images.homeBg} style={{ width: "100%", height: "100%" }}>
         <FlatList
           style={styles.eventList}
-          data={state.data}
+          data={state.data.reverse()}
           keyExtractor={(item) => {
             return item.id;
           }}
           renderItem={({ item }) => {
             return (
-              <TouchableOpacity onPress={() => console.log("row")}>
+              <TouchableOpacity onPress={() => props.navigation.navigate('OrderDetails')}>
                 <View style={styles.eventBox}>
                   <View style={styles.eventDate}>
                     <Text style={styles.eventDay}>{item.day}</Text>
@@ -55,7 +55,6 @@ const OrderHistory = () => {
             )
           }} />
       </ImageBackground>
-
     </View>
   );
 }
