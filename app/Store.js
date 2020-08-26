@@ -7,6 +7,7 @@ import * as rootReducer from "shared/utils/rootReducer";
 
 export const CurrentUserContext = React.createContext();
 export const UsersContext = React.createContext();
+export const OrdersContext = React.createContext();
 
 if (!firebase.apps.length)
   firebase.initializeApp(appsettings[appsettings.environment].firebaseConfig);
@@ -20,13 +21,12 @@ const initalState = {
 // eslint-disable-next-line react/prop-types
 const Store = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
-  const [users, setUsers] = useReducer(
-    rootReducer.setStateReducer,
-    initalState
-  );
+  const [users, setUsers] = useReducer(rootReducer.setStateReducer, initalState);
+  const [order, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
 
   useEffect(() => {
     api.getCollection("users", setUsers);
+    api.getCollection("orders", setUsers);
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -39,7 +39,9 @@ const Store = ({ children }) => {
   return (
     <CurrentUserContext.Provider value={[currentUser, setCurrentUser]}>
       <UsersContext.Provider value={[users, setUsers]}>
-        {children}
+        <OrdersContext.Provider value={[order, setOrders]}>
+          {children}
+        </OrdersContext.Provider>
       </UsersContext.Provider>
     </CurrentUserContext.Provider>
   );
