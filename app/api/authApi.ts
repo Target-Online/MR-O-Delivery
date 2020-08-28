@@ -3,14 +3,16 @@ import * as firebase from "firebase";
 import { onSuccess, onError } from '../utils/notifications'
 
 import appsettings from "../appsettings.json";
-import { set } from "./index";
+import { update } from "./index";
+
+const _appsettings: any = appsettings;
 
 if (!firebase.apps.length)
-  firebase.initializeApp(appsettings[appsettings.environment].firebaseConfig);
+  firebase.initializeApp(_appsettings[appsettings.environment].firebaseConfig);
 
 export const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
 
-export const verifyPhoneNumber = async (phoneNumber, recaptchaVerifier, setVerificationId) => {
+export const verifyPhoneNumber = async (phoneNumber: any, recaptchaVerifier: any, setVerificationId: any) => {
   try {
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
     const verificationId = await phoneProvider.verifyPhoneNumber(
@@ -38,11 +40,11 @@ export const signInWithCredential = async (verificationId: string, verificationC
   }
 }
 
-export const login = (user, setUser, navigation, setInprogress) => {
+export const login = (user: any, setUser: any, navigation: any, setInprogress: any) => {
   setInprogress(true);
   firebase.auth()
       .signInWithEmailAndPassword(user.email, user.password)
-      .then(function (response) {
+      .then(function (response: any) {
           setInprogress(false);
           setUser({
               ...user,
@@ -50,7 +52,7 @@ export const login = (user, setUser, navigation, setInprogress) => {
           })
           onSuccess('Welcome ' + response.user.displayName)
           navigation.navigate('Stores')
-      }, function (error) {
+      }, function (error: any) {
           setInprogress(false);
           onError(error.message);
       });
@@ -66,14 +68,14 @@ export const signOut = () => {
     });
 };
 
-export const updateAuthUser = async (data) => {
+export const updateAuthUser = async (data: any) => {
   firebase.auth().currentUser.updateProfile({
     ...data,
   });
   onSuccess("Account updated successfully");
 };
 
-export const newUser = (ref, data, key) => {
-  set(ref, data, key);
+export const updateUser = (id: any, data: any) => {
+  update('users', id, data);
   updateAuthUser(data);
 };

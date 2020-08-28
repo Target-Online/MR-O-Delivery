@@ -21,13 +21,13 @@ interface Props{
 class TextInput extends React.Component<Props>{ 
 
     render(){ 
-        const {onChangeText, keyboardType, onClear, onBlur, value, clear, placeholder,error,label,password} = this.props
+        const {onChangeText, keyboardType, onClear, onBlur, value, placeholder,error,label,password} = this.props
 
         return (  
             <View key={label} style={{height :  60, width : "100%",marginBottom : 4}}>
               <View style={[styles.textAreaStyles,styles.addressInputWrapper]} >               
                       <RnTextInput keyboardType={keyboardType} {...this.props} value={value} onBlur={onBlur}  onChangeText={onChangeText}  secureTextEntry={password}  placeholder={label}   style={styles.addressInput} />  
-                  {(value !== null && value.length) ? <Btn onPress={()=>{ clear && onClear()}}> 
+                  {(value !== null && value.length) ? <Btn onPress={()=>{ onClear()}}> 
                        <Icon name="ios-close-circle-outline" style={{color : "grey", fontSize : 16 }}  size={16} />
                     </Btn> : null }
                 </View>
