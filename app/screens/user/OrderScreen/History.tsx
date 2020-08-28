@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,29 +8,20 @@ import {
   ImageBackground
 } from 'react-native';
 
+import { OrdersContext } from "../../../Store";
+
 import images from '../../../assets/images'
 
 const OrderHistory = (props: any) => {
-  const state = {
-    data: [
-      { id: 1, day: 1, month: 'Sep' },
-      { id: 2, day: 2, month: 'Jan' },
-      { id: 3, day: 3, month: 'Aug' },
-      { id: 4, day: 4, month: 'Dec' },
-      { id: 5, day: 5, month: 'Jul' },
-      { id: 6, day: 6, month: 'Oct' },
-      { id: 7, day: 7, month: 'Sep' },
-      { id: 8, day: 8, month: 'Jan' },
-      { id: 9, day: 9, month: 'May' },
-    ],
-  };
+  const [orders] = useContext(OrdersContext);
+  console.log("orders", orders)
 
   return (
     <View style={styles.container}>
       <ImageBackground  source={images.homeBg} style={{ width: "100%", height: "100%", }}>
         <FlatList
           style={styles.eventList}
-          data={state.data.reverse()}
+          data={orders.data.reverse()}
           keyExtractor={(item) => {
             return item.id;
           }}
@@ -67,7 +58,7 @@ const styles = StyleSheet.create({
   },
   eventList: {
     marginTop: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)'
+    //backgroundColor: 'rgba(0,0,0,0.3)'
   },
   tripDetails: {
     flexDirection: 'row',

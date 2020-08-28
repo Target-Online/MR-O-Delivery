@@ -1,2 +1,3 @@
 declare module 'galio-framework';
-declare module '../constants/index.js';
+declare module 'expo-firebase-recaptcha';
+declare module 'object-to-array-convert';
