@@ -1,45 +1,52 @@
 import React, { useContext } from 'react';
+import moment from 'moment';
 import {
   StyleSheet,
   Text,
   View,
   FlatList,
   TouchableOpacity,
-  ImageBackground
+  ImageBackground,
+  RefreshControl
 } from 'react-native';
 
 import { OrdersContext } from "../../../Store";
-
 import images from '../../../assets/images'
+import orders from "./testData";
 
 const OrderHistory = (props: any) => {
-  const [orders] = useContext(OrdersContext);
-  console.log("orders", orders)
+  //const [orders] = useContext(OrdersContext);
+  //console.log("orders", orders)
+
 
   return (
     <View style={styles.container}>
       <ImageBackground  source={images.homeBg} style={{ width: "100%", height: "100%", }}>
         <FlatList
+          refreshControl={<RefreshControl
+            colors={["orange", "#689F38"]}
+            refreshing={false} 
+          />}
           style={styles.eventList}
-          data={orders.data.reverse()}
-          keyExtractor={(item) => {
+          data={orders.reverse()}
+          keyExtractor={(item: any) => {
             return item.id;
           }}
           renderItem={({ item }) => {
             return (
-              <TouchableOpacity onPress={() => props.navigation.navigate('OrderDetails')}>
+              <TouchableOpacity onPress={() => props.navigation.navigate('OrderDetails', { order: item })}>
                 <View style={styles.eventBox}>
                   <View style={styles.eventDate}>
-                    <Text style={styles.eventDay}>{item.day}</Text>
-                    <Text style={styles.eventMonth}>{item.month}</Text>
+                    <Text style={styles.eventDay}>{moment(item.createdAt).format('DD')}</Text>
+                    <Text style={styles.eventMonth}>{moment(item.createdAt).format('MMM')}</Text>
                   </View>
                   <View style={styles.eventContent}>
-                    <Text style={styles.eventDateTime}>21 Jan 2020 13:43</Text>
+                    <Text style={styles.eventDateTime}>{moment(item.createdAt).format('DD MMM YYYY HH:ss')}</Text>
                     <View style={styles.tripDetails}>
-                      <Text style={styles.description}>Pick Up</Text>
-                      <Text style={styles.description}>N130</Text>
+                      <Text style={styles.description}>{item.orderType}</Text>
+                      <Text style={styles.description}>N{item.total}</Text>
                     </View>
-                    <Text style={styles.destination}>No.3 Olise Okolie Street, Asaba, Delta State, Nigeria</Text>
+                    <Text style={styles.destination}>{item.dropOffAddress.address}</Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -75,12 +82,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   eventDay: {
-    fontSize: 50,
+    fontSize: 30,
     color: "#fff",
     fontWeight: "600"
   },
   eventMonth: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#fff",
     fontWeight: "600",
   },

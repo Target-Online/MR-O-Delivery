@@ -1,4 +1,5 @@
 import React from "react";
+import moment from 'moment';
 import {
     StyleSheet,
     Image,
@@ -11,7 +12,8 @@ import MapView, { Marker } from 'react-native-maps';
 
 import nowTheme from "../../../constants/Theme";
 
-const TripDetails = () => {
+const TripDetails = (props: any) => {
+    const order = props.route.params.order;
 
     return (
         <ScrollView
@@ -26,8 +28,8 @@ const TripDetails = () => {
                         color='green'
                         style={{ paddingRight: 0 }}
                     />
-                    <Text size={14} color="#525F7F">{'Kim Royal Hotel and Suites'}</Text>
-                    <Text size={14} color="#525F7F">{'14:32'}</Text>
+                    <Text size={14} color="#525F7F">{order.pickUpAddress.address}</Text>
+                    <Text size={14} color="#525F7F">{moment(order.packagePickupAt).format('HH:ss')}</Text>
                 </Block>
             </Block>
             <Block style={styles.rows}>
@@ -38,8 +40,8 @@ const TripDetails = () => {
                         color='red'
                         style={{ paddingRight: 1, transform: [{ rotate: '180deg' }] }}
                     />
-                    <Text size={14} color="#525F7F">{'Summit Rd, Central Area, Asaba, Nigeria'}</Text>
-                    <Text size={14} color="#525F7F">{'15:02'}</Text>
+                    <Text size={14} color="#525F7F">{order.dropOffAddress.address}</Text>
+                    <Text size={14} color="#525F7F">{moment(order.orderCompletedAt).format('HH:ss')}</Text>
                 </Block>
             </Block>
             <View style={styles.mapContainer}>
@@ -53,39 +55,34 @@ const TripDetails = () => {
                     style={styles.mapStyle}
                 >
                     <Marker
-                        coordinate={{
-                            latitude: 6.2048043,
-                            longitude: 6.6814971
-                        }}
-                        color={'green'}
-                        title={'Kim Royal'}
-                        description={'Kim Royal Hotel and Suites'}
+                        coordinate={order.dropOffAddress.location}
+                        title={order.dropOffAddress.address}
+                        description={order.dropOffAddress.address}
                     />
                     <Marker
-                        coordinate={{
-                            latitude: 6.2049334,
-                            longitude: 6.6928027
-                        }}
-                        title={'Shoprite'}
-                        description={'Summit Rd, Central Area, Asaba, Nigeria'}
+                        coordinate={order.pickUpAddress.address.location}
+                        title={order.pickUpAddress.address}
+                        description={order.pickUpAddress.address}
                         pinColor={'green'}
                     />
                 </MapView>
             </View>
+            {order.driver &&
             <Block style={styles.rows}>
                 <Block row middle space="between" style={{ paddingTop: 7 }}>
-                    <Image source={{ uri: "https://bootdey.com/img/Content/avatar/avatar7.png" }} style={styles.pic} />
+                    <Image source={{ uri: order.driver.profilePicUrl }} style={styles.pic} />
                     <View>
                         <View style={styles.nameContainer}>
-                            <Text style={styles.nameTxt} numberOfLines={1} ellipsizeMode="tail">{'Skhumbuzo'}</Text>
-                            <Text style={styles.mblTxt}>CAYT 7834</Text>
+                            <Text style={styles.nameTxt} numberOfLines={1} ellipsizeMode="tail">{order.driver.displayName}</Text>
+                            <Text style={styles.mblTxt}>{order.driver.vehicleRegistration}</Text>
                         </View>
                         <View style={styles.msgContainer}>
-                            <Text style={styles.msgTxt}>{'17 Jan 2020 13:56'}</Text>
+                            <Text style={styles.msgTxt}>{moment(order.createdAt).format('DD MMM YYYY HH:ss')}</Text>
                         </View>
                     </View>
                 </Block>
             </Block>
+            }
             <Block center style={styles.title}>
                 <Text style={{ padding: 30 }} size={theme.SIZES.BASE} color={nowTheme.COLORS.TEXT}>
                     Payment Method
@@ -99,7 +96,7 @@ const TripDetails = () => {
                         color='green'
                     />
                     <Text size={14} color="#525F7F">{true ? 'Cash' : 'Card'}</Text>
-                    <Text size={14} color="#525F7F">{'N432'}</Text>
+                    <Text size={14} color="#525F7F">N{order.total}</Text>
                 </Block>
             </Block>
             <Block center style={styles.title}>
