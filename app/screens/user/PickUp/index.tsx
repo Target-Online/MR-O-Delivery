@@ -6,20 +6,16 @@ import {
   TouchableOpacity as Btn,View,
   Text,StatusBar, Dimensions, ImageBackground, TextInput, ScrollView, FlatList, Alert,
 } from 'react-native';
-import { Container,Button, Header, Tab, Tabs, ScrollableTab } from 'native-base'
-import images from '../../../assets/images'
-import { Image } from '../../../components';
 import Icon from 'react-native-vector-icons/Ionicons'
 import TruckIcon from '../../../assets/icons/TruckIcon';
-import OrderIcon from '../../../assets/icons/OrderIcon';
 import PinIcon from '../../../assets/icons/PinIcon';
 import LocationIcon from '../../../assets/icons/LocationIcon';
 import Loader from '../../../components/loader';
 import BackScreen from '../../../layouts/BackScreen';
-import RNGooglePlaces from 'react-native-google-places';
 import { IContextProps, withAppContext } from '../../../AppContext';
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { AntDesign } from '@expo/vector-icons';
 const shadow =  {
     shadowColor: '#000000',
     shadowOpacity: 0.15,
@@ -87,8 +83,6 @@ class PickUp extends React.Component<Props, IState> {
     }
 
     componentDidMount(){
-      // const orderType = this.props.route.params
-      // this.setState({orderType})
     }
 
     closeModal = () =>{
@@ -97,86 +91,70 @@ class PickUp extends React.Component<Props, IState> {
 
     renderPlacesModal(){
       const {addressKey} = this.state
+      const addressLabel = addressKey === "pickUp" ? "Pick Up Address" : "Delivery Address"
       return(
         <Modal
             visible={this.state.showPlaces}
+            animationType="fade"
             keyboardShouldPersistTaps='always'
         >
-        <GooglePlacesAutocomplete
-          placeholder="Search"
-          minLength={2} // minimum length of text to search
-          autoFocus={false}
-          returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-          listViewDisplayed={false} // true/false/undefined
-          fetchDetails={true}
-          // renderDescription={row => row.description} // custom description render
-          onPress={(data, details) => {
-            this.setState({[addressKey] :  data})
-            this.setState({showPlaces:false})
-            // console.log("===== ", data);
-            // console.log(details);c
+        <View style={{flex : 1 , width : "100%"}}>
+          <View style={{height : 64, width : "100%",alignItems: "center",flexDirection:"row",justifyContent : "space-between",paddingHorizontal : 16 }} >
+             <Btn 
+                onPress={()=>{ this.setState({showPlaces : false})}}
+                style={{width : 26,height : 26,marginTop :4}}>
+                <AntDesign name="closecircleo" size={24} color="black" />
+             </Btn>
+             <Text>
+               {addressLabel}
+             </Text>
+             <Btn style={{width : 40,height : 40}} ></Btn>
+          </View>
+          <GooglePlacesAutocomplete
+            placeholder="Search"
+            minLength={2} // minimum length of text to search
+            autoFocus={false}
+            returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+            listViewDisplayed={false} // true/false/undefined
+            fetchDetails={true}
+            // renderDescription={row => row.description} // custom description render
+            onPress={(data, details) => {
+              this.setState({[addressKey] :  data})
+              this.setState({showPlaces:false})
+              // console.log("===== ", data);
+              // console.log(details);c
+            }}
 
-            Alert.alert("test",details?.name,
-            [{
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: "OK", onPress: () => console.log("OK Pressed") }]
-           )
-          }}
-          // getDefaultValue={() => {
-          //   return ''; // text input default value
-          // }}
-          query={{
-            // available options: https://developers.google.com/places/web-service/autocomplete
-            key: 'AIzaSyDQBBCtTFs_pu7bJamKGWgEVaCf5KC_7LA',
-            language: 'en', // language of the results
-            // types: '(cities)', // default: 'geocode'
-          }}
-          // styles={{
-          //   description: {
-          //     fontWeight: 'bold',
-          //   },
-          //   predefinedPlacesDescription: {
-          //     color: '#1faadb',
-          //   },
-          // }}
-          // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-          // currentLocationLabel="Current location"
-          nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-          GoogleReverseGeocodingQuery={{
-            // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-          }}
-          GooglePlacesSearchQuery={{
-            // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-            rankby: 'distance',
-            types: 'food',
-          }}
-          filterReverseGeocodingByTypes={[
-            'locality',
-            'administrative_area_level_3',
-          ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-          predefinedPlaces={[homePlace, workPlace]}
-          debounce={200}
-        />
+            query={{
+              // available options: https://developers.google.com/places/web-service/autocomplete
+              key: 'AIzaSyDQBBCtTFs_pu7bJamKGWgEVaCf5KC_7LA',
+              language: 'en', // language of the results
+              // types: '(cities)', // default: 'geocode'
+            }}
+
+            nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+            GoogleReverseGeocodingQuery={{
+              // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+            }}
+            GooglePlacesSearchQuery={{
+              // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+              rankby: 'distance',
+              types: 'food',
+            }}
+            filterReverseGeocodingByTypes={[
+              'locality',
+              'administrative_area_level_3',
+            ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+            predefinedPlaces={[homePlace, workPlace]}
+            debounce={200}
+          />
+        </View>
       </Modal>
       )
     }
 
     openSearchModal(key : string) {
-
       this.setState({showPlaces :  true , addressKey : key})
-      // RNGooglePlaces.openAutocompleteModal()
-      // .then((place) => {
-
-      // this.setState({[key] :  place})
-      // // place represents user's selection from the
-
-
-      // // suggestions and it is a simplified Google Place object.
-      // })
-      // .catch(error => console.log(error.message));  // error is a Javascript Error object
     }
   
     renderAddress(){

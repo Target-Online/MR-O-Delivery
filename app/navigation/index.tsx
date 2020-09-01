@@ -20,8 +20,10 @@ class AppNavigator extends Component<IProps> {
     barcodePosition = new Animated.Value(0)
 
     state = {
-      isDriver : false
+      isDriver : false,
+      loading : false
     }
+
     componentWillMount = () => {
 
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
@@ -42,7 +44,8 @@ class AppNavigator extends Component<IProps> {
     render () {
 
       const {user,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
-
+      const {loading} = this.state
+      
       return [
         <StatusBar backgroundColor ={Colors.focusColor}
           barStyle = 'dark-content'

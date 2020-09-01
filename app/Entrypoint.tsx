@@ -1,31 +1,55 @@
 import { ActivityIndicator, Image, StatusBar, Modal, View } from 'react-native'
-/**
- * React Native App
- * Everthing starts from the App
- */
 import React, { Component, useState, useEffect, createContext, useContext } from 'react'
 import Navigator from './navigation'
-import AuthNav from './screens/user/Auth'
-import { auth } from 'firebase'
 import AppContextProvider, { withAppContext, AppContext, ContextConsumer, IContextProps } from './AppContext'
 import AlertModal from './components/AlertModal'
-import ForgotPassword from './screens/user/Auth/ForgotPassword'
 import Store from './Store'
+import { Bubbles, DoubleBounce, Bars, Pulse } from 'react-native-loader';
+
+// ...
 
 type IProps = IContextProps
 
 console.disableYellowBox = true
-const App : React.SFC<IProps> = (props) => {
+class App extends React.Component<IProps>{
 
-    const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
+  state = {
+    loading : false
+  }
+
+  async componentDidMount(){
+    const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context
+    this.setState({loading : true})
+    //fetch drivers and all
+
+
+
+    this.setState({loading : false})
+
+  }
+
+  renderInitialLoading = () => {
+    <View style={{flex : 1}} >
+      <Bubbles size={10} color="#FFF" />
+      <Bars size={10} color="#FDAAFF" />
+      <Pulse size={10} color="#52AB42" />
+      <DoubleBounce size={10} color="#1CAFF6" />
+    </View>
+  }
+
+  render(){
+    const { loading } = this.state 
+    const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context
     // setShowAlert(true)
     return(
       <View style={{flex : 1}}>
         <AlertModal/>
+        {loading ? this.renderInitialLoading() : 
         <Navigator />
+        }
       </View>
     )
-   
+  }
 
 }
 

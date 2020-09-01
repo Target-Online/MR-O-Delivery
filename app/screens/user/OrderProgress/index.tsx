@@ -1,19 +1,39 @@
 import React, { Component} from 'react'
 import { View, Text , TouchableOpacity as Btn, Image, StyleSheet} from 'react-native'
-import VerifiedIcon from '../../../assets/icons/VerfiedIcon'
-import MastercardIcon from '../../../assets/icons/MastercardIcon'
-import CashIcon from '../../../assets/icons/CashIcon'
-import Icon from 'react-native-vector-icons/Ionicons'
-import EFTIcon from '../../../assets/icons/EFTIcon'
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import images from '../../../assets/images'
 import ChatIcon from '../../../assets/icons/ChatIcon'
 import CallIcon from '../../../assets/icons/CallIcon'
-import MapView from 'react-native-maps';
 import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
-import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
+import StepIndicator from 'react-native-step-indicator';
+
+const labels = ["Order Confirmed", "Parcel Collection" ,"On Route","Delivered"]
+
+const customStyles = {
+  stepIndicatorSize: 25,
+  currentStepIndicatorSize:30,
+  separatorStrokeWidth: 2,
+  currentStepStrokeWidth: 3,
+  stepStrokeCurrentColor: '#fe7013',
+  stepStrokeWidth: 3,
+  stepStrokeFinishedColor: '#fe7013',
+  stepStrokeUnFinishedColor: '#aaaaaa',
+  separatorFinishedColor: '#fe7013',
+  separatorUnFinishedColor: '#aaaaaa',
+  stepIndicatorFinishedColor: '#fe7013',
+  stepIndicatorUnFinishedColor: '#ffffff',
+  stepIndicatorCurrentColor: '#ffffff',
+  stepIndicatorLabelFontSize: 13,
+  currentStepIndicatorLabelFontSize: 13,
+  stepIndicatorLabelCurrentColor: '#fe7013',
+  stepIndicatorLabelFinishedColor: '#ffffff',
+  stepIndicatorLabelUnFinishedColor: '#aaaaaa',
+  labelColor: '#999999',
+  labelSize: 13,
+  currentStepLabelColor: '#fe7013'
+}
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
@@ -38,39 +58,46 @@ class Payment extends Component<IProps> {
                 <View style={{flex : 1}}>
                 <View style={{alignItems : "center"}}>
                     <View style={{width : "100%", height:  340,}} >
-                        {/* <MapView
-                            style={{flex : 1}}
-                            initialRegion={{
-                            latitude: 37.78825,
-                            longitude: -122.4324,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                            }}
-                        /> */}
 
-                        <View style={{flex: 1}}>
-                            <ProgressSteps>
-                                <ProgressStep label="Parcel pickup">
-                                    <View style={{ alignItems: 'center' }}>
+                        <View style={{flex: 1 ,paddingHorizontal : 16, paddingTop : 46}}>
+                            <StepIndicator
+                                customStyles={customStyles}
+                                currentPosition={3}
+                                labels={labels}
+                                stepCount={4}
+                            />
+                             <View style={{ alignItems: 'center',paddingTop : 42 }}>
+                                    <ParcelIcon width={80} height={80} />
+                                    {/* <Text>Your parcel has been delivered</Text> */}
+                            </View>
+                            {/* <ProgressSteps
+                                    activeStep={1}
+                                    removeBtnRow
+                                    
+                                    completedProgressBarColor="orange"
+                                    completedStepIconColor="orange"
+                                    activeStepIconBorderColor="orange"
+                                    activeLabelColor="orange" >
+                                        <ProgressStep 
+                                        ne
+                                        nextBtnTextStyle={{height :0}}
+                                        label="Parcel pickup">
+                                            <View style={{ alignItems: 'center' }}>
 
-                                    <Text>{`${displayName} is ON THE WAY to PICK up your parcel`}</Text>
-                                    </View>
-                                </ProgressStep>
-                                <ProgressStep label="En Route">
-                                    <View style={{ alignItems: 'center' }}>
-                                        
-                                    <Text>{`${displayName} is ON THE WAY to deliver  your parcel`}</Text>
-                                        
-                                    </View>
-                                </ProgressStep>
-                                <ProgressStep label="Complete">
-                                    <View style={{ alignItems: 'center' }}>
-
-                                        <ParcelIcon width={80} height={80} />
-                                        <Text>Your parcel has been delivered</Text>
-                                    </View>
-                                </ProgressStep>
-                            </ProgressSteps>
+                                            <Text>{`${displayName} is ON THE WAY to PICK up your parcel`}</Text>
+                                            </View>
+                                        </ProgressStep>
+                                        <ProgressStep label="En Route">
+                                            <View style={{ alignItems: 'center' }}>
+                                                
+                                            <Text>{`${displayName} is ON THE WAY to deliver  your parcel`}</Text>
+                                                
+                                            </View>
+                                        </ProgressStep>
+                                        <ProgressStep label="Complete">
+                                           
+                                        </ProgressStep>
+                            </ProgressSteps> */}
                         </View>
 
                     </View>

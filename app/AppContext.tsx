@@ -94,6 +94,7 @@ export type IUser = {
 const AppContextProvider : React.SFC = ({children}) => {
 
         const [user, setUser] = useState(null);
+        const [loading, setLoading] = useState<boolean>(false);
         const [profile, setProfile] = useState<IUser>({});
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
@@ -103,10 +104,10 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [drivers, setDrivers] = useState<IDriver[]>([]);
         const usersRef =  firebase.firestore().collection('users')
  
-        const getIDFromEmail = (word : string) => {
-           const result = word.replace(/[^a-zA-Z0-9]/g, '')
-        //    console.log({result})
-           return result
+        const initialLoad = (word : string) => {
+
+           const {phoneNumber} = user || {}
+
         }
 
         const generateOrderId = (userId : string) => {

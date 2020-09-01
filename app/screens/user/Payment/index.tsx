@@ -111,14 +111,15 @@ class Payment extends Component<IProps> {
                 myOrder.driver = freeDrivers[0]
                 setOrder(myOrder)
                 sendRequest("testId", ()=>{
-                    this.setState({loaderVisible : false})
+                    // this.setState({loaderVisible : false})
+                    setTimeout(()=> this.setState({loaderVisible : false}),3000)
                     this.props.navigation.navigate('OrderProgress')
                 }, ()=>{} )
             }
         }
         
 
-        // setTimeout(3000,()=> this.setState({loaderVisible : false}) )
+        // setTimeout(()=> this.setState({loaderVisible : false}),3000)
        
     }
 

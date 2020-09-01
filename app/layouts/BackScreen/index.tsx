@@ -73,7 +73,10 @@ class BackScreen extends React.Component<Props, IState> {
     if (onBackPress) {
       return onBackPress();
     }
-    // navigation.goBack() === A navigation service
+    else if (navigation){
+        navigation.goBack() // === A navigation service
+    }
+    
   }
 
   handleScroll = (event: any) => {
@@ -98,7 +101,7 @@ class BackScreen extends React.Component<Props, IState> {
       <SafeAreaView style={{flex : 1}}>
         <View style={styles.topBarStyles}>
                 <Btn style={styles.backBtnStyle} onPress={()=> this.navigateBack()}>
-                  <Ionicons name="arrow-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
+                  <Ionicons name="md-arrow-round-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
                 </Btn>
                 <View style={{alignItems : "center"}}>
                   <Text style={{fontSize : 16, fontWeight : "600"}}>{title}</Text>
