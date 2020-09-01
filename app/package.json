@@ -17,6 +17,7 @@
     "@react-navigation/drawer": "5.8.1",
     "@react-navigation/native": "5.5.0",
     "@react-navigation/stack": "5.4.1",
+    "@types/moment": "^2.13.0",
     "expo": "^37.0.0",
     "expo-asset": "~8.1.5",
     "expo-firebase-recaptcha": "^1.1.3",
@@ -61,7 +62,5 @@
     "MR O Delivery",
     "ASABA",
     "NIGERIA"
-  ],
-  "author": "Target Online <info@targetonline.co.za> (https://www.targetonline.co.za)",
-  "homepage": "https://demos.creative-tim.com/now-ui-react-native"
+  ]
 }

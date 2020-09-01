@@ -10,7 +10,7 @@ import { auth } from 'firebase'
 import AppContextProvider, { withAppContext, AppContext, ContextConsumer, IContextProps } from './AppContext'
 import AlertModal from './components/AlertModal'
 import ForgotPassword from './screens/user/Auth/ForgotPassword'
-
+import Store from './Store'
 
 type IProps = IContextProps
 
@@ -32,6 +32,7 @@ const App : React.SFC<IProps> = (props) => {
 const AppComp : React.SFC = () => {
 
   return (
+    <Store>
     <AppContextProvider>  
     <ContextConsumer>
       {(c) => {
@@ -39,6 +40,7 @@ const AppComp : React.SFC = () => {
       }}
       </ContextConsumer>  
     </AppContextProvider>
+    </Store>
   )
 }
 

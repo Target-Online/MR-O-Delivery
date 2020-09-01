@@ -1,2 +1,6 @@
 declare module 'galio-framework';
-declare module 'react-native-progress-steps'
+declare module 'expo-firebase-recaptcha';
+declare module 'object-to-array-convert';
+declare module 'firebase';
+declare module 'moment';
+

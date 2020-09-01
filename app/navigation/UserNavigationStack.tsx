@@ -10,7 +10,8 @@ import SignIn from '../screens/user/Auth/SignIn'
 import SignUp from '../screens/user/Auth/SignUp'
 import ForgotPassword from '../screens/user/Auth/ForgotPassword'
 import { BottomMenu } from '../components'
-import OrderHistory from '../screens/user/OrderScreen'
+import OrderHistory from '../screens/user/OrderScreen/History'
+import OrderDetails from '../screens/user/OrderScreen/Details'
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -23,14 +24,10 @@ const noOptions = {
   header : null
 }
 
-function HomeStack(props) {
+function HomeStack() {
   return (
-    <Stack.Navigator 
-      screenOptions={{
-        headerShown: false
-      }} 
-      initialRouteName="Components" mode="card" headerMode="screen">
-      <Stack.Screen name="Home" component={Home}  />
+    <Stack.Navigator  initialRouteName="Home" mode="card" headerMode={"none"}>
+      <Stack.Screen  name="Home" component={Home}  />
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="PickUpRequest" component={PickUp} />
@@ -44,6 +41,7 @@ function RNApp() {
       <Tab.Navigator tabBar={(props) => <BottomMenu  {...props} />} >
         <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="OrderHistory" component={OrderHistory} />
+        <Tab.Screen name="OrderDetails" component={OrderDetails} />
         <Tab.Screen name="Profile" component={Profile} />
         <Tab.Screen name="Receipts" component={OrderHistory} />
         <Tab.Screen name="Contact" component={Contact} />
@@ -52,5 +50,4 @@ function RNApp() {
   );
 }
   
-
 export default (RNApp)
