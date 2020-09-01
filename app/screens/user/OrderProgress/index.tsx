@@ -13,6 +13,7 @@ import MapView from 'react-native-maps';
 import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
+import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
@@ -27,18 +28,17 @@ class Payment extends Component<IProps> {
 
         const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items, driver, total}  = order
-
+        const { displayName }  = driver
         return ( 
             <BackScreen 
                 // scroll
-                title={"Your Order"}
-                navigation={this.props.navigation}
-            
+                title={"Track Your Order"}
+                navigation={this.props.navigation}          
             >
                 <View style={{flex : 1}}>
                 <View style={{alignItems : "center"}}>
                     <View style={{width : "100%", height:  340,}} >
-                        <MapView
+                        {/* <MapView
                             style={{flex : 1}}
                             initialRegion={{
                             latitude: 37.78825,
@@ -46,7 +46,33 @@ class Payment extends Component<IProps> {
                             latitudeDelta: 0.0922,
                             longitudeDelta: 0.0421,
                             }}
-                        />
+                        /> */}
+
+                        <View style={{flex: 1}}>
+                            <ProgressSteps>
+                                <ProgressStep label="Parcel pickup">
+                                    <View style={{ alignItems: 'center' }}>
+
+                                    <Text>{`${displayName} is ON THE WAY to PICK up your parcel`}</Text>
+                                    </View>
+                                </ProgressStep>
+                                <ProgressStep label="En Route">
+                                    <View style={{ alignItems: 'center' }}>
+                                        
+                                    <Text>{`${displayName} is ON THE WAY to deliver  your parcel`}</Text>
+                                        
+                                    </View>
+                                </ProgressStep>
+                                <ProgressStep label="Complete">
+                                    <View style={{ alignItems: 'center' }}>
+
+                                        <ParcelIcon width={80} height={80} />
+                                        <Text>Your parcel has been delivered</Text>
+                                    </View>
+                                </ProgressStep>
+                            </ProgressSteps>
+                        </View>
+
                     </View>
                 </View>
 
@@ -56,7 +82,7 @@ class Payment extends Component<IProps> {
                         <Image source={images.headShot} style={{width: 60, height : 60, borderRadius : 30}} />
                         <View style={{height : "100%", justifyContent : "center",padding : 16 }}>
                             <Text style={styles.driverName} >{driver?.displayName}</Text>
-                            <Text style={styles.driverName} >Vehicle Name</Text>
+                            {/* <Text style={styles.driverName} >Vehicle Name</Text> */}
                             <Text style={styles.driverName} >{driver?.vehicleRegistration}</Text>
                             
                         </View>
@@ -80,13 +106,13 @@ class Payment extends Component<IProps> {
                             <View style={{flex:1, height: 70,justifyContent  :"space-between" }}> 
                                 <View style={styles.textAreaStyles} >
                                     <Text   style={styles.addressInput} >
-                                        {pickUpAddress.address}
+                                        {pickUpAddress.description}
                                     </Text>  
                                                                
                                 </View>
                                 <View style={styles.textAreaStyles} >
                                     <Text style={styles.addressInput} >
-                                        {dropOffAddress.address}
+                                        {dropOffAddress.description}
                                     </Text>   
                                 </View>
                             </View>

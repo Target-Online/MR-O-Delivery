@@ -38,7 +38,7 @@ class AppNavigator extends Component<IProps> {
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context;
       const {isDriver} = this.state
 
-      if(isDriver){
+      if(isDriver ||  true){
 
         return(
           <DriverNavigationStack

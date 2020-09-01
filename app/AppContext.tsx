@@ -3,6 +3,7 @@ import  * as firebase from "firebase"
 import React from "react";
 import { IAlertProps } from "./components/AlertModal";
 import {Alert} from 'react-native'
+import _ from "lodash";
 export const AppContext = createContext({});
 export const ContextConsumer = AppContext.Consumer
 require('firebase/firestore')
@@ -189,7 +190,8 @@ const AppContextProvider : React.SFC = ({children}) => {
                 .then(snapshot => {
                     let userProfile = snapshot.val() 
                     console.log(" this is the user profile  ", {userProfile})
-                    // userProfile && setProfile(userProfile)
+                    const hasProfile = !_.isEmpty(userProfile)
+                    hasProfile && setProfile(userProfile)
                     return userProfile
                 }).catch((err)=>{
                     return {}
@@ -213,16 +215,23 @@ const AppContextProvider : React.SFC = ({children}) => {
             });
         }
 
-        const updateUserProfile = (profile : IUser, silentUpdate?: boolean, newUser?: boolean) => {
+        const updateUserProfile = ( params: {profile : IUser, silentUpdate?: boolean, 
+            newUser?: boolean ,onSuccess : () => void , onFailure : () => void }) => {
 
+            const {profile , silentUpdate, newUser,onSuccess,onFailure } = params
             console.log("==== ssetting" ,{profile})
                 const {phoneNumber} = profile
                 // usersRef.doc(email).set(profile)
 
                 if(newUser){
                     const newRef = firebase.database().ref(`users/`).child(phoneNumber)
-                    newRef.set({...profile})
-                    setProfile(profile)
+                    newRef.set({...profile}).then(()=>{
+                        setProfile(profile)
+                        onSuccess && onSuccess()
+                    }).catch(()=>{
+                        onFailure && onFailure()
+                    })
+                  
                     
                 }
                 else{

@@ -275,12 +275,12 @@ export const RouteSummary = (props : IAddressParams) => {
                 <View style={{flex:1, height: 70,justifyContent  :"space-between",backgroundColor : "#fff" }}> 
                     <View style={styles.textAreaStyles} >
                         <Text numberOfLines={2} style={styles.addressInput} >
-                            {pickUpAddress.address}
+                            {pickUpAddress.description}
                         </Text>    
                     </View>
                     <View style={styles.textAreaStyles} >
                         <Text numberOfLines={2} style={styles.addressInput} >
-                        {dropOffAddress.address}
+                        {dropOffAddress.description}
                         </Text>   
                     </View>
                 </View>

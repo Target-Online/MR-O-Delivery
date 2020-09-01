@@ -79,13 +79,11 @@ class Home extends React.Component<Props, IState> {
   renderNewUserModal = () => {
 
     const { context: { profile, user, fetchUserProfile, getAllDrivers } } = this.props
-
-    console.log("=== this is the profile" ,{ profile })
     const noUser = _.isEmpty(profile)
 
-    console.log({ profile })
+    console.log({ profile ,noUser })
     return (
-      <Modal visible={true}>
+      <Modal visible={noUser}>
         <ProfileLoad />
       </Modal>
     )
@@ -105,26 +103,25 @@ class Home extends React.Component<Props, IState> {
       this.renderAuthModal(),
       <View key="main" style={styles.container} >
         <StatusBar barStyle="dark-content" />
-        <ImageBackground source={images.homeBg} style={{ width: "100%", height: "100%" }}>
-
-          <View style={{ width: "100%", justifyContent: "flex-end", alignItems: "flex-start", height: "35%", paddingHorizontal: 24, paddingBottom: 32 }}>
-
+        
+          <View style={{ width: "100%", justifyContent: "flex-end", alignItems: "flex-start", height: "45%", paddingHorizontal: 24,backgroundColor : Colors.primaryOrange, paddingBottom: 32 }}>
+          <ImageBackground resizeMode="contain" source={images.DeliveryGuy} style={{ width: "100%", height: "100%" }}>
             <View style={{ position: "absolute", bottom: height / 13, right: 12 }}>
               <RnImg style={{ height: 110, width: 110 }} resizeMode="contain" source={images.DeliveryGuy} />
             </View>
-
             <RnImg style={{ borderRadius: 100, height: 100, width: 100 }} resizeMode="cover" source={images.headShot} />
-
             <Text style={{ fontSize: 16, fontWeight: "400", color: "#fff", alignSelf: "flex-start" }} >
               Welcome Back,
                 </Text>
             <Text style={{ fontSize: 20, fontWeight: "700", color: "#fff", alignSelf: "flex-start" }} >
               {firstname}
             </Text>
-          </View>
+
         </ImageBackground>
 
-        <View style={{ padding: 24, backgroundColor: "#fff", width: "100%", height: "65%", ...shadow, alignItems: "center", justifyContent: "space-between", position: "absolute", bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
+        </View>
+
+        <View style={styles.mainOptsWrapper} >
           <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "space-between" }} >
             <Btn
               onPress={() => this.props.navigation.navigate("PickUpRequest")}
@@ -184,6 +181,13 @@ const styles = StyleSheet.create({
     flex: 1, width: "100%", height: "100%",
     backgroundColor: "#FEFEFE",
     alignItems: "center"
+  },
+  mainOptsWrapper: { 
+    padding: 24, backgroundColor: "#fff", width: "100%",
+    height: "65%", ...shadow, alignItems: "center", 
+    justifyContent: "space-between", 
+    position: "absolute", bottom: 0, borderTopLeftRadius: 24, 
+    borderTopRightRadius: 24 
   },
   inputWrapper: {
     width: "100%", height: 54, borderColor: Colors.primaryOrange,

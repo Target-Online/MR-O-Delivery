@@ -25,7 +25,11 @@ const noOptions = {
 
 function HomeStack(props) {
   return (
-    <Stack.Navigator initialRouteName="Components" mode="card" headerMode="screen">
+    <Stack.Navigator 
+      screenOptions={{
+        headerShown: false
+      }} 
+      initialRouteName="Components" mode="card" headerMode="screen">
       <Stack.Screen name="Home" component={Home}  />
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
       <Stack.Screen name="Payment" component={Payment} />

@@ -32,14 +32,13 @@ class ProfileLoad extends React.Component<FormProps> {
         passConfirm : null,
     }
 
-    submitForm = (values: { email: string; lastname: string; phoneNumber : string;   }) => {
-        const {errors, handleChange,navigation, touched,handleBlur,context } = this.props
+    submitForm = (values: { email: string; lastname: string; phoneNumber : string; firstname: string  }) => {
+        const {navigation, touched,handleBlur,context } = this.props
         const { updateUserProfile ,user } = context
-        const  { email, lastname,  } = values
+        const  { email, lastname,firstname } = values
         const {phoneNumber} = user
-        console.log({email})
-        console.log({user})
-        updateUserProfile({phoneNumber,email,lastname},false, true)
+        const profile = {phoneNumber ,email,firstname,lastname}
+        updateUserProfile({profile , silentUpdate : true, newUser : false,onSuccess : ()=>{ } ,onFailure :()=>{ }})
 
     }
 
@@ -47,22 +46,17 @@ class ProfileLoad extends React.Component<FormProps> {
       
         const {errors, handleChange,navigation, touched,handleBlur,context,onBack, values } = this.props
         return (
-
             <BackScreen
+
                 title="Register Your Profile"
                 onBackPress={()=> {
-                    if (onBack){
-                        return onBack()
-                    }
+                    if (onBack){ return onBack() }
                     navigation.goBack()
                 }}
             >
             <View style={{flex : 1, alignItems : 'center' , padding : 24 }}>
                 <Image width={150} height={150} source={images.logo} />
-
                 <Text style={{marginBottom : 24}}> Looks like you're new here :]</Text>
-
-
 
                 <Content>               
                     <TextInput 
