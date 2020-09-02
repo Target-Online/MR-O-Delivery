@@ -107,11 +107,12 @@ class Payment extends Component<IProps> {
 
             if (freeDrivers){
                 let myOrder  = {...order}
-                // console.log()
+                const {orderId} = myOrder
                 myOrder.driver = freeDrivers[0]
                 setOrder(myOrder)
-                sendRequest("testId", ()=>{
-                    // this.setState({loaderVisible : false})
+
+                console.log("order set here", {myOrder})
+                sendRequest(orderId, ()=>{
                     setTimeout(()=> this.setState({loaderVisible : false}),3000)
                     this.props.navigation.navigate('OrderProgress')
                 }, ()=>{} )

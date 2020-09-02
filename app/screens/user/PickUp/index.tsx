@@ -1,21 +1,17 @@
 
-import React from 'react';
-import {
-  Modal,
-  StyleSheet,
-  TouchableOpacity as Btn,View,
-  Text,StatusBar, Dimensions, ImageBackground, TextInput, ScrollView, FlatList, Alert,
-} from 'react-native';
+import React from 'react'
+import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput,FlatList } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import TruckIcon from '../../../assets/icons/TruckIcon';
-import PinIcon from '../../../assets/icons/PinIcon';
-import LocationIcon from '../../../assets/icons/LocationIcon';
-import Loader from '../../../components/loader';
-import BackScreen from '../../../layouts/BackScreen';
-import { IContextProps, withAppContext } from '../../../AppContext';
-import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { AntDesign } from '@expo/vector-icons';
+import TruckIcon from '../../../assets/icons/TruckIcon'
+import PinIcon from '../../../assets/icons/PinIcon'
+import LocationIcon from '../../../assets/icons/LocationIcon'
+import Loader from '../../../components/loader'
+import BackScreen from '../../../layouts/BackScreen'
+import { IContextProps, withAppContext } from '../../../AppContext'
+import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import { Ionicons } from '@expo/vector-icons';
+
 const shadow =  {
     shadowColor: '#000000',
     shadowOpacity: 0.15,
@@ -103,7 +99,7 @@ class PickUp extends React.Component<Props, IState> {
              <Btn 
                 onPress={()=>{ this.setState({showPlaces : false})}}
                 style={{width : 26,height : 26,marginTop :4}}>
-                <AntDesign name="closecircleo" size={24} color="black" />
+                <Ionicons name="md-arrow-round-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
              </Btn>
              <Text>
                {addressLabel}
@@ -257,8 +253,9 @@ class PickUp extends React.Component<Props, IState> {
     render(){
 
         const {pickUp , dropOff ,item : {name , description}, orderType} = this.state
-        const {context : {profile , order,setOrder}} = this.props
-
+        const {context : {profile , order,setOrder,user,generateOrderId}} = this.props
+        const {phoneNumber} = user
+        const orderId = generateOrderId(phoneNumber)
         return [
           this.renderPlacesModal(),
           <Loader visible={false} /> ,          
@@ -283,7 +280,7 @@ class PickUp extends React.Component<Props, IState> {
                 {this.renderAddressSelector("Pick-up Address","pickUp")}
                 {this.renderAddressSelector("Drop-off Address","dropOff")}
                 <Text style={{fontSize : 12, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
-                  {"Pick Up Details"}
+                  {"Parcel Details"}
                 </Text>
                 <View style={[styles.textAreaStyles,{height : 42,marginVertical : 8,paddingVertical: 2}]} >              
                     <TextInput 
@@ -313,7 +310,7 @@ class PickUp extends React.Component<Props, IState> {
                         const {pickUp , dropOff ,item : {name , description}} = this.state
 
                         const order : IOrder = {
-                            orderId : `testID${randomNum}`,
+                            orderId,
                             orderType ,
                             driver : {},
                             pickUpAddress : pickUp,

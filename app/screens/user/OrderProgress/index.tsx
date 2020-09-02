@@ -8,6 +8,7 @@ import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import StepIndicator from 'react-native-step-indicator';
+import firebase from 'firebase'
 
 const labels = ["Order Confirmed", "Parcel Collection" ,"On Route","Delivered"]
 
@@ -37,18 +38,36 @@ const customStyles = {
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
-
+const orderProgress = ["Confirmed" , "Collected" , "Delivered"]
 
 class Payment extends Component<IProps> {
     constructor (props) {
       super(props)
     }
 
+    componentDidMount(){
+        const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
+        const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
+        const {orderId} = order
+        console.log({orderId})
+        var ref = firebase.database().ref(`orders/${orderId}`);
+        ref.on('value', function(snapshot) {
+            // Do whatever
+            console.log(" Order changed ", snapshot.val())
+            if(snapshot.val()){
+                const order = snapshot.val()
+                setOrder(order)
+            }
+        });
+
+    }
     render () {
 
         const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items, driver, total}  = order
-        const { displayName }  = driver
+        const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
+        const { displayName }  = driver || {} 
+        let currentStep = orderProgress.indexOf(status)
+        if (currentStep < 0) currentStep = 0
         return ( 
             <BackScreen 
                 // scroll
@@ -62,42 +81,17 @@ class Payment extends Component<IProps> {
                         <View style={{flex: 1 ,paddingHorizontal : 16, paddingTop : 46}}>
                             <StepIndicator
                                 customStyles={customStyles}
-                                currentPosition={3}
+                                currentPosition={currentStep}
                                 labels={labels}
                                 stepCount={4}
                             />
                              <View style={{ alignItems: 'center',paddingTop : 42 }}>
                                     <ParcelIcon width={80} height={80} />
-                                    {/* <Text>Your parcel has been delivered</Text> */}
+                                    {(currentStep === 3) && <Text>Your parcel has been delivered</Text>}
+                                    {(currentStep === 2) && <Text>Your parcel has been collected and trhe driver is on route to drop it off</Text>}
+                                    {(currentStep === 1) && <Text>A driver has accepted your order and is  going to collect your parcel</Text>}
                             </View>
-                            {/* <ProgressSteps
-                                    activeStep={1}
-                                    removeBtnRow
-                                    
-                                    completedProgressBarColor="orange"
-                                    completedStepIconColor="orange"
-                                    activeStepIconBorderColor="orange"
-                                    activeLabelColor="orange" >
-                                        <ProgressStep 
-                                        ne
-                                        nextBtnTextStyle={{height :0}}
-                                        label="Parcel pickup">
-                                            <View style={{ alignItems: 'center' }}>
-
-                                            <Text>{`${displayName} is ON THE WAY to PICK up your parcel`}</Text>
-                                            </View>
-                                        </ProgressStep>
-                                        <ProgressStep label="En Route">
-                                            <View style={{ alignItems: 'center' }}>
-                                                
-                                            <Text>{`${displayName} is ON THE WAY to deliver  your parcel`}</Text>
-                                                
-                                            </View>
-                                        </ProgressStep>
-                                        <ProgressStep label="Complete">
-                                           
-                                        </ProgressStep>
-                            </ProgressSteps> */}
+                          
                         </View>
 
                     </View>

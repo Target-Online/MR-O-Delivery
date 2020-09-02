@@ -50,6 +50,7 @@ export interface IAddress {
 export interface IOrder {
     orderId : "Pick-Up" | "Shopping";
     customer : any;
+    status : "Pending" | "Confirmed" | "Collected" | "Delivered"
     driver?: IDriver;
     dropOffAddress : IAddress ;
     pickUpAddress : IAddress;
@@ -66,6 +67,7 @@ export interface IAppContext{
         user : any ;
         drivers : IDriver[];
         profile: IUser;
+        generateOrderId : (uid: string) => string;
         showAlert:  boolean;
         order: IOrder;
         isUserDriver : (phoneNumber : string) => boolean ;
@@ -124,6 +126,7 @@ const AppContextProvider : React.SFC = ({children}) => {
     
         useEffect(() => {
           const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+        //   const user = await firebase.auth().currentUser 
           return subscriber; // unsubscribe on unmount
         }, []);
     
@@ -202,9 +205,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const sendRequest = async (id : string , onSuccess : () => void ,onFailure : () => void ) => {
-            const orderID = generateOrderId(id)
-
-            const order = {...mockOrder} //for testing purposes
+            const orderID = (id)
             firebase.database()
                 .ref(`orders/`).child(orderID)
                 .set({...order})
@@ -292,7 +293,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                     user, showAlert, setShowAlert,updateOrderStatus,
                     alertBoxData, setAlertData, setUser,sendRequest,
                     login, register, logout, fetchUserProfile,isUserDriver,
-                    isDev : true,order,setOrder,drivers,getAllDrivers,
+                    isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile
                 }}
             >
