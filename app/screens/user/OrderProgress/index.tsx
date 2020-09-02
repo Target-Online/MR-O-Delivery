@@ -38,7 +38,7 @@ const customStyles = {
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
-const orderProgress = ["Confirmed" , "Collected" , "Delivered"]
+const orderProgress = ["Pending","Confirmed" , "Collected" , "Delivered"]
 
 class Payment extends Component<IProps> {
     constructor (props) {
@@ -66,7 +66,7 @@ class Payment extends Component<IProps> {
         const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
         const { displayName }  = driver || {} 
-        let currentStep = orderProgress.indexOf(status)
+        let currentStep = orderProgress.indexOf(status) 
         if (currentStep < 0) currentStep = 0
         return ( 
             <BackScreen 
@@ -87,9 +87,11 @@ class Payment extends Component<IProps> {
                             />
                              <View style={{ alignItems: 'center',paddingTop : 42 }}>
                                     <ParcelIcon width={80} height={80} />
-                                    {(currentStep === 3) && <Text>Your parcel has been delivered</Text>}
-                                    {(currentStep === 2) && <Text>Your parcel has been collected and trhe driver is on route to drop it off</Text>}
-                                    {(currentStep === 1) && <Text>A driver has accepted your order and is  going to collect your parcel</Text>}
+                                    
+                                    {(currentStep === 4) && <Text>Your parcel has been delivered</Text>}
+                                    {(currentStep === 3) && <Text>Your parcel has been collected and trhe driver is on route to drop it off</Text>}
+                                    {(currentStep === 2) && <Text>A driver has accepted your order and is  going to collect your parcel</Text>}
+                                    {(currentStep === 1) && <Text>Waiting for drivers confirmation of your request</Text>}
                             </View>
                           
                         </View>
