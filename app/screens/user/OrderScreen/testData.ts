@@ -23,7 +23,7 @@ export default ([
             "vehicleRegistration" : "GGE-23729Y"
           },         
         "dropOffAddress" : {
-          "address" : "Washington, DC, USA",
+          "address" : "Asaba - The Rodinia Hotel",
           "addressComponents" : [ {
             "name" : "Washington",
             "shortName" : "Washington",
@@ -37,15 +37,15 @@ export default ([
             "shortName" : "DC",
             "types" : [ "administrative_area_level_1", "political" ]
           }, {
-            "name" : "United States",
+            "name" : "The Rodinia Hotel",
             "shortName" : "US",
             "types" : [ "country", "political" ]
           } ],
           "location" : {
-            "latitude" : 38.9071923,
-            "longitude" : -77.0368707
+            "latitude" : 6.2018213,
+            "longitude" : 6.6725734
           },
-          "name" : "Washington",
+          "name" : "The Rodinia Hotel",
           "placeID" : "ChIJW-T2Wt7Gt4kRKl2I1CJFUsI",
           "priceLevel" : -1,
           "types" : [ "locality", "political" ],
@@ -64,7 +64,7 @@ export default ([
         "orderId" : "testID681",
         "orderType" : "Pick-Up",
         "pickUpAddress" : {
-          "address" : "Dubai - United Arab Emirates",
+          "address" : "Asaba - Nelson Mandela Gardens",
           "addressComponents" : [ {
             "name" : "Dubai",
             "shortName" : "Dubai",
@@ -79,10 +79,10 @@ export default ([
             "types" : [ "country", "political" ]
           } ],
           "location" : {
-            "latitude" : 25.2048493,
-            "longitude" : 55.2707828
+            "latitude" : 6.1854835,
+            "longitude" : 6.6427177
           },
-          "name" : "Dubai",
+          "name" : "Asaba",
           "placeID" : "ChIJRcbZaklDXz4RYlEphFBu5r0",
           "priceLevel" : -1,
           "types" : [ "locality", "political" ],
@@ -120,7 +120,7 @@ export default ([
             "vehicleRegistration" : "GGE-23729Y"
           },
         "dropOffAddress" : {
-          "address" : "Washington, DC, USA",
+          "address" : "Grail Centre, Asaba",
           "addressComponents" : [ {
             "name" : "Washington",
             "shortName" : "Washington",
@@ -139,8 +139,8 @@ export default ([
             "types" : [ "country", "political" ]
           } ],
           "location" : {
-            "latitude" : 38.9071923,
-            "longitude" : -77.0368707
+            "latitude" : 6.2016463,
+            "longitude" : 6.6836732
           },
           "name" : "Washington",
           "placeID" : "ChIJW-T2Wt7Gt4kRKl2I1CJFUsI",
@@ -161,7 +161,7 @@ export default ([
         "orderId" : "testID681",
         "orderType" : "Pick-Up",
         "pickUpAddress" : {
-          "address" : "Dubai - United Arab Emirates",
+          "address" : "Restaurant - Mr Biggs",
           "addressComponents" : [ {
             "name" : "Dubai",
             "shortName" : "Dubai",
@@ -176,16 +176,16 @@ export default ([
             "types" : [ "country", "political" ]
           } ],
           "location" : {
-            "latitude" : 25.2048493,
-            "longitude" : 55.2707828
+            "latitude" : 6.1991451,
+            "longitude" : 6.7101066
           },
           "name" : "Dubai",
           "placeID" : "ChIJRcbZaklDXz4RYlEphFBu5r0",
           "priceLevel" : -1,
           "types" : [ "locality", "political" ],
           "viewport" : {
-            "latitudeNE" : 25.3585607,
-            "latitudeSW" : 24.7921359,
+            "latitudeNE" : 6.1991451,
+            "latitudeSW" : 6.7101066,
             "longitudeNE" : 55.5650393,
             "longitudeSW" : 54.89045429999999
           }

@@ -76,7 +76,6 @@ class BackScreen extends React.Component<Props, IState> {
     else if (navigation){
         navigation.goBack() // === A navigation service
     }
-    
   }
 
   handleScroll = (event: any) => {

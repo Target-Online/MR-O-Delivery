@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import moment from 'moment';
 import {
     StyleSheet,
@@ -14,6 +14,7 @@ import nowTheme from "../../../constants/Theme";
 
 const TripDetails = (props: any) => {
     const order = props.route.params.order;
+    const mapRef = useRef(null);
 
     return (
         <ScrollView
@@ -46,24 +47,29 @@ const TripDetails = (props: any) => {
             </Block>
             <View style={styles.mapContainer}>
                 <MapView
+                    ref={mapRef}
                     region={{
-                        latitude: 6.2048043,
-                        longitude: 6.6814971,
+                        ...order.pickUpAddress.location,
                         latitudeDelta: 0.01354,
                         longitudeDelta: 0.02454,
                     }}
                     style={styles.mapStyle}
+                    onPress={() => mapRef.current.fitToSuppliedMarkers(['pick-up','drop-off'])}
+                    onMapReady={() => mapRef.current.fitToSuppliedMarkers(['pick-up','drop-off'])}
+                    onLayout={() => mapRef.current.fitToSuppliedMarkers(['pick-up','drop-off'])}
                 >
                     <Marker
                         coordinate={order.dropOffAddress.location}
                         title={order.dropOffAddress.address}
                         description={order.dropOffAddress.address}
+                        identifier={'drop-off'}
                     />
                     <Marker
-                        coordinate={order.pickUpAddress.address.location}
+                        coordinate={order.pickUpAddress.location}
                         title={order.pickUpAddress.address}
                         description={order.pickUpAddress.address}
                         pinColor={'green'}
+                        identifier={'pick-up'}
                     />
                 </MapView>
             </View>
