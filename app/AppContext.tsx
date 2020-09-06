@@ -126,7 +126,7 @@ const AppContextProvider : React.SFC = ({children}) => {
     
         useEffect(() => {
           const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-        //   const user = await firebase.auth().currentUser 
+          getAllDrivers()
           return subscriber; // unsubscribe on unmount
         }, []);
     
@@ -148,7 +148,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 .then(snapshot => {
                     let users = snapshot.val() 
                     let drivers = []
-                    // console.log({users})
+
                     for (var id in users){
                         if(users.hasOwnProperty(id)){
                             const user = users[id]
@@ -157,6 +157,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                             }                        
                         }                      
                     }
+                    
                     setDrivers(drivers)                   
                     }).catch((err)=>{
                         return {
@@ -168,8 +169,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         const isUserDriver = (phoneNumber : string) =>{
             getAllDrivers()
 
-            console.log({phoneNumber})
-            console.log({drivers : drivers.map((d)=> d.phoneNumber)})
             let isDriver = drivers.filter(driver => driver.phoneNumber === phoneNumber ).length > 0
             return isDriver
         }
@@ -179,7 +178,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             .ref(`/orders/`).child(orderId)
             .set({...updatedOrder})
             .then(snapshot => {
-                    console.log("updated the order ",orderId)
+                    
                 }).catch((err)=>{
                     
                     console.log(" failed to update")
@@ -188,12 +187,10 @@ const AppContextProvider : React.SFC = ({children}) => {
       
         const fetchUserProfile = async (uid : string) => {
 
-            firebase.database()
-                .ref(`/users/${uid}`)
+            firebase.database().ref(`/users/${uid}`)
                 .once('value')
                 .then(snapshot => {
                     let userProfile = snapshot.val() 
-                    console.log(" this is the user profile  ", {userProfile})
                     const hasProfile = !_.isEmpty(userProfile)
                     hasProfile && setProfile(userProfile)
                     return userProfile
@@ -204,11 +201,12 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         }
 
-        const sendRequest = async (id : string , onSuccess : () => void ,onFailure : () => void ) => {
+        const sendRequest = async (id : string , theOrder: IOrder, onSuccess : () => void ,onFailure : () => void ) => {
             const orderID = (id)
+            setOrder(theOrder)
             firebase.database()
                 .ref(`orders/`).child(orderID)
-                .set({...order})
+                .set({...theOrder})
                 .then(snapshot => {
                     onSuccess()
             
@@ -221,7 +219,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             newUser?: boolean ,onSuccess : () => void , onFailure : () => void }) => {
 
             const {profile , silentUpdate, newUser,onSuccess,onFailure } = params
-            console.log("==== ssetting" ,{profile})
+
                 const {phoneNumber} = profile
                 // usersRef.doc(email).set(profile)
 

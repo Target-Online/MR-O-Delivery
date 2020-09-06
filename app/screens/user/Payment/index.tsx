@@ -99,9 +99,7 @@ class Payment extends Component<IProps> {
             const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
-
             getAllDrivers()
-
             const freeDrivers = drivers.filter((driver) =>  driver.isActive)
 
 
@@ -109,10 +107,9 @@ class Payment extends Component<IProps> {
                 let myOrder  = {...order}
                 const {orderId} = myOrder
                 myOrder.driver = freeDrivers[0]
+                console.log({myOrder})
                 setOrder(myOrder)
-
-                console.log("order set here", {myOrder})
-                sendRequest(orderId, ()=>{
+                sendRequest(orderId, myOrder, ()=>{
                     setTimeout(()=> this.setState({loaderVisible : false}),3000)
                     this.props.navigation.navigate('OrderProgress')
                 }, ()=>{} )

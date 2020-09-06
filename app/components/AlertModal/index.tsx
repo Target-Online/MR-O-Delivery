@@ -26,7 +26,6 @@ const AlertModal  : React.SFC<IProps>  = (props) => {
 
         const hideAlert = () => { setShowAlert(false)}
 
-        // console.log(props.context)
         return (
             <Modal 
                 visible={showAlert}

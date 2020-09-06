@@ -48,7 +48,7 @@ class AddProduct extends Component {
     renderFoodItem = () => {
 
         const {quantity , total} = this.state
-        console.log("foodies ", foodItems)
+
         return(
         <View style={{padding : 20,}}>
             <Text font={Fonts.headingBold} mb={0.5}>{"Ribs, Chips and Wings Combo"}</Text>

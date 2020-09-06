@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import { View, Text , TouchableOpacity as Btn, Image, StyleSheet} from 'react-native'
+import { View, Text , TouchableOpacity as Btn, Image, StyleSheet , Linking} from 'react-native'
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import images from '../../../assets/images'
 import ChatIcon from '../../../assets/icons/ChatIcon'
@@ -38,7 +38,7 @@ const customStyles = {
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
-const orderProgress = ["Pending","Confirmed" , "Collected" , "Delivered"]
+const orderProgress = [ "Pending", "Confirmed" , "Collected" , "Delivery"]
 
 class Payment extends Component<IProps> {
     constructor (props) {
@@ -49,11 +49,9 @@ class Payment extends Component<IProps> {
         const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
         const {orderId} = order
-        console.log({orderId})
         var ref = firebase.database().ref(`orders/${orderId}`);
         ref.on('value', function(snapshot) {
             // Do whatever
-            console.log(" Order changed ", snapshot.val())
             if(snapshot.val()){
                 const order = snapshot.val()
                 setOrder(order)
@@ -65,13 +63,17 @@ class Payment extends Component<IProps> {
 
         const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
-        const { displayName }  = driver || {} 
+        const { displayName , vehicleRegistration , phoneNumber}  = driver || {} 
+        console.log({driver})
         let currentStep = orderProgress.indexOf(status) 
         if (currentStep < 0) currentStep = 0
         return ( 
             <BackScreen 
                 // scroll
                 title={"Track Your Order"}
+                onBackPress={()=> {
+                    this.props.navigation.navigate("Home")
+                }}
                 navigation={this.props.navigation}          
             >
                 <View style={{flex : 1}}>
@@ -88,32 +90,32 @@ class Payment extends Component<IProps> {
                              <View style={{ alignItems: 'center',paddingTop : 42 }}>
                                     <ParcelIcon width={80} height={80} />
                                     
-                                    {(currentStep === 4) && <Text>Your parcel has been delivered</Text>}
-                                    {(currentStep === 3) && <Text>Your parcel has been collected and trhe driver is on route to drop it off</Text>}
-                                    {(currentStep === 2) && <Text>A driver has accepted your order and is  going to collect your parcel</Text>}
-                                    {(currentStep === 1) && <Text>Waiting for drivers confirmation of your request</Text>}
+                                    {(currentStep === 4) && <Text style={styles.deliveryStep} >Your parcel has been delivered</Text>}
+                                    {(currentStep === 3) && <Text style={styles.deliveryStep} >Your parcel has been collected and trhe driver is on route to drop it off</Text>}
+                                    {(currentStep === 2) && <Text style={styles.deliveryStep} >A driver has accepted your order and is  going to collect your parcel</Text>}
+                                    {(currentStep <= 1) && <Text style={styles.deliveryStep} >Waiting for drivers confirmation of your request</Text>}
                             </View>
                           
                         </View>
-
                     </View>
                 </View>
 
-                <View style={{width : "100%", height : 250 ,
-                            backgroundColor : "#F57301",alignItems : "center"}}>
+                <View style={{width : "100%", height : 250 ,backgroundColor : "#F57301",alignItems : "center"}}>
                     <View style={{width : "100%" ,backgroundColor :"#000",height: 100, flexDirection : "row",alignItems : "center",paddingHorizontal : 24 }}>
                         <Image source={images.headShot} style={{width: 60, height : 60, borderRadius : 30}} />
                         <View style={{height : "100%", justifyContent : "center",padding : 16 }}>
-                            <Text style={styles.driverName} >{driver?.displayName}</Text>
-                            {/* <Text style={styles.driverName} >Vehicle Name</Text> */}
-                            <Text style={styles.driverName} >{driver?.vehicleRegistration}</Text>
-                            
+                            <Text style={styles.driverName} >{displayName}</Text>
+                            <Text style={styles.driverName} >Vehicle Name</Text>
+                            <Text style={styles.driverName} >{vehicleRegistration}</Text>                            
                         </View>
                         <View style={{position : "absolute",right : 0 ,width : 120, marginRight:24, flexDirection : "row",flex : 1, justifyContent : "space-between" }}>
                             <Btn style={styles.contactBtn}>
                                 <ChatIcon />
                             </Btn>
-                            <Btn style={styles.contactBtn}>
+                            <Btn onPress={()=>{
+                                Linking.openURL(`tel:${phoneNumber}`)
+                            }} 
+                            style={styles.contactBtn}>
                                 <CallIcon />
                             </Btn>
                         </View>
@@ -130,8 +132,7 @@ class Payment extends Component<IProps> {
                                 <View style={styles.textAreaStyles} >
                                     <Text   style={styles.addressInput} >
                                         {pickUpAddress.description}
-                                    </Text>  
-                                                               
+                                    </Text>                                                          
                                 </View>
                                 <View style={styles.textAreaStyles} >
                                     <Text style={styles.addressInput} >
@@ -166,6 +167,11 @@ const styles = StyleSheet.create({
     driverName:{
         color : '#fff',
         fontSize : 12,
+    },
+    deliveryStep :{
+        alignItems : "center",
+        textAlign:"center",
+        marginTop : 16
     },
     contactBtn:{
         width : 50,

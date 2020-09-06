@@ -50,8 +50,6 @@ class HomeView extends Component {
           console.log("ddding item")
           this.setState({selectedItem : item,isAddProdVisible : true })
       }
-
-     console.log("foodies ", foodItems)
       return(
 
           foodItems.map((item , index) =>(

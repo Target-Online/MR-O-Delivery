@@ -117,8 +117,7 @@ class PickUp extends React.Component<Props, IState> {
             onPress={(data, details) => {
               this.setState({[addressKey] :  data})
               this.setState({showPlaces:false})
-              // console.log("===== ", data);
-              // console.log(details);c
+
             }}
 
             query={{
@@ -221,7 +220,6 @@ class PickUp extends React.Component<Props, IState> {
 
     renderAddressSelector = (addressVariant:string , key : string ) =>{
 
-      console.log(this.state)
       const address = this.state[key].address || this.state[key].description
       
       return [
@@ -286,7 +284,6 @@ class PickUp extends React.Component<Props, IState> {
                     <TextInput 
                       value={name}
                       onChangeText={(text)=> { 
-                        console.log(text)
                         const item  = {name : text, description}
                         this.setState({item })
                        }}
@@ -299,7 +296,6 @@ class PickUp extends React.Component<Props, IState> {
                       value={description}
                       placeholder={"Item description"}  
                       onChangeText={(text)=> { 
-                        console.log(text)
                         const item  = {name, description : text}
                         this.setState({item})
                        }}
