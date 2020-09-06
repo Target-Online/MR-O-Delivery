@@ -63,7 +63,6 @@ interface IState {
 }
 
 class PickUp extends React.Component<Props, IState> {
-  
     state = {
       isModalVisible : false,
       authType: "signIn",
@@ -258,6 +257,7 @@ class PickUp extends React.Component<Props, IState> {
           this.renderPlacesModal(),
           <Loader visible={false} /> ,          
           <BackScreen
+            {...this.props}
             title="Request Delivery"
           >
             <View style={{flex : 1, paddingHorizontal : 24}}>
