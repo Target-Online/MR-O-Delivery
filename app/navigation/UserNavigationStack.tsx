@@ -7,7 +7,7 @@ import PickUp from '../screens/user/PickUp'
 import OrderProgress from '../screens/user/OrderProgress'
 import Auth from '../screens/user/Auth'
 import SignIn from '../screens/user/Auth/SignIn'
-import SignUp from '../screens/user/Auth/SignUp'
+import About from '../screens/user/About'
 import ForgotPassword from '../screens/user/Auth/ForgotPassword'
 import { BottomMenu } from '../components'
 import OrderHistory from '../screens/user/OrderScreen/History'
@@ -35,6 +35,16 @@ function HomeStack() {
   );
 }
 
+function ProfileStack() {
+  return (
+    <Stack.Navigator  initialRouteName="Profile" mode="card" headerMode={"none"}>
+      <Stack.Screen  name="Profile" component={Profile}  />
+      <Stack.Screen name="AboutUs" component={About} />
+    </Stack.Navigator>
+  );
+}
+
+
 function RNApp() {
   return (
     <NavigationContainer>
@@ -42,7 +52,7 @@ function RNApp() {
         <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="OrderHistory" component={OrderHistory} />
         <Tab.Screen name="OrderDetails" component={OrderDetails} />
-        <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen name="Profile" component={ProfileStack} />
         <Tab.Screen name="Receipts" component={OrderHistory} />
         <Tab.Screen name="Contact" component={Contact} />
       </Tab.Navigator>

@@ -9,10 +9,11 @@ import icons from '../../../assets/icons'
 import images from '../../../assets/images'
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon'
 import { withAppContext, IAppContext } from '../../../AppContext'
+import { StackScreenProps } from '@react-navigation/stack'
 const { width, height } = Metrics.window
 //The following code executes inside one of your component's methods, post render
 
-type Props = {context : IAppContext}
+type Props = {context : IAppContext} & StackScreenProps<Component>
 
 class Logout extends Component<Props> {
 
@@ -104,10 +105,38 @@ class Logout extends Component<Props> {
     }
     
     render () {
-      let toggle = false
-      const { focusedEntry, favCommodities } = this.state
-      const {context} = this.props
-      const {logout} = context
+      const {logout ,setAlertData,setShowAlert,profile : {firstname}} = this.props.context
+      const menuList = [
+        {
+          displayName : "My Profile",
+          icon :  <icons.ProfileIcon fill={"#000"}/>,
+          onPress : () =>  { 
+            setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
+            buttons : [{
+              label : "Ok",
+              onPress : ()=> setShowAlert(false)
+            }]})
+    
+            setShowAlert(true)
+          }
+        },
+        {
+          displayName : 'About', 
+          icon :  <icons.InfoIcon></icons.InfoIcon>,
+          onPress : () =>  {
+            this.props.navigation.navigate("AboutUs")
+          }
+        },
+        // { displayName : 'Help', 
+        //   icon :  <icons.HelpIcon></icons.HelpIcon>,
+        //   onPress : () =>  {}
+        // },
+        { displayName : 'Logout', 
+          icon :  <icons.LogoutIcon fill={"#000"}></icons.LogoutIcon>,
+          onPress : () =>  {}
+        },
+      ]
+        
       return (
         <SafeAreaView>
         {this.renderUserDetails()}
@@ -121,27 +150,7 @@ class Logout extends Component<Props> {
     }
 }
 
-const menuList = [
-  {
-    displayName : "My Profile",
-    icon :  <icons.ProfileIcon fill={"#000"}/>,
-    onPress : () =>  {}
-  },
-  {
-    displayName : 'About', 
-    icon :  <icons.InfoIcon></icons.InfoIcon>,
-    onPress : () =>  {}
-  },
-  { displayName : 'Help', 
-    icon :  <icons.HelpIcon></icons.HelpIcon>,
-    onPress : () =>  {}
-  },
-  { displayName : 'Logout', 
-    icon :  <icons.LogoutIcon fill={"#000"}></icons.LogoutIcon>,
-    onPress : () =>  {}
-  },
-]
-  
+
 export default withAppContext(Logout)
 
 // FIXME: Remove unused code and imports

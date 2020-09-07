@@ -44,23 +44,32 @@ const Home: any = (props: Props) => {
   const [currentUser] = useContext(CurrentUserContext);
 
   useEffect(() => {
-    if(currentUser && currentUser.displayName.length == 0) setNewUserModalVisible(true)
-  }, [currentUser && currentUser.inProgress])
+
+    if(!currentUser || (currentUser && !currentUser.displayName)) {
+      console.log("no current user")
+      setNewUserModalVisible(true)
+    }
+    else{
+      console.log("got a current user")
+      setNewUserModalVisible(false)
+    }
+    }, [currentUser])
 
 
-  const renderNewUserModal: any = () => (
-    <Modal visible={isNewUserModalVisible}>
+  const renderNewUserModal: any = () => {
+
+    console.log({currentUser})
+    const userNull = _.isEmpty(currentUser)
+    return (
+    <Modal visible={userNull}>
       <ProfileLoad 
         setVisible={setNewUserModalVisible}
         currentUser={currentUser}  
       />
     </Modal>
-  )
-
-  const openAuthModal = (authType: string) => {
-    setAuthModalVisible(true);
-    setAuthType(authType);
+    )
   }
+
 
   const processTrackOrder = () => {
     const {context : {setOrder ,order}} = props

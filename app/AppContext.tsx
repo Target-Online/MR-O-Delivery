@@ -118,9 +118,14 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const onAuthStateChanged = (user: any) => {
-            const { phoneNumber } = user
-            fetchUserProfile(phoneNumber)
-            setUser(user);
+            console.log(" auth state changed")
+            if(user){
+
+                const { phoneNumber } = user
+                fetchUserProfile(phoneNumber)
+                setUser(user);
+            }
+
             if (initializing) setInitializing(false);
         }
     
@@ -191,6 +196,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 .once('value')
                 .then(snapshot => {
                     let userProfile = snapshot.val() 
+                    console.log({userProfile})
                     const hasProfile = !_.isEmpty(userProfile)
                     hasProfile && setProfile(userProfile)
                     return userProfile

@@ -23,6 +23,7 @@ if (!firebase.apps.length)
 // eslint-disable-next-line react/prop-types
 const Store: React.FunctionComponent = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
+  const [loadingUser, setLoadingUser] = useState(false);
   const [users, setUsers] = useReducer(rootReducer.setStateReducer, initalState);
   const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
 
@@ -31,15 +32,24 @@ const Store: React.FunctionComponent = ({ children }) => {
     api.getCollection("orders", setOrders);
 
     firebase.auth().onAuthStateChanged((user: any) => {
+      setLoadingUser(true)
+      console.log("user fetch")
       if (user) {
         var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
         dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);
+        setTimeout(()=> {setLoadingUser(false)}, 3000)
       }
+
+      setTimeout(()=> {
+        console.log("done fetch")
+        setLoadingUser(false)
+      }, 3000)
+      
     });
   }, [users.inProgress]);
 
   return (
-    <CurrentUserContext.Provider value={[currentUser, setCurrentUser]}>
+    <CurrentUserContext.Provider value={[currentUser, setCurrentUser , loadingUser]}>
       <UsersContext.Provider value={[users, setUsers]}>
         <OrdersContext.Provider value={[orders, setOrders]}>
           {children}

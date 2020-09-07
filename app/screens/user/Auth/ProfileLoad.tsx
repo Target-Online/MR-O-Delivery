@@ -49,7 +49,10 @@ const ProfileLoad: React.FunctionComponent<FormProps> = (props: any) => {
                     <Btn 
                         underlayColor="#eaeaea" 
                         onPress={() => {
-                           if(displayName.length > 0) updateUser(currentUser.id, { 'displayName': displayName }) 
+                           if(displayName.length > 0){
+                               console.log({currentUser})
+                                updateUser(currentUser.phoneNumber, { 'displayName': displayName }) 
+                            }
                            setVisible(false)
                         }}
                         style={{ width: 300, height: 46, borderRadius: 3, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.primaryOrange, marginTop: 24 }} >
