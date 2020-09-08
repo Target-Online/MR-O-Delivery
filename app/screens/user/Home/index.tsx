@@ -92,7 +92,7 @@ const Home: any = (props: Props) => {
       <StatusBar barStyle="dark-content" />
       <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "70%" }}/>
       <View style={{ padding: 24, backgroundColor: "#fff", width: "100%", height: "55%", ...shadow, alignItems: "center", justifyContent: "space-between", position: "absolute", bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
-      <Text style={{ fontSize: 20, fontWeight: "700", color: "black", alignSelf: "center" }} >
+      <Text style={{ fontSize: 20, fontWeight: "700", color: "#fb9011", alignSelf: "center" }} >
             Welcome, {currentUser && (currentUser.displayName + " !!!")}
           </Text>
         <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "space-between" }} >
