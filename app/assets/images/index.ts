@@ -33,7 +33,7 @@ import DeliveryGuy from './generic/DeliveryGuy.png'
 import fullScreenSplash from './splash/mrO.png'
 import bike from './home/motorcycle.png'
 import orderSchedule from './home/list.png'
-import headShot from './generic/headShot.jpg'
+import headShot from './generic/headShot.png'
 
 export default {
   bike,

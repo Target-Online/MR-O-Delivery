@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import {
-  Modal, StyleSheet, ActivityIndicator as Bubbles, TouchableOpacity as Btn, View, Image as RnImg,
+  Modal, StyleSheet, ActivityIndicator as Bubbles,ScrollView, TouchableOpacity as Btn, View, Image as RnImg,
   Text, StatusBar, Dimensions, ImageBackground, TextInput , 
 } from 'react-native';
 import images from '../../../assets/images'
@@ -15,6 +15,7 @@ import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import ProfileLoad from '../Auth/ProfileLoad';
 import { CurrentUserContext } from '../../../Store';
 import firebase from 'firebase';
+
 
 const shadow = {
   shadowColor: '#000000',
@@ -88,10 +89,12 @@ const Home: any = (props: Props) => {
 
   return [
     renderNewUserModal(),
-    <View key="main" style={styles.container} >
-      <StatusBar barStyle="dark-content" />
-      <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "70%" }}/>
-      <View style={{ padding: 24, backgroundColor: "#fff", width: "100%", height: "55%", ...shadow, alignItems: "center", justifyContent: "space-between", position: "absolute", bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
+    <ScrollView  >
+      <View style={{height : 300,width : "100%",alignSelf : "center" ,position: "absolute",top : 0}}>
+          <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: 300 }}/>
+      </View>
+     
+      <View style={{ padding: 24, backgroundColor: "#fff", width: "100%",marginTop : 280, height: 400, ...shadow, alignItems: "center", justifyContent: "space-between",  borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
       <Text style={{ fontSize: 20, fontWeight: "700", color: "#fb9011", alignSelf: "center" }} >
             Welcome, {currentUser && (currentUser.displayName + " !!!")}
           </Text>
@@ -150,7 +153,7 @@ const Home: any = (props: Props) => {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   ]
 };
 
