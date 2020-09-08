@@ -74,10 +74,22 @@ const Home: any = (props: Props) => {
     .ref(`orders/${orderNumber}`)
     .once('value')
     .then(snapshot => {
-        setOrder(snapshot.val())
-        console.log("=========",order)
-        if(order){
+        
+        if(!_.isEmpty(order)){
+          setOrder(snapshot.val())
           props.navigation.navigate("OrderProgress")
+        }
+        else{
+          setAlertData({
+                text : "We couldn't find any request linked to that tracking number.\nPlease check your order number or contact admin for any queries." , 
+                title: "Oops..." , 
+                buttons : [{
+                  label : "Ok",
+                  onPress : ()=> setShowAlert(false)
+                }]})
+        
+                setShowAlert(true)
+
         }
         setLoading(false)
     }).catch((err)=>{
@@ -89,7 +101,7 @@ const Home: any = (props: Props) => {
 
   return [
     renderNewUserModal(),
-    <ScrollView  >
+    <ScrollView style={{backgroundColor : "#fff"}} >
       <View style={{height : 300,width : "100%",alignSelf : "center" ,position: "absolute",top : 0}}>
           <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: 300 }}/>
       </View>
@@ -140,7 +152,7 @@ const Home: any = (props: Props) => {
         <View>
           <Text style={{ marginBottom: 4 }} >Track your order</Text>
           <View overflow="hidden" style={styles.inputWrapper}>
-            <TextInput value={orderNumber} placeholder={"Enter Order Number"} style={{ flex: 1, height: "100%", paddingHorizontal: 24, paddingVertical: 4 }} />
+            <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={{ flex: 1, height: "100%", paddingHorizontal: 24, paddingVertical: 4 }} />
             <Btn 
               onPress={()=> {
                 processTrackOrder()
