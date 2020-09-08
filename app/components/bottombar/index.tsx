@@ -17,7 +17,9 @@ class BottomMenu extends Component {
 
   _nav (navString){
     this.props.navigation.navigate(navString) 
-    // this.props.navigation.dispatch(StackActions.popToTop()); 
+    if (["Home","Profile","Receipts"].includes(navString)) {
+      this.props.navigation.dispatch(StackActions.pop(2))
+    }
     this.setState({currentNav: navString}) 
   }
 

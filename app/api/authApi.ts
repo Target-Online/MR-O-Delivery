@@ -70,13 +70,14 @@ export const signOut = () => {
 };
 
 export const updateAuthUser = async (data: any) => {
-  firebase.auth().currentUser.updateProfile({
+  await firebase.auth().currentUser.updateProfile({
     ...data,
   });
   onSuccess("Account updated successfully");
-};
+}
 
 export const updateUser = (id: any, data: any) => {
   update('users', id, data);
+  console.log({data})
   updateAuthUser(data);
 };

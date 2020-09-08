@@ -123,7 +123,10 @@ class Payment extends Component<IProps> {
 
     render () {
       const { paymentMethod } = this.state
-      const paymentMethods = [{label : "Card", icon : <MastercardIcon />},{label : "Cash",icon : <CashIcon /> }]
+      const paymentMethods = [
+        //   {label : "Card", icon : <MastercardIcon />},
+      {label : "Cash",icon : <CashIcon /> }
+    ]
       const {context : {profile , order,setOrder}} = this.props
       const {dropOffAddress , pickUpAddress , items, total}  = order
       const {name , description } = items[0]

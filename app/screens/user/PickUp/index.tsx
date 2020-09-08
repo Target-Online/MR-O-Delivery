@@ -11,6 +11,7 @@ import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { Ionicons } from '@expo/vector-icons';
+import _ from 'lodash'
 
 const shadow =  {
     shadowColor: '#000000',
@@ -221,9 +222,7 @@ class PickUp extends React.Component<Props, IState> {
 
       const address = this.state[key].address || this.state[key].description
       
-      return [
-
-    
+      return [  
         <View style={{width : "100%", marginVertical : 8}}>
 
         <Text style={{fontSize : 12, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
@@ -247,12 +246,47 @@ class PickUp extends React.Component<Props, IState> {
       ]
     }
 
+    processOrderPlacement = () => {
+      const {pickUp , dropOff ,item : {name , description},item, orderType} = this.state
+      if (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item)){
+
+
+      }
+      else{
+        const {context : {profile ,setOrder,user,generateOrderId}} = this.props
+        const {phoneNumber} = user
+        const orderId = generateOrderId(phoneNumber)
+
+        const newOrder : IOrder = {
+            orderId,
+            // orderType ,
+            driver : {},
+            pickUpAddress : pickUp,
+            dropOffAddress : dropOff,
+            items : [{
+              name,
+              description
+            }],
+            customer : profile,
+            total : 1250,
+            status : "Pending"
+            
+        }
+        setOrder(newOrder)
+        this.props.navigation.navigate("Payment")
+
+      }
+      
+    }
+
     render(){
 
-        const {pickUp , dropOff ,item : {name , description}, orderType} = this.state
+        const {pickUp , dropOff ,item : {name , description},item, orderType} = this.state
         const {context : {profile , order,setOrder,user,generateOrderId}} = this.props
         const {phoneNumber} = user
         const orderId = generateOrderId(phoneNumber)
+        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item))
+
         return [
           this.renderPlacesModal(),
           <Loader visible={false} /> ,          
@@ -302,29 +336,12 @@ class PickUp extends React.Component<Props, IState> {
                       multiline  
                      style={{ fontSize :  14, height: "100%", flex : 1 ,textAlignVertical : "top"}} />        
                 </View>
-                <Btn onPress={()=>{ 
-                        const {pickUp , dropOff ,item : {name , description}} = this.state
-
-                        const order : IOrder = {
-                            orderId,
-                            orderType ,
-                            driver : {},
-                            pickUpAddress : pickUp,
-                            dropOffAddress : dropOff,
-                            items : [{
-                              name,
-                              description
-                            }],
-                            customer : profile,
-                            total : 1250,
-                            status : "pending"
-                            
-                        }
-                        setOrder(order)
-                        this.props.navigation.navigate("Payment" , {orderType : "Pick-Up"})
-
+                <Btn 
+                    disabled={dislabled}
+                      onPress={()=>{ 
+                          this.processOrderPlacement()
                       }} 
-                      style={{width : "100%", height : 42 , borderRadius : 4, marginTop : 12,
+                      style={{width : "100%", height : 42 , opacity : dislabled ? 0.6 : 1,  borderRadius : 4, marginTop : 12,
                       backgroundColor : "#F57301",alignItems : "center", justifyContent : "center" 
                       }}>
 

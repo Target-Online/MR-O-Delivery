@@ -37,15 +37,14 @@ interface IState {
 }
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
-  const [isAuthModalVisible, setAuthModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [orderNumber, setOrderNumber] = useState('76+27611801505');
-  const [authType, setAuthType] = useState('signIn');
   const [currentUser] = useContext(CurrentUserContext);
 
   useEffect(() => {
-
-    if(!currentUser || (currentUser && !currentUser.displayName)) {
+    const userNull = _.isEmpty(currentUser)
+    console.log({currentUser})
+    if(userNull || (!userNull && !currentUser.displayName)) {
       console.log("no current user")
       setNewUserModalVisible(true)
     }
@@ -53,23 +52,19 @@ const Home: any = (props: Props) => {
       console.log("got a current user")
       setNewUserModalVisible(false)
     }
-    }, [currentUser])
+  }, [currentUser])
 
 
   const renderNewUserModal: any = () => {
-
-    console.log({currentUser})
-    const userNull = _.isEmpty(currentUser)
     return (
-    <Modal visible={userNull}>
-      <ProfileLoad 
-        setVisible={setNewUserModalVisible}
-        currentUser={currentUser}  
-      />
-    </Modal>
+      <Modal visible={isNewUserModalVisible}>
+        <ProfileLoad 
+          setVisible={setNewUserModalVisible}
+          currentUser={currentUser}  
+        />
+      </Modal>
     )
   }
-
 
   const processTrackOrder = () => {
     const {context : {setOrder ,order}} = props
@@ -98,23 +93,23 @@ const Home: any = (props: Props) => {
       <ImageBackground source={images.homeBg} style={{ width: "100%", height: "100%" }}>
 
         <View style={{ width: "100%", justifyContent: "flex-end", alignItems: "flex-start", height: "35%", paddingHorizontal: 24, paddingBottom: 32 }}>
-          <View style={{ position: "absolute", bottom: height / 13, right: 12 }}>
-            <RnImg style={{ height: 110, width: 110 }} resizeMode="contain" source={images.DeliveryGuy} />
-          </View>
+          {/* <View style={{ position: "absolute", bottom: height / 13, right: 12 }}>
+            <RnImg style={{ height: 150, width: 200 }} resizeMode="contain" source={images.DeliveryGuy} />
+          </View> */}
 
           <RnImg style={{ borderRadius: 100, height: 100, width: 100 }} resizeMode="cover" source={images.headShot} />
             <Text style={{ fontSize: 16, fontWeight: "400", color: "#fff", alignSelf: "flex-start" }} >
-              Welcome Back,
+              Welcome ,
             </Text>
           <Text style={{ fontSize: 20, fontWeight: "700", color: "#fff", alignSelf: "flex-start" }} >
-            {currentUser && currentUser.displayName}
+            {currentUser && (currentUser.displayName + " !!!")}
           </Text>
         </View>
       </ImageBackground>
 
       <View style={{ padding: 24, backgroundColor: "#fff", width: "100%", height: "65%", ...shadow, alignItems: "center", justifyContent: "space-between", position: "absolute", bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
-        <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "space-between" }} >
-          <Btn
+        <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "center" }} >
+          {/* <Btn
             onPress={() => props.navigation.navigate("PickUpRequest")}
             style={{ width: 150, height: 200 }}
           >
@@ -127,7 +122,7 @@ const Home: any = (props: Props) => {
                 Send a bike to a local shop to buy and return your goods.
               </Text>
             </View>
-          </Btn>
+          </Btn> */}
           <Btn
             onPress={() => props.navigation.navigate("PickUpRequest")}
             style={{ width: 150, height: 200 }}
