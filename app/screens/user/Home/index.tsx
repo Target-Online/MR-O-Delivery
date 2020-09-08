@@ -39,7 +39,7 @@ const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const {logout , setAlertData, setShowAlert, profile : {firstname}} = props.context
-  const [orderNumber, setOrderNumber] = useState('681');
+  const [orderNumber, setOrderNumber] = useState('57');
   const [currentUser] = useContext(CurrentUserContext);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ const Home: any = (props: Props) => {
     .once('value')
     .then(snapshot => {
         
-        if(!_.isEmpty(order)){
+      if(!_.isEmpty(snapshot.val())){
           setOrder(snapshot.val())
           props.navigation.navigate("OrderProgress")
         }
