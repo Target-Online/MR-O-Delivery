@@ -38,6 +38,7 @@ interface IState {
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const {logout ,setAlertData,setShowAlert,profile : {firstname}} = props.context
   const [orderNumber, setOrderNumber] = useState('76+27611801505');
   const [currentUser] = useContext(CurrentUserContext);
 
@@ -109,8 +110,17 @@ const Home: any = (props: Props) => {
 
       <View style={{ padding: 24, backgroundColor: "#fff", width: "100%", height: "65%", ...shadow, alignItems: "center", justifyContent: "space-between", position: "absolute", bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
         <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "center" }} >
-          {/* <Btn
-            onPress={() => props.navigation.navigate("PickUpRequest")}
+          <Btn
+            onPress={() => {
+                setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
+                buttons : [{
+                  label : "Ok",
+                  onPress : ()=> setShowAlert(false)
+                }]})
+        
+                setShowAlert(true)
+              }
+            }
             style={{ width: 150, height: 200 }}
           >
             <View style={styles.btnStyle}  >
@@ -122,7 +132,7 @@ const Home: any = (props: Props) => {
                 Send a bike to a local shop to buy and return your goods.
               </Text>
             </View>
-          </Btn> */}
+          </Btn>
           <Btn
             onPress={() => props.navigation.navigate("PickUpRequest")}
             style={{ width: 150, height: 200 }}
