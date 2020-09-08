@@ -109,7 +109,7 @@ const Home: any = (props: Props) => {
       </ImageBackground>
 
       <View style={{ padding: 24, backgroundColor: "#fff", width: "100%", height: "65%", ...shadow, alignItems: "center", justifyContent: "space-between", position: "absolute", bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
-        <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "center" }} >
+        <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "space-between" }} >
           <Btn
             onPress={() => {
                 setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
