@@ -9,7 +9,6 @@ import Icon from 'react-native-vector-icons/EvilIcons'
 import OrderIcon from '../../../assets/icons/OrderIcon';
 import BikeIcon from '../../../assets/icons/BikeIcon';
 import { Colors } from '../../../constants';
-import { height } from '../../../constants/utils';
 import _ from "lodash"
 import { withAppContext, IContextProps } from '../../../AppContext';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
@@ -38,7 +37,7 @@ interface IState {
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {logout ,setAlertData,setShowAlert,profile : {firstname}} = props.context
+  const {logout , setAlertData, setShowAlert, profile : {firstname}} = props.context
   const [orderNumber, setOrderNumber] = useState('801505');
   const [currentUser] = useContext(CurrentUserContext);
 
@@ -91,12 +90,12 @@ const Home: any = (props: Props) => {
     renderNewUserModal(),
     <View key="main" style={styles.container} >
       <StatusBar barStyle="dark-content" />
-      <ImageBackground source={images.homeBg} resizeMode="cover" style={{ width: "100%", height: "70%" }}/>
+      <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "70%" }}/>
       <View style={{ padding: 24, backgroundColor: "#fff", width: "100%", height: "55%", ...shadow, alignItems: "center", justifyContent: "space-between", position: "absolute", bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
       <Text style={{ fontSize: 20, fontWeight: "700", color: "black", alignSelf: "center" }} >
             Welcome, {currentUser && (currentUser.displayName + " !!!")}
           </Text>
-        <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "center" }} >
+        <View style={{ flexDirection: "row", alignItems: "center", width: "100%", height: "70%", justifyContent: "space-between" }} >
           <Btn
             onPress={() => {
                 setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 

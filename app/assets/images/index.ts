@@ -1,5 +1,6 @@
 import commodity from './tabbar/commodity.png'
 import homeBg from './home/homeBg.jpg'
+import banner from './home/banner.jpg'
 import favourite from './tabbar/favourite.png'
 import commodityActive from './tabbar/commodity-active.png'
 import contactActive from './tabbar/contact-active.png'
@@ -73,5 +74,6 @@ export default {
   mail,
   whiteStar,
   brochure,
-  DeliveryGuy
+  DeliveryGuy,
+  banner
 }
