@@ -61,7 +61,7 @@ class Payment extends Component<IProps> {
     }
     render () {
 
-        const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
+        const {context : {sendRequest ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
         const { displayName , vehicleRegistration , phoneNumber , profilePicUrl}  = driver || {} 
         const driverPicURL = profilePicUrl ? {uri : profilePicUrl} : images.headShot
@@ -110,7 +110,18 @@ class Payment extends Component<IProps> {
                             <Text style={styles.driverName} >{vehicleRegistration}</Text>                            
                         </View>
                         <View style={{position : "absolute",right : 0 ,width : 120, marginRight:24, flexDirection : "row",flex : 1, justifyContent : "space-between" }}>
-                            <Btn style={styles.contactBtn}>
+                            <Btn 
+                                onPress={() => {
+                                        setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
+                                        buttons : [{
+                                        label : "Ok",
+                                        onPress : ()=> setShowAlert(false)
+                                        }]})
+                                
+                                        setShowAlert(true)
+                                    }
+                                }
+                             style={styles.contactBtn}>
                                 <ChatIcon />
                             </Btn>
                             <Btn onPress={()=>{
