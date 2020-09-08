@@ -285,8 +285,7 @@ class PickUp extends React.Component<Props, IState> {
         const {context : {profile , order,setOrder,user,generateOrderId}} = this.props
         const {phoneNumber} = user
         const orderId = generateOrderId(phoneNumber)
-        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item))
-
+        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item) || !name || !description)
         return [
           this.renderPlacesModal(),
           <Loader visible={false} /> ,          

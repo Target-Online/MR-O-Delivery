@@ -39,7 +39,7 @@ const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const {logout , setAlertData, setShowAlert, profile : {firstname}} = props.context
-  const [orderNumber, setOrderNumber] = useState('801505');
+  const [orderNumber, setOrderNumber] = useState('681');
   const [currentUser] = useContext(CurrentUserContext);
 
   useEffect(() => {
@@ -102,11 +102,11 @@ const Home: any = (props: Props) => {
   return [
     renderNewUserModal(),
     <View style={{backgroundColor : "#fff"}} >
-      <View style={{height : "35%",width : "100%",alignSelf : "center" ,position: "absolute",top : 0}}>
-          <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="stretch" style={{ width: "100%", height: "100%" }}/>
+      <View style={{height : "40%", width : "90%",alignSelf : "center" ,position: "absolute",top : 10}}>
+          <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
       </View>
-      <View style={{height : "30%"}} />
-      <View style={{ padding: 24, backgroundColor: "#fff", width: "100%",height: "70%", ...shadow, alignItems: "center", justifyContent: "space-between",  borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
+      <View style={{height : "40%"}} />
+      <View style={{ padding: 24, backgroundColor: "#fff", width: "100%",height: "60%", ...shadow, alignItems: "center", justifyContent: "space-between",  borderTopLeftRadius: 24, borderTopRightRadius: 24 }} >
       <Text style={{ fontSize: 20, fontWeight: "700", color: "#fb9011", alignSelf: "center" }} >
             Welcome, {currentUser && (currentUser.displayName + " !!!")}
           </Text>
