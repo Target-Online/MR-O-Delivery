@@ -1,0 +1,60 @@
+.wa-chat-btn-fixed {	
+    position: fixed;	
+  }	
+
+  .wa-chat-btn-offset {	
+    bottom: 20px;	
+    right: 20px;	
+    z-index: 99999 !important;	
+  }	
+
+  .wa-chat-btn-base-cta {	
+    text-decoration: none;	
+    cursor: pointer;	
+    -webkit-box-shadow: 0 0 5px 0 #d3d3d3;	
+    box-shadow: 0px 0px 5px 0px #D3D3D3;	
+    display: table;	
+    border-radius: 5px;	
+    -webkit-border-radius: 5px;	
+    -moz-border-radius: 5px;	
+    -ms-border-radius: 5px;	
+    -o-border-radius: 5px;	
+  }	
+
+  .wa-chat-btn-container-size-big {	
+    font-size: 14px;	
+    padding: 10px 10px 10px 10px;	
+  }	
+
+  .wa-chat-btn-theme-cta-new-inverted {	
+    background: #35CB5E;	
+    color: white;	
+  }	
+
+  .wa-chat-btn-icon-cta-big {	
+    width: 25px;	
+    vertical-align: middle;	
+    margin-right: 4px;	
+  }	
+
+  .wa-chat-btn-fixed img {	
+    background-color: transparent;	
+    opacity: 1;	
+  }	
+
+  img {	
+    max-width: 100%;	
+    border: 0;	
+  }	
+
+  .wa-chat-button-cta-text {	
+    display: inline-block;	
+    vertical-align: middle;	
+    font-style: normal;	
+    font-weight: 400;	
+    line-height: 1.5;	
+  }	
+
+  a div.wa-chat-button-cta-text {	
+    color: white;	
+} 

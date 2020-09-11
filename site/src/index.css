@@ -1,0 +1,56 @@
+html {
+  font-family: sans-serif;
+}
+.Toastify__toast--success {	
+  background: #f8f9fa;	
+  color: #486B00	
+}	
+
+.Toastify__toast-body {	
+  text-align: center;
+}	
+
+.Toastify__close-button--success {	
+  color: #486B00;	
+}	
+
+.Toastify__progress-bar--success {	
+  background-color: #92D400;	
+}	
+
+  .Toastify__toast--error {	
+    background: #f8f9fa;	
+    color: #470000	
+  }	
+
+  .Toastify__close-button--error {	
+    color: #470000;	
+  }	
+
+  .Toastify__progress-bar--error {	
+    background-color: #C9190B;	
+  }	
+
+  .align-text-center {	
+    text-align: center;	
+    display: flex;	
+  }	
+
+.MuiTypography-root.MuiTypography-h6.MuiTypography-colorInherit {	
+  margin-top: 7rem !important;	
+}	
+
+@media only screen and (max-width: 600px) {	
+  .MuiTypography-root.MuiTypography-h6.MuiTypography-colorInherit {	
+    margin-top: 2vw !important;	
+  }	
+  .MuiButtonBase-root.MuiButton-root.transparent-button.MuiButton-text {	
+    padding: 1px !important;	
+  }	
+}	
+
+body, h1, h2, h3, h4, h5 {
+  font-family: Roboto,Helvetica,Arial,sans-serif;
+  font-weight: 300;
+  line-height: 1.5em;
+}
