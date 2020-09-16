@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator();
 
 function HomeStack(props) {
   return (
-    <Stack.Navigator initialRouteName="Home" mode="card" headerMode="screen">
+    <Stack.Navigator initialRouteName="Home" mode="card" headerMode="none">
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
       <Stack.Screen name="Payment" component={Payment} />
@@ -24,17 +24,6 @@ function HomeStack(props) {
     </Stack.Navigator>
   );
 }
-
-// export const AuthStack = createAppContainer(createStackNavigator({
-//   Auth,
-//   ForgotPassword,
-//   SignUp,
-//   SignIn,
-// }, 
-// { 
-//   initialRouteName: 'Auth',
-//   headerMode : "none"
-// }))
 
 function RNApp() {
   return (

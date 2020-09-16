@@ -27,7 +27,7 @@ const AppNavigator : any = (props: IProps) => {
 
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
       const {phoneNumber} = user || {}
-      const isDriver = isUserDriver(phoneNumber)//true
+      const isDriver =  true //isUserDriver(phoneNumber)//true
       setIsUserDriver(isDriver)
 
     }, []);

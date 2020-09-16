@@ -37,6 +37,7 @@ interface IAddressComponent {
 
 export interface IAddress {
     address: string;
+    description: string;
     addressComponents: IAddressComponent[]
     location: {longitude: number, latitude: number}
     name: string;
@@ -76,7 +77,7 @@ export interface IAppContext{
         setProfile : (profile : IUser) => void ;
         alertBoxData : IAlertProps ;
         setAlertData : (data : IAlertProps) => void ;
-        sendRequest : (id : string , onSuccess : () => void ,onFailure : () => void ) => void ;      
+        sendRequest : (id : string ,order: IOrder, onSuccess : () => void ,onFailure : () => void ) => void ;      
         setUser: (user : any) => void ;
         login: (values: { email: string; password: string, firstname : string }) => void ;
         register: (values: { email: string; password: string, firstname : string } ) => void;
@@ -289,8 +290,7 @@ const AppContextProvider : React.SFC = ({children}) => {
 
             })
         }
- 
-        // getAllDrivers()
+
         return (
             <AppContext.Provider
                 value={{ 
@@ -307,10 +307,10 @@ const AppContextProvider : React.SFC = ({children}) => {
 
   };
 
-  export default AppContextProvider
+export default AppContextProvider
 
 
-  export const withAppContext = (Component : React.Component) => {
+export const withAppContext = (Component : React.Component) => {
 
     const Wrapper : React.SFC = (props) => (
         <ContextConsumer>
@@ -324,15 +324,22 @@ const AppContextProvider : React.SFC = ({children}) => {
 }
 
 const randomNum = () =>  Math.floor(Math.random() * Math.floor(100));
-const mockOrder =  {
+export const mockOrder =  {
     "customer" : {
       "email" : "menc9@coo9.com",
-      "firstname" : "Test",
+      "displayName" : "Customer Name",
       "lastname" : "TEst Last",
       "profilePicURL" : ""
     },
+    "driver" : {
+        "email" : "menc9@coo9.com",
+        "displayName" : "Driver Name",
+        "lastname" : "TEst Last",
+        "phoneNumber" : "+27611801505",
+        "profilePicURL" : ""
+      },
     "dropOffAddress" : {
-      "address" : "Washington, DC, USA",
+      "description" : "Washington, DC, USA",
       "addressComponents" : [ {
         "name" : "Washington",
         "shortName" : "Washington",
@@ -368,12 +375,12 @@ const mockOrder =  {
     },
     "items" : [ {
       "description" : "We’re",
-      "name" : "Wrwq"
+      "name" : "Something here"
     } ],
     "orderId" : "testID681",
     "orderType" : "Pick-Up",
     "pickUpAddress" : {
-      "address" : "Dubai - United Arab Emirates",
+      "description" : "Dubai - United Arab Emirates",
       "addressComponents" : [ {
         "name" : "Dubai",
         "shortName" : "Dubai",

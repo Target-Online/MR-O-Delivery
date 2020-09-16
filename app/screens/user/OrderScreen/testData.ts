@@ -5,7 +5,7 @@ export default ([
         orderCompletedAt:  1598796000,
         "customer" : {
           "email" : "menc9@coo9.com",
-          "firstname" : "Test",
+          "displayName" : "Test Name",
           "lastname" : "TEst Last",
           "profilePicURL" : ""
         },

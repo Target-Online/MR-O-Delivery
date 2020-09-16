@@ -9,11 +9,13 @@ import Icon from 'react-native-vector-icons/EvilIcons'
 import BikeIcon from '../../../assets/icons/BikeIcon';
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
-import { withAppContext, IAppContext, IOrder } from '../../../AppContext';
+import { withAppContext, IAppContext, IOrder, mockOrder } from '../../../AppContext';
 import { RouteSummary } from '../../user/Payment';
+import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import LocationIcon from '../../../assets/icons/LocationIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
+
 
 const shadow =  {
     shadowColor: '#000000',
@@ -30,7 +32,7 @@ type IProps = IAppContext & StackNavigationProp;
 interface IState {
   isModalVisible: boolean;
   isOnline : boolean;
-  newRequestStep : "pending" | "inProgress" | "delivered" ; 
+  newRequestStep : "pending"| "confirmed" | "collected" | "delivered" ; 
   order?: IOrder;
   orderId?: string;
 }
@@ -47,10 +49,14 @@ class Home extends React.Component<IProps, IState> {
 
           const order = snapshot.val()
           const orderId = snapshot.key
-          const {status} = order
+          const {status , driver} = order
 
-          if(status === "pending"){ //and I'm the driver
+          // console.log({order})
+        
+          const myNo = "+27611801505"
+          if(status === "pending" && driver && driver.phoneNumber === myNo){ //and I'm the driver
 
+            console.log({driver})
             this.recordNewOrderOfFocus(order, orderId )
 
           }    
@@ -72,8 +78,6 @@ class Home extends React.Component<IProps, IState> {
 
     }
 
-
-
     componentWillMount = async () => {
 
       const {context : {profile :{firstname}, user : {_user : {email}} ,fetchUserProfile, getAllDrivers } } = this.props
@@ -91,34 +95,37 @@ class Home extends React.Component<IProps, IState> {
       database()
         .ref('/orders')
         .off('child_added', this.onChildAdded );
-
     }
 
     closeModal = () =>{
       this.setState({isModalVisible : false})
     }
 
-    changeOrderProgress = (newRequestStep : "pending" | "inProgress" | "delivered") => { 
+    changeOrderProgress = (newRequestStep : "pending" | "collected" | "confirmed" | "delivered") => { 
       const { order,orderId } = this.state
       const { context : {updateOrderStatus } } = this.props
-      this.setState({newRequestStep})
       const updatedOrder = {...order, status : newRequestStep}
       updateOrderStatus(orderId,updatedOrder)
+      this.setState({newRequestStep})
     }
 
     renderCustomerCard = () => {
 
       const {context : {order}} = this.props
-      const {firstname} = order.customer || {}
-     
-
+      const { customer , items} = order || {}
+      const {displayName , firstname} = customer || {}
+      console.log(order.customer)
+      const profilePicURL = ""
+      const cardSource = profilePicURL || images.headShot
       return(
         <View style={{borderBottomWidth : 0.75 , borderBottomColor : Colors.overlayDark10,flexDirection : "row" , height : 74, alignItems : "center", width: "100%"}} >  
-          <View style={{width : 50, height : 50, borderRadius : 4, backgroundColor : Colors.overlayDark10 ,marginRight: 12}} />
+          <View style={{width : 40, height : 40, borderRadius : 20, backgroundColor : Colors.overlayDark10 ,marginRight: 12}} >
+            <RnImg style={{width : "100%", height : "100%"}} source={cardSource} />
+            </View>
           <View style={{height : "100%",width : "100%",justifyContent : "center"}}>
      
-              <Text>{firstname}</Text>
-              <Text>Estimate - 2.5 km 
+              <Text style={styles.customerHeader} >{displayName || firstname}</Text>
+              <Text style={styles.customerHeader} >Estimate - 2.5 km 
               <Text style={[styles.activeTextStyle,{marginLeft : 16}]} > Payment</Text>
               </Text>
 
@@ -127,9 +134,25 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
+    renderParcelDetails = () =>{
+
+      const {order} = this.state
+      const {name, description} = order.items[0]
+      return(
+        <View style={{flexDirection : "row", height: 56, width : "100%",alignItems : "center"}}>
+          <ParcelIcon width={30} height={30} />
+          <View style={{marginLeft : 8}}>
+            <Text style={{fontSize : 12,}}>{name}</Text>
+            <Text numberOfLines={1} style={{fontSize : 11, color : "grey"}} >{description}</Text>
+          </View>
+
+        </View>
+      )
+    }
+
     renderNewRequestDecision = () => {
 
-      const { order } = this.state
+      const { order,newRequestStep } = this.state
 
 
       if(order){
@@ -139,7 +162,9 @@ class Home extends React.Component<IProps, IState> {
         return(
           <View style={styles.modalInnerContainer}>
             <View style={styles.newReqContainer}>
+              {newRequestStep === "pending" && <Text style={styles.incomingText}> Incoming Request</Text>}
               {this.renderCustomerCard()}
+              {this.renderParcelDetails()}
               <View style={{ height: 70, flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
                   <View style={styles.routePath}>
                     <View style={styles.pickupIconOutter} >
@@ -155,13 +180,14 @@ class Home extends React.Component<IProps, IState> {
                       <View style={styles.textAreaStyles} >
                           <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} >Pickup</Text>
                           <Text numberOfLines={2} style={styles.addressInput} >
-                              {pickUpAddress.address}
+                              {pickUpAddress.description}
                           </Text>    
                       </View>
+                      <View style={{height : 1,backgroundColor: "grey", width: "100%",alignSelf : "center"}}></View>
                       <View style={styles.textAreaStyles} >
                           <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} >Drop-Off</Text>
                           <Text numberOfLines={2} style={styles.addressInput} >
-                            {dropOffAddress.address}
+                            {dropOffAddress.description}
                           </Text>   
                       </View>
                   </View>
@@ -171,12 +197,12 @@ class Home extends React.Component<IProps, IState> {
 
             <View style={styles.bottomBtnswrapper}>
 
-              <Btn style={[styles.btnStyle ]}>
+              {/* <Btn style={[styles.btnStyle ]}>
                 <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70}]} > Decline </Text>
-              </Btn>
+              </Btn> */}
 
               <Btn 
-                onPress={()=> this.changeOrderProgress("inProgress")} 
+                onPress={()=> this.changeOrderProgress("confirmed")} 
                 style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange}]} 
               >
                 <Text  style={styles.acceptDeclineText} > Accept </Text>
@@ -192,11 +218,16 @@ class Home extends React.Component<IProps, IState> {
 
     renderOrderInProgress = () =>{
 
+      const {newRequestStep, order : {pickUpAddress, dropOffAddress}} = this.state
+      const orderCollected = newRequestStep === "collected"
       return(
       <View style={styles.modalInnerContainer}>
          <View style={styles.newReqContainer}>
            {this.renderCustomerCard()}
-           <Text style={{alignSelf : "center" , marginVertical : 4}} > On Route...</Text>
+          <Text style={{alignSelf : "center" , marginVertical : 4}} >{
+            !orderCollected ? "On route to collect the parcel" : "Dropping off the parcel "
+          } 
+          </Text>
           <View style={{ height: 70, flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
               
               <View style={[styles.routePath,{height : 42} ]}>
@@ -208,9 +239,9 @@ class Home extends React.Component<IProps, IState> {
               <View style={[styles.addressesWrapper,{height : 42}]}>
                  
                   <View style={styles.textAreaStyles} >
-                      <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} >Drop-Off</Text>
+                      <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} > {orderCollected? "Drop-Off" : "Pick-Up"}</Text>
                       <Text numberOfLines={2} style={styles.addressInput} >
-                        {"drop-off Address 1"}
+                        {orderCollected ? dropOffAddress.description : pickUpAddress.description }
                       </Text>   
                   </View>
               </View>
@@ -224,8 +255,11 @@ class Home extends React.Component<IProps, IState> {
             <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
           </Btn>
 
-          <Btn onPress={()=>{ this.changeOrderProgress("delivered")}} style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192 }]} >
-            <Text  style={styles.acceptDeclineText} > Drop-Off </Text>
+          <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192 }]} >
+            <Text  style={styles.acceptDeclineText} >
+              {orderCollected ? "Confirm Delivery" : "Confirm Collection"}
+            
+            </Text>
           </Btn>
 
         </View>
@@ -252,8 +286,6 @@ class Home extends React.Component<IProps, IState> {
         <View style={[styles.newReqContainer, {height : 400}]}>
           {this.renderCustomerCard()}
           <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 36 }}>  
-
-
            <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30}]} >Amount due </Text>
             <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 16, fontWeight : "bold" }]} >
                N1250 
@@ -263,20 +295,13 @@ class Home extends React.Component<IProps, IState> {
               2.5 km
             </Text>
             
-            {this.renderPaymmentMethod(true)}
-
-              
-            <View style={styles.addressesWrapper}>
-                
+            {this.renderPaymmentMethod(true)}            
+            <View style={styles.addressesWrapper}>               
             </View>
           </View>
-
         </View>
 
         <View style={[styles.bottomBtnswrapper,{flexDirection : "column",alignItems : "center" } ]}>
-
-
-
           <Btn onPress={()=>{
               this.setState({isModalVisible : false})
             }} 
@@ -292,6 +317,8 @@ class Home extends React.Component<IProps, IState> {
     renderNewOrderModal = () => {
 
       const {isModalVisible , newRequestStep} = this.state
+
+      console.log({newRequestStep})
       return(
         <Modal 
           animated
@@ -303,7 +330,7 @@ class Home extends React.Component<IProps, IState> {
         >
           {newRequestStep === "pending" ? 
             this.renderNewRequestDecision() : 
-            newRequestStep === "inProgress" ? this.renderOrderInProgress():
+            ["confirmed", "collected"].includes(newRequestStep) ? this.renderOrderInProgress():
             this.renderDeliveredOrder()
           }
         </Modal>
@@ -365,11 +392,9 @@ class Home extends React.Component<IProps, IState> {
 
                   <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
-
                     onPress={()=>{
-                          sendRequest(`some${randomNum}order${randomNum}`,()=>{},()=>{} )
-                    }}
-                  
+                          sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{} )
+                    }} 
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
                     </Btn>
@@ -399,6 +424,17 @@ const styles = StyleSheet.create({
       fontWeight : "bold",
       color : "#fff"
     },
+    incomingText : {
+      alignSelf : "center", 
+      textAlign : "center", 
+      fontSize : 16 , fontWeight : "bold",
+      color : "red" 
+    },
+    customerHeader : {
+      fontSize : 11,
+      color : "#878787",
+
+    },
     paymentMethod : { 
       borderWidth : 1.25 , borderColor : "green", 
       width : 100,height:24,marginVertical:2,
@@ -406,14 +442,14 @@ const styles = StyleSheet.create({
       justifyContent : "center" 
     },
     newReqContainer : {
-      width : "100%" , minHeight : 300, maxHeight : 400,
+      width : "100%" , minHeight : 360, maxHeight : 500,
       borderRadius : 3, backgroundColor : "#fff",
       paddingTop: 12, paddingHorizontal : 24
     },
     bottomBtnswrapper : { 
       height : 64, width : "100%" ,position : "absolute", 
       bottom : 56 ,paddingHorizontal : 16,
-      flexDirection : "row", justifyContent :"space-between", 
+      flexDirection : "row", justifyContent :"center", 
       alignSelf : "center"
     },
     path : { 
