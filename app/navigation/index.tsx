@@ -23,8 +23,8 @@ const AppNavigator : any = (props: IProps) => {
 
     useEffect(() => {
 
-      const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
-      const {phoneNumber} = user || {}
+      const {currentUser,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
+      const {phoneNumber} = currentUser || {}
       const isDriver =  isUserDriver(phoneNumber)//true
       setIsUserDriver(isDriver)
 

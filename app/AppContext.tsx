@@ -97,6 +97,8 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const isUserDriver = (phoneNumber : string) =>{
             getAllDrivers()
+            console.log({drivers})
+            console.log({phoneNumber})
             let isDriver = drivers.filter(driver => driver.phoneNumber === phoneNumber ).length > 0
             return isDriver
         }

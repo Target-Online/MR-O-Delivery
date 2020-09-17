@@ -42,7 +42,7 @@ export interface IAddress {
 export interface IOrder {
     orderId : "Pick-Up" | "Shopping";
     customer : any;
-    status : "Pending" | "Confirmed" | "Collected" | "Delivered"
+    status : "pending" | "confirmed" | "collected" | "delivered"
     driver?: IDriver;
     dropOffAddress : IAddress ;
     pickUpAddress : IAddress;

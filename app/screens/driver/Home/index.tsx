@@ -49,11 +49,12 @@ class Home extends React.Component<IProps, IState> {
           const orderId = snapshot.key
           const {status , driver} = order
 
-          // console.log({order})
+          console.log(" new order arrived", order.status)
+          console.log({theDriver : order.driver })
         
-          const myNo = "+27611801505"
+       
           if(status === "pending" && driver && driver.phoneNumber === phoneNumber){ //and I'm the driver
-
+            this.setState({newRequestStep : "pending"})
             this.recordNewOrderOfFocus(order, orderId )
 
           }    

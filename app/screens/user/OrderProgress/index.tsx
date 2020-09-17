@@ -38,7 +38,7 @@ const customStyles = {
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
-const orderProgress = [ "pending", "confirmed" , "collected" , "delivery"]
+const orderProgress = [ "pending", "confirmed" , "collected" , "delivered"]
 
 class Payment extends Component<IProps> {
     constructor (props) {

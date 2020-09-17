@@ -269,7 +269,7 @@ class PickUp extends React.Component<Props, IState> {
             }],
             customer : profile,
             total : 1250,
-            status : "Pending"
+            status : "pending"
             
         }
         setOrder(newOrder)
