@@ -48,17 +48,13 @@ const AppContextProvider : React.SFC = ({children}) => {
             getAllDrivers()
             firebase.auth().onAuthStateChanged((user: any) => {
               setLoadingUser(true)
-              console.log("user fetch")
               if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);
                 setTimeout(()=> {setLoadingUser(false)}, 3000)
               }
         
-              setTimeout(()=> {
-                console.log("done fetch")
-                setLoadingUser(false)
-              }, 3000)
+              setTimeout(()=> {setLoadingUser(false)}, 3000)
               
             });
           }, [users.inProgress]);
@@ -66,9 +62,9 @@ const AppContextProvider : React.SFC = ({children}) => {
     
         const logout = () => {
             
-            firebase.auth().signOut().then((res)=> {
+            firebase.auth().signOut().then((res: any)=> {
 
-            }).catch(err => {
+            }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
                 console.error(err)
                 Alert.alert("Error", err.userInfo.NSLocalizedDescription, [ {text : "Ok",onPress : ()=>{}} ])
             })
@@ -79,10 +75,9 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.database()
                 .ref(`/users/`)
                 .once('value')
-                .then(snapshot => {
+                .then((snapshot: { val: () => any; }) => {
                     let users = snapshot.val() 
                     let drivers = []
-
                     for (var id in users){
                         if(users.hasOwnProperty(id)){
                             const user = users[id]
@@ -93,7 +88,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                     }
                     
                     setDrivers(drivers)                   
-                    }).catch((err)=>{
+                    }).catch((err: any)=>{
                         return {
 
                         }
@@ -102,7 +97,6 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const isUserDriver = (phoneNumber : string) =>{
             getAllDrivers()
-
             let isDriver = drivers.filter(driver => driver.phoneNumber === phoneNumber ).length > 0
             return isDriver
         }
@@ -111,36 +105,31 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.database()
             .ref(`/orders/`).child(orderId)
             .set({...updatedOrder})
-            .then(snapshot => {
-                    
-                }).catch((err)=>{
-                    
+            .then((snapshot: any) => {               
+                }).catch((err: any)=>{                  
                     console.log(" failed to update")
             });
         }
-        // const toggleDriverAvailability = (phoneNumber : string, updatedOrder : IOrder) => {
-        //     firebase.database()
-        //     .ref(`/users/`).child(phoneNumber)
-        //     .set({...updatedOrder})
-        //     .then(snapshot => {
-                    
-        //         }).catch((err)=>{
-                    
-        //             console.log(" failed to update")
-        //     });
-        // }
+        const toggleDriverAvailability = (phoneNumber : string, updatedDriverState : IDriver) => {
+            firebase.database().ref(`/users/`).child(phoneNumber)
+            .set({...updatedDriverState})
+            .then((snapshot: any) => {   
+                console.log(snapshot)               
+            }).catch((err: any)=>{          
+                    console.log(" failed to update")
+            });
+        }
       
         const fetchUserProfile = async (uid : string) => {
 
             firebase.database().ref(`/users/${uid}`)
                 .once('value')
-                .then(snapshot => {
+                .then((snapshot: { val: () => any; }) => {
                     let userProfile = snapshot.val() 
-                    console.log({userProfile})
                     const hasProfile = !_.isEmpty(userProfile)
                     hasProfile && setProfile(userProfile)
                     return userProfile
-                }).catch((err)=>{
+                }).catch((err: any)=>{
                     return {}
             });
 
@@ -153,10 +142,10 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.database()
                 .ref(`orders/`).child(orderID)
                 .set({...theOrder})
-                .then(snapshot => {
+                .then((snapshot: any) => {
                     onSuccess()
             
-                }).catch((err)=>{
+                }).catch((err: any)=>{
                     onFailure()
             });
         }
@@ -181,9 +170,9 @@ const AppContextProvider : React.SFC = ({children}) => {
                     
                 }
                 else{
-                    firebase.database().ref(`users/${phoneNumber}`).update(profile).then((ref)=>{
+                    firebase.database().ref(`users/${phoneNumber}`).update(profile).then((ref: any)=>{
 
-                    }).catch((err) => {
+                    }).catch((err: any) => {
                     })
                 }
 
@@ -195,23 +184,23 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const register = (values: { email: string; password: string, firstname : string, lastname : string } ) => {
 
-            firebase.auth().createUserWithEmailAndPassword(values.email,values.password).then((res) =>{ 
+            firebase.auth().createUserWithEmailAndPassword(values.email,values.password).then((res: any) =>{ 
                 const {firstname , lastname, email} = values
                 updateUserProfile({firstname , lastname, email,profilePicURL : "" },true,true)
                 // setProfile()
             }
-            ).catch(err =>{
+            ).catch((err: { userInfo: { NSLocalizedDescription: any; }; }) =>{
                 setAlertData({ text: err.userInfo.NSLocalizedDescription ,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Registration Failed",})
                 setShowAlert(true)
             })           
         }
 
         const resetPassword = (email : string) => {
-            firebase.auth().sendPasswordResetEmail(email).then((res) => {        
+            firebase.auth().sendPasswordResetEmail(email).then((res: any) => {        
                 setAlertData({ text: `A password reset e-mail has been sent to ${email}`,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Success",})
                 setShowAlert(true)
 
-            }).catch((err)=>{
+            }).catch((err: { userInfo: { NSLocalizedDescription: any; }; })=>{
                 
                 setAlertData({ text: err.userInfo.NSLocalizedDescription ,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Error",})
                 setShowAlert(true)
@@ -220,10 +209,10 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const login = (values: { email: string; password: string, firstname : string }) => {
 
-            firebase.auth().signInWithEmailAndPassword(values.email, values.password).then(res => {
+            firebase.auth().signInWithEmailAndPassword(values.email, values.password).then((res: any) => {
                 fetchUserProfile(values.email)
                 
-            }).catch(err => {
+            }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
 
                 Alert.alert("Login Failed", err.userInfo.NSLocalizedDescription, [ {text : "Ok",onPress : ()=>{}} ])
 
@@ -239,7 +228,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
-                    orders, setOrders
+                    orders, setOrders, toggleDriverAvailability
                 }}
             >
                 {children}

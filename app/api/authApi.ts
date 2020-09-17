@@ -78,6 +78,5 @@ export const updateAuthUser = async (data: any) => {
 
 export const updateUser = (id: any, data: any) => {
   update('users', id, data);
-  console.log({data})
   updateAuthUser(data);
 };

@@ -10,7 +10,7 @@ import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/typ
 import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
 
-const labels = ["Order Confirmed", "Parcel Collection" ,"On Route","Delivered"]
+const labels = ["Confirmation", "Parcel Collection" ,"On Route","Delivered"]
 
 const customStyles = {
   stepIndicatorSize: 25,
@@ -38,7 +38,7 @@ const customStyles = {
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
-const orderProgress = [ "Pending", "Confirmed" , "Collected" , "Delivery"]
+const orderProgress = [ "pending", "confirmed" , "collected" , "delivery"]
 
 class Payment extends Component<IProps> {
     constructor (props) {

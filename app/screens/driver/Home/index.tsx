@@ -311,8 +311,6 @@ class Home extends React.Component<IProps, IState> {
     renderNewOrderModal = () => {
 
       const {isModalVisible , newRequestStep} = this.state
-
-      console.log({newRequestStep})
       return(
         <Modal 
           animated
@@ -343,7 +341,6 @@ class Home extends React.Component<IProps, IState> {
     render(){
 
       const {context : {currentUser :{displayName}, user ,sendRequest}} = this.props
-      console.log({context : this.props.context})
       const {isOnline} = this.state
 
       return [

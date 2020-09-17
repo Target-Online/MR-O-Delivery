@@ -86,24 +86,30 @@ class Payment extends Component<IProps> {
     renderCashOption(){
         const {context : {profile , order,setOrder}} = this.props
         const {dropOffAddress , pickUpAddress , items, total}  = order
+        const orderTotal = this.getOrderTotal()
         return(
             <View style={{width : "100%", minHeight : 100, justifyContent : "center", alignItems : "center" ,paddingHorizontal : 24}}>
                 <Text style={styles.cashDeliveryNote}> The driver will collect a total of 
-                    <Text style={[styles.cashDeliveryNote, {color : "red"}]}>{` N${total}`}</Text> on delivery </Text>
+                    <Text style={[styles.cashDeliveryNote, {color : "red"}]}>{` N${orderTotal}`}</Text> on delivery </Text>
                 <Text style={styles.cashDeliveryNote} >Please make sure you make the right change with you</Text>                  
             </View>
         )
     }
 
     getTotalDistance = (pickUp: GeolibInputCoordinates, dropOff: GeolibInputCoordinates) =>{
+        var dis = getPreciseDistance(pickUp,dropOff)+ 300 //distance off by 200 metres
+        return (dis)/1000
+    }
 
-        var dis = getPreciseDistance(
-            pickUp,
-            dropOff
-          )+ 300
+    getOrderTotal = () => {
 
-          console.log({dis}) //distance off by 200 metres
-          return (dis)/1000
+        const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
+        const {dropOffAddress , pickUpAddress , items, total}  = order
+        const freeDrivers = drivers.filter((driver: { isActive: any }) =>  driver.isActive)
+        const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
+        this.convertLocation(dropOffAddress.geometry.location))
+        const orderTotal = distance < 5 ? 500 : distance * 100
+        return Math.round(orderTotal)
     }
   
     processRequest(){
@@ -112,26 +118,18 @@ class Payment extends Component<IProps> {
             const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
-            console.log(dropOffAddress.geometry)
-            console.log(pickUpAddress.geometry)
             // const distance = this.getTotalDistance()
             getAllDrivers()
-            const freeDrivers = drivers.filter((driver: { isActive: any }) =>  driver.isActive)
-            const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
+            const freeDrivers = drivers.filter((driver: { isActive: any, status : string }) =>  driver.isActive && driver.status === "vacant")
+            console.log({freeDrivers})
+            const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location),
             this.convertLocation(dropOffAddress.geometry.location))
-            const orderTotal = distance < 5 ? 500 : distance * 100
-            console.log({orderTotal})
-
+            const orderTotal = this.getOrderTotal()
 
             if (freeDrivers){
-                let myOrder  = {
-                    ...order,
-                    total : orderTotal,
-                    distance 
-                }
+                let myOrder  = {...order, total : orderTotal,distance }
                 const {orderId} = myOrder
                 myOrder.driver = freeDrivers[0]
-                console.log({myOrder})
                 setOrder(myOrder)
                 sendRequest(orderId, myOrder, ()=>{
                     setTimeout(()=> this.setState({loaderVisible : false}),3000)
@@ -140,7 +138,6 @@ class Payment extends Component<IProps> {
             }
         }
         
-
         // setTimeout(()=> this.setState({loaderVisible : false}),3000)
        
     }
@@ -160,17 +157,8 @@ class Payment extends Component<IProps> {
       const {context : {profile , order,setOrder}} = this.props
       const {dropOffAddress , pickUpAddress , items, total}  = order
       const {name , description } = items[0]
-        
-      console.log(dropOffAddress.geometry.location)
-      console.log(pickUpAddress.geometry.location)
-
-
-      const dist = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
-      this.convertLocation(dropOffAddress.geometry.location))
-      const orderTotal = dist < 5 ? 500 : dist * 100
-      console.log({orderTotal})
-
-
+      const orderTotal = this.getOrderTotal()
+      
       return ( 
         <BackScreen
             title="Payment"

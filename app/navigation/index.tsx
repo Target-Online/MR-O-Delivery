@@ -21,9 +21,6 @@ const AppNavigator : any = (props: IProps) => {
     const {user,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
     const [currentUser, setCurrentUser , loadingUser] = useContext(CurrentUserContext);
 
-    console.log({currentUser})
-
-
     useEffect(() => {
 
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
