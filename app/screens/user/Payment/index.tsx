@@ -102,23 +102,21 @@ class Payment extends Component<IProps> {
     }
 
     getOrderTotal = () => {
-
         const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items, total}  = order
         const freeDrivers = drivers.filter((driver: { isActive: any }) =>  driver.isActive)
         const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
         this.convertLocation(dropOffAddress.geometry.location))
-        const orderTotal = distance < 5 ? 500 : distance * 100
+        const orderTotal = 500 + distance * 200
         return Math.round(orderTotal)
     }
   
     processRequest(){
         if(this.props.context){
-
             const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
-            // const distance = this.getTotalDistance()
+
             getAllDrivers()
             const freeDrivers = drivers.filter((driver: { isActive: any, status : string }) =>  driver.isActive && driver.status === "vacant")
             console.log({freeDrivers})

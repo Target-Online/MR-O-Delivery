@@ -79,7 +79,6 @@ class Payment extends Component<IProps> {
                 <View style={{flex : 1}}>
                 <View style={{alignItems : "center"}}>
                     <View style={{width : "100%", height:  340,}} >
-
                         <View style={{flex: 1 ,paddingHorizontal : 16, paddingTop : 46}}>
                             <StepIndicator
                                 customStyles={customStyles}
@@ -88,14 +87,12 @@ class Payment extends Component<IProps> {
                                 stepCount={4}
                             />
                              <View style={{ alignItems: 'center',paddingTop : 42 }}>
-                                    <ParcelIcon width={80} height={80} />
-                                    
+                                    <ParcelIcon width={80} height={80} />                                    
                                     {(currentStep === 4) && <Text style={styles.deliveryStep} >Your parcel has been delivered</Text>}
                                     {(currentStep === 3) && <Text style={styles.deliveryStep} >Your parcel has been collected and trhe driver is on route to drop it off</Text>}
                                     {(currentStep === 2) && <Text style={styles.deliveryStep} >A driver has accepted your order and is  going to collect your parcel</Text>}
                                     {(currentStep <= 1) && <Text style={styles.deliveryStep} >Waiting for drivers confirmation of your request</Text>}
-                            </View>
-                          
+                            </View>                        
                         </View>
                     </View>
                 </View>
