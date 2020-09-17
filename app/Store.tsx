@@ -41,7 +41,6 @@ const Store: React.FunctionComponent = ({ children }) => {
       }
 
       setTimeout(()=> {
-        console.log("done fetch")
         setLoadingUser(false)
       }, 3000)
       

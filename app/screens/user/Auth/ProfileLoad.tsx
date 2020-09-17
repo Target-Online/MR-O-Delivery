@@ -50,7 +50,6 @@ const ProfileLoad: React.FunctionComponent<FormProps> = (props: any) => {
                         underlayColor="#eaeaea" 
                         onPress={() => {
                            if(displayName.length > 0){
-                               console.log({currentUser})
                                 updateUser(currentUser.phoneNumber, { 'displayName': displayName }) 
                             }
                            setVisible(false)

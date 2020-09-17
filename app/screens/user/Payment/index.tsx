@@ -10,12 +10,14 @@ import { withAppContext, IContextProps, IAddress } from '../../../AppContext'
 import BackScreen from '../../../layouts/BackScreen'
 import Loader from '../../../components/loader'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
+import { getDistance, getPreciseDistance } from 'geolib';
+import { GeolibInputCoordinates } from 'geolib/es/types'
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}>
 
 class Payment extends Component<IProps> {
-    constructor (props) {
+    constructor (props: any) {
       super(props)
     }
 
@@ -92,6 +94,17 @@ class Payment extends Component<IProps> {
             </View>
         )
     }
+
+    getTotalDistance = (pickUp: GeolibInputCoordinates, dropOff: GeolibInputCoordinates) =>{
+
+        var dis = getPreciseDistance(
+            pickUp,
+            dropOff
+          )+ 300
+
+          console.log({dis}) //distance off by 200 metres
+          return (dis)/1000
+    }
   
     processRequest(){
         if(this.props.context){
@@ -99,12 +112,23 @@ class Payment extends Component<IProps> {
             const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
+            console.log(dropOffAddress.geometry)
+            console.log(pickUpAddress.geometry)
+            // const distance = this.getTotalDistance()
             getAllDrivers()
-            const freeDrivers = drivers.filter((driver) =>  driver.isActive)
+            const freeDrivers = drivers.filter((driver: { isActive: any }) =>  driver.isActive)
+            const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
+            this.convertLocation(dropOffAddress.geometry.location))
+            const orderTotal = distance < 5 ? 500 : distance * 100
+            console.log({orderTotal})
 
 
             if (freeDrivers){
-                let myOrder  = {...order}
+                let myOrder  = {
+                    ...order,
+                    total : orderTotal,
+                    distance 
+                }
                 const {orderId} = myOrder
                 myOrder.driver = freeDrivers[0]
                 console.log({myOrder})
@@ -121,6 +145,12 @@ class Payment extends Component<IProps> {
        
     }
 
+    convertLocation = (location : {lat: string, lng:string}) =>(
+        {
+            latitude : location.lat, longitude : location.lng
+        }
+    )
+
     render () {
       const { paymentMethod } = this.state
       const paymentMethods = [
@@ -130,7 +160,15 @@ class Payment extends Component<IProps> {
       const {context : {profile , order,setOrder}} = this.props
       const {dropOffAddress , pickUpAddress , items, total}  = order
       const {name , description } = items[0]
+        
+      console.log(dropOffAddress.geometry.location)
+      console.log(pickUpAddress.geometry.location)
 
+
+      const dist = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
+      this.convertLocation(dropOffAddress.geometry.location))
+      const orderTotal = dist < 5 ? 500 : dist * 100
+      console.log({orderTotal})
 
 
       return ( 

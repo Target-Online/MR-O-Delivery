@@ -44,13 +44,11 @@ const Home: any = (props: Props) => {
 
   useEffect(() => {
     const userNull = _.isEmpty(currentUser)
-    console.log({currentUser})
+
     if(userNull || (!userNull && !currentUser.displayName)) {
-      console.log("no current user")
       setNewUserModalVisible(true)
     }
     else{
-      console.log("got a current user")
       setNewUserModalVisible(false)
     }
   }, [currentUser])

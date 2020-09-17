@@ -1,98 +1,23 @@
-import { createContext, useState, Component, useEffect } from "react";
+import { createContext, useState, Component, useEffect, useReducer } from "react";
 import  * as firebase from "firebase"
 import React from "react";
 import { IAlertProps } from "./components/AlertModal";
 import {Alert} from 'react-native'
 import _ from "lodash";
 export const AppContext = createContext({});
+import * as api from "./api/index";
+import * as rootReducer from "./utils/rootReducer";
+import { IOrder } from "screens/user/PickUp";
+import { IUser, IDriver } from "types";
 export const ContextConsumer = AppContext.Consumer
+
+
 require('firebase/firestore')
-export interface IVehicle {
-    registration : string ; 
-    brand : string;
-    model : string;
-  }
-
-export interface IDriver {
-    vehicel : IVehicle;
-    status : "busy" | "vacant" | "offline"
-    address: string;
-    createdAt: any;
-    displayName: string;
-    id: string;
-    isActive ?: boolean ;
-    isDriver ?: boolean;
-    object_key: string;
-    phoneNumber: string;
-    profilePicURL: string;
-    profilePicUrl: string;
-    vehicleRegistration: string;
-}
-
-interface IAddressComponent { 
-    name : string;
-    shortName : string;
-    types : any[]
-}
-
-export interface IAddress {
-    address: string;
-    description: string;
-    addressComponents: IAddressComponent[]
-    location: {longitude: number, latitude: number}
-    name: string;
-    placeID: string ;
-    priceLevel: number;
-    types: string[]
-    viewport: {latitudeNE: number, longitudeSW: number, latitudeSW: number, longitudeNE: number}
-    website: string
-}
-  
-export interface IOrder {
-    orderId : "Pick-Up" | "Shopping";
-    customer : any;
-    status : "Pending" | "Confirmed" | "Collected" | "Delivered"
-    driver?: IDriver;
-    dropOffAddress : IAddress ;
-    pickUpAddress : IAddress;
-    orderType : any;
-    items : any[];
-    total : number;
-}
-
-export type IContextProps = {
-    context : IAppContext
-}
-
-export interface IAppContext{
-        user : any ;
-        drivers : IDriver[];
-        profile: IUser;
-        generateOrderId : (uid: string) => string;
-        showAlert:  boolean;
-        order: IOrder;
-        isUserDriver : (phoneNumber : string) => boolean ;
-        setOrder : (order : IOrder) => void;
-        setShowAlert : (newState : boolean) => void ;
-        setProfile : (profile : IUser) => void ;
-        alertBoxData : IAlertProps ;
-        setAlertData : (data : IAlertProps) => void ;
-        sendRequest : (id : string ,order: IOrder, onSuccess : () => void ,onFailure : () => void ) => void ;      
-        setUser: (user : any) => void ;
-        login: (values: { email: string; password: string, firstname : string }) => void ;
-        register: (values: { email: string; password: string, firstname : string } ) => void;
-        logout: () => void;
-        getAllDrivers: () => void;
-        resetPassword : (email : string) => void;
-}
-
-export type IUser = {
-    email?: string;
-    phoneNumber?: number;
-    firstname?: string;
-    lastname?: string;
-    profilePicURL?: string;
-}
+const initalState = {
+    data: [],
+    search: "",
+    inProgress: true,
+  };
 
 const AppContextProvider : React.SFC = ({children}) => {
 
@@ -103,38 +28,41 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [showAlert , setShowAlert] = useState<boolean>(false)
         const [initializing, setInitializing] = useState(true);
         const [orderId, setOrderId] = useState("");
+        const [currentUser, setCurrentUser] = useState();
+        const [loadingUser, setLoadingUser] = useState(false);
         const [order, setOrder] = useState({});
+        const [users, setUsers] = useReducer(rootReducer.setStateReducer, initalState);
+        const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
         const [drivers, setDrivers] = useState<IDriver[]>([]);
         const usersRef =  firebase.firestore().collection('users')
- 
-        const initialLoad = (word : string) => {
 
-           const {phoneNumber} = user || {}
-
-        }
 
         const generateOrderId = (userId : string) => {
             const Id = randomNum() + userId 
             return Id
         }
 
-        const onAuthStateChanged = (user: any) => {
-            console.log(" auth state changed")
-            if(user){
-
-                const { phoneNumber } = user
-                fetchUserProfile(phoneNumber)
-                setUser(user);
-            }
-
-            if (initializing) setInitializing(false);
-        }
-    
         useEffect(() => {
-          const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-          getAllDrivers()
-          return subscriber; // unsubscribe on unmount
-        }, []);
+            api.getCollection("users", setUsers);
+            api.getCollection("orders", setOrders);
+            getAllDrivers()
+            firebase.auth().onAuthStateChanged((user: any) => {
+              setLoadingUser(true)
+              console.log("user fetch")
+              if (user) {
+                var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
+                dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);
+                setTimeout(()=> {setLoadingUser(false)}, 3000)
+              }
+        
+              setTimeout(()=> {
+                console.log("done fetch")
+                setLoadingUser(false)
+              }, 3000)
+              
+            });
+          }, [users.inProgress]);
+    
     
         const logout = () => {
             
@@ -190,6 +118,17 @@ const AppContextProvider : React.SFC = ({children}) => {
                     console.log(" failed to update")
             });
         }
+        // const toggleDriverAvailability = (phoneNumber : string, updatedOrder : IOrder) => {
+        //     firebase.database()
+        //     .ref(`/users/`).child(phoneNumber)
+        //     .set({...updatedOrder})
+        //     .then(snapshot => {
+                    
+        //         }).catch((err)=>{
+                    
+        //             console.log(" failed to update")
+        //     });
+        // }
       
         const fetchUserProfile = async (uid : string) => {
 
@@ -298,7 +237,9 @@ const AppContextProvider : React.SFC = ({children}) => {
                     alertBoxData, setAlertData, setUser,sendRequest,
                     login, register, logout, fetchUserProfile,isUserDriver,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
-                    resetPassword, updateUserProfile,profile,setProfile
+                    resetPassword, updateUserProfile,profile,setProfile,
+                    currentUser, setCurrentUser , loadingUser,users, setUsers,
+                    orders, setOrders
                 }}
             >
                 {children}
@@ -410,5 +351,7 @@ export const mockOrder =  {
       }
     },
     "status" : "pending",
+    "paymentMethod" : "cash",
+    "distance" : "22 km",
     "total" : 1250
   }

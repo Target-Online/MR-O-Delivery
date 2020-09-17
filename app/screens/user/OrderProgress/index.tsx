@@ -65,7 +65,6 @@ class Payment extends Component<IProps> {
         const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
         const { displayName , vehicleRegistration , phoneNumber , profilePicUrl}  = driver || {} 
         const driverPicURL = profilePicUrl ? {uri : profilePicUrl} : images.headShot
-        console.log({driver})
         let currentStep = orderProgress.indexOf(status) 
         if (currentStep < 0) currentStep = 0
         return ( 

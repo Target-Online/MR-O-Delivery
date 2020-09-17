@@ -115,7 +115,7 @@ class PickUp extends React.Component<Props, IState> {
             fetchDetails={true}
             // renderDescription={row => row.description} // custom description render
             onPress={(data, details) => {
-              this.setState({[addressKey] :  data})
+              this.setState({[addressKey] :  {...data , ...details}})
               this.setState({showPlaces:false})
 
             }}
@@ -253,8 +253,8 @@ class PickUp extends React.Component<Props, IState> {
 
       }
       else{
-        const {context : {profile ,setOrder,user,generateOrderId}} = this.props
-        const {phoneNumber} = user
+        const {context : {profile ,setOrder,currentUser,generateOrderId}} = this.props
+        const {phoneNumber} = currentUser
         const orderId = generateOrderId(phoneNumber)
 
         const newOrder : IOrder = {
@@ -282,8 +282,8 @@ class PickUp extends React.Component<Props, IState> {
     render(){
 
         const {pickUp , dropOff ,item : {name , description},item, orderType} = this.state
-        const {context : {profile , order,setOrder,user,generateOrderId}} = this.props
-        const {phoneNumber} = user
+        const {context : {profile , order,setOrder,currentUser,generateOrderId}} = this.props
+        const {phoneNumber} = currentUser
         const orderId = generateOrderId(phoneNumber)
         const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item) || !name || !description)
         return [

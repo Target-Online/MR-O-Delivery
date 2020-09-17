@@ -26,6 +26,7 @@
     "firebase": "7.9.0",
     "formik": "^2.1.5",
     "galio-framework": "^0.6.3",
+    "geolib": "^3.3.1",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
     "native-base": "^2.13.13",

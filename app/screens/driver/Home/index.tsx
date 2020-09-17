@@ -5,8 +5,6 @@ import {
   Text,StatusBar, Dimensions, ImageBackground, TextInput} from 'react-native';
 import { Container,Button, Header, Tab, Tabs, Switch } from 'native-base'
 import images from '../../../assets/images'
-import Icon from 'react-native-vector-icons/EvilIcons'
-import BikeIcon from '../../../assets/icons/BikeIcon';
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
 import { withAppContext, IAppContext, IOrder, mockOrder } from '../../../AppContext';
@@ -46,7 +44,7 @@ class Home extends React.Component<IProps, IState> {
       this.onChildAdded = database()
         .ref('/orders')
         .on('child_added', snapshot => {
-
+          const {context : {currentUser :{phoneNumber}, user ,sendRequest}} = this.props
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
@@ -54,9 +52,8 @@ class Home extends React.Component<IProps, IState> {
           // console.log({order})
         
           const myNo = "+27611801505"
-          if(status === "pending" && driver && driver.phoneNumber === myNo){ //and I'm the driver
+          if(status === "pending" && driver && driver.phoneNumber === phoneNumber){ //and I'm the driver
 
-            console.log({driver})
             this.recordNewOrderOfFocus(order, orderId )
 
           }    
@@ -114,7 +111,6 @@ class Home extends React.Component<IProps, IState> {
       const {context : {order}} = this.props
       const { customer , items} = order || {}
       const {displayName , firstname} = customer || {}
-      console.log(order.customer)
       const profilePicURL = ""
       const cardSource = profilePicURL || images.headShot
       return(
@@ -125,7 +121,7 @@ class Home extends React.Component<IProps, IState> {
           <View style={{height : "100%",width : "100%",justifyContent : "center"}}>
      
               <Text style={styles.customerHeader} >{displayName || firstname}</Text>
-              <Text style={styles.customerHeader} >Estimate - 2.5 km 
+              <Text style={styles.customerHeader} >2.5 km 
               <Text style={[styles.activeTextStyle,{marginLeft : 16}]} > Payment</Text>
               </Text>
 
@@ -197,17 +193,12 @@ class Home extends React.Component<IProps, IState> {
 
             <View style={styles.bottomBtnswrapper}>
 
-              {/* <Btn style={[styles.btnStyle ]}>
-                <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70}]} > Decline </Text>
-              </Btn> */}
-
               <Btn 
                 onPress={()=> this.changeOrderProgress("confirmed")} 
                 style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange}]} 
               >
                 <Text  style={styles.acceptDeclineText} > Accept </Text>
               </Btn>
-
             </View>
           </View>
         )
@@ -224,6 +215,7 @@ class Home extends React.Component<IProps, IState> {
       <View style={styles.modalInnerContainer}>
          <View style={styles.newReqContainer}>
            {this.renderCustomerCard()}
+           {this.renderParcelDetails()}
           <Text style={{alignSelf : "center" , marginVertical : 4}} >{
             !orderCollected ? "On route to collect the parcel" : "Dropping off the parcel "
           } 
@@ -255,7 +247,7 @@ class Home extends React.Component<IProps, IState> {
             <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
           </Btn>
 
-          <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192 }]} >
+          <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
             <Text  style={styles.acceptDeclineText} >
               {orderCollected ? "Confirm Delivery" : "Confirm Collection"}
             
@@ -281,6 +273,8 @@ class Home extends React.Component<IProps, IState> {
 
     renderDeliveredOrder = () =>{
 
+      const {order : {total , paymentMethod}} = this.state
+
       return(
       <View style={[styles.modalInnerContainer ]  }>
         <View style={[styles.newReqContainer, {height : 400}]}>
@@ -288,14 +282,14 @@ class Home extends React.Component<IProps, IState> {
           <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 36 }}>  
            <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30}]} >Amount due </Text>
             <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 16, fontWeight : "bold" }]} >
-               N1250 
+               {`N${total}`}
             </Text>
             <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30}]}>Distance Travelled </Text>
             <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4,marginBottom : 16,fontSize : 16, fontWeight : "bold" }]}> 
               2.5 km
             </Text>
             
-            {this.renderPaymmentMethod(true)}            
+            {this.renderPaymmentMethod(paymentMethod === "cash")}            
             <View style={styles.addressesWrapper}>               
             </View>
           </View>
@@ -348,7 +342,8 @@ class Home extends React.Component<IProps, IState> {
 
     render(){
 
-      const {context : {profile :{firstname}, user ,sendRequest}} = this.props
+      const {context : {currentUser :{displayName}, user ,sendRequest}} = this.props
+      console.log({context : this.props.context})
       const {isOnline} = this.state
 
       return [
@@ -361,21 +356,16 @@ class Home extends React.Component<IProps, IState> {
                 <View style={{position: "absolute", bottom : 24,right:12}}>
                   <DeliveryGuyIcon />
                 </View>
-                  <Btn
-                      onPress={()=> { this.openModal("DriversignIn") }}
-                  >
-                    <View
-                    style={{width : 40,height: 40, borderRadius : 20,backgroundColor : "grey", borderWidth : 0.75, borderColor : "#fff",marginBottom : 12}}
-                    >                 
-                      <RnImg style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={images.headShot} />
-                    </View>
-                  </Btn>
-
+                <Btn onPress={()=> { this.openModal("DriversignIn") }} >
+                  <View style={{width : 40,height: 40, borderRadius : 20,backgroundColor : "grey", borderWidth : 0.75, borderColor : "#fff",marginBottom : 12}}>                 
+                    <RnImg style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={images.headShot} />
+                  </View>
+                </Btn>
                 <Text style={{fontSize : 16, fontWeight : "400", color : "#fff",alignSelf : "flex-start" }} >
                   Welcome Back,               
                 </Text>
                 <Text style={{fontSize : 20, fontWeight : "700", color : "#fff",alignSelf : "flex-start" }} >
-                    {firstname}
+                  {displayName}
                 </Text>
                 </View>
               </ImageBackground>

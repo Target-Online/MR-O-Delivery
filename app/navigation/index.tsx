@@ -21,13 +21,14 @@ const AppNavigator : any = (props: IProps) => {
     const {user,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
     const [currentUser, setCurrentUser , loadingUser] = useContext(CurrentUserContext);
 
-    console.log({loadingUser})
+    console.log({currentUser})
+
 
     useEffect(() => {
 
       const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
       const {phoneNumber} = user || {}
-      const isDriver =  true //isUserDriver(phoneNumber)//true
+      const isDriver =  isUserDriver(phoneNumber)//true
       setIsUserDriver(isDriver)
 
     }, []);
@@ -51,7 +52,7 @@ const AppNavigator : any = (props: IProps) => {
         hidden = {false}
         key={1}
         translucent = {true}/>,
-        loadingUser ? renderLoader() : user  ? renderStack() : <AuthStack  />
+        loadingUser ? renderLoader() : currentUser  ? renderStack() : <AuthStack  />
 
     ]
     
