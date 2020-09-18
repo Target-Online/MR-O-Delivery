@@ -18,11 +18,9 @@ const AppNavigator : any = (props: IProps) => {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [isDriver, setIsUserDriver] = useState<boolean>(false);
-    const {user,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
-    const [currentUser, setCurrentUser , loadingUser] = useContext(CurrentUserContext);
+    const {user, currentUser, setCurrentUser , loadingUser ,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
 
     useEffect(() => {
-
       const {currentUser,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
       const {phoneNumber} = currentUser || {}
       const isDriver =  isUserDriver(phoneNumber)//true
@@ -43,12 +41,13 @@ const AppNavigator : any = (props: IProps) => {
       )
     }
 
+    console.log({loadingUser})
     return [
       <StatusBar backgroundColor ={Colors.focusColor}
         barStyle = 'dark-content'
         hidden = {false}
         key={1}
-        translucent = {true}/>,
+       />,
         loadingUser ? renderLoader() : currentUser  ? renderStack() : <AuthStack  />
 
     ]

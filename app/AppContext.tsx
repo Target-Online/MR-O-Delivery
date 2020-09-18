@@ -29,35 +29,35 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [initializing, setInitializing] = useState(true);
         const [orderId, setOrderId] = useState("");
         const [currentUser, setCurrentUser] = useState();
-        const [loadingUser, setLoadingUser] = useState(false);
+        const [loadingUser, setLoadingUser] = useState(true);
         const [order, setOrder] = useState({});
         const [users, setUsers] = useReducer(rootReducer.setStateReducer, initalState);
         const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
         const [drivers, setDrivers] = useState<IDriver[]>([]);
-        const usersRef =  firebase.firestore().collection('users')
-
 
         const generateOrderId = (userId : string) => {
             const Id = randomNum() + userId 
             return Id
         }
 
+        const storeUSer = (user ) => {
+
+            if (user) {
+                var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
+                dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
+            }
+        }
+
         useEffect(() => {
+            setLoadingUser(true)
             api.getCollection("users", setUsers);
             api.getCollection("orders", setOrders);
             getAllDrivers()
             firebase.auth().onAuthStateChanged((user: any) => {
-              setLoadingUser(true)
-              if (user) {
-                var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
-                dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);
-                setTimeout(()=> {setLoadingUser(false)}, 3000)
-              }
-        
-              setTimeout(()=> {setLoadingUser(false)}, 3000)
-              
-            });
-          }, [users.inProgress]);
+                storeUSer(user)           
+                setTimeout(()=> {setLoadingUser(false)}, 3000)           
+            })          
+          }, []);
     
     
         const logout = () => {
@@ -97,8 +97,6 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const isUserDriver = (phoneNumber : string) =>{
             getAllDrivers()
-            console.log({drivers})
-            console.log({phoneNumber})
             let isDriver = drivers.filter(driver => driver.phoneNumber === phoneNumber ).length > 0
             return isDriver
         }
