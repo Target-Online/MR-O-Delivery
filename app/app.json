@@ -3,7 +3,6 @@
     "name": "MR O Delivery",
     "slug": "mr-o-delivery",
     "privacy": "public",
-    "sdkVersion": "38.0.0",
     "platforms": [
       "ios",
       "android"
@@ -24,8 +23,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier" : "com.mro.mrodelivery",
-
+      "bundleIdentifier": "com.mro.mrodelivery"
     },
     "android": {
       "package": "com.mro.mrodelivery",
@@ -37,9 +35,7 @@
       }
     },
     "packagerOpts": {
-      "assetExts": [
-        "ttf"
-      ]
+
     },
     "description": "Now UI React Native, based on Now UI Design System. Coded by Creative Tim"
   }

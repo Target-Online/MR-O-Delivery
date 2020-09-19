@@ -108,9 +108,9 @@ class Components extends React.Component {
             </Button>
           </Block>
           <Block row space="between">
-            <Block flex left>
+            {/* <Block flex left>
               <Select defaultIndex={1} options={['01', '02', '03', '04', '05']} />
-            </Block>
+            </Block> */}
             <Block flex>
               <Button
                 textStyle={{ fontFamily: 'montserrat-regular', fontSize: 10 }}
