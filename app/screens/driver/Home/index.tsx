@@ -102,15 +102,17 @@ class Home extends React.Component<IProps, IState> {
     }
 
     changeOrderProgress = (newState : "pending" | "collected" | "confirmed" | "delivered") => { 
-      const { order,orderId } = this.state
-      const { context : {updateOrderStatus } } = this.props
+      const { orderId } = this.state
+      const { context : {updateOrderStatus, order } } = this.props
  
       const nowNow = moment(new Date()).toString()
       const addOn = newState === "confirmed" ? {confirmedAt : nowNow} : (newState === "collected" ? 
       {collectedAt : nowNow} : newState === "delivered" ? {deliveredAt : nowNow} : {}
       )
+      console.log("before the change ",order)
       const updatedOrder = {...order, status : newState , ...addOn  }
-
+      this.setState({order :  updatedOrder})
+      console.log("after the change ", updatedOrder)
       updateOrderStatus(orderId,updatedOrder)
       this.setState({newState})
     }

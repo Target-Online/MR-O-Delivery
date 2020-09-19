@@ -106,9 +106,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             const {status} = updatedOrder
             firebase.database()
             .ref(`/orders/`).child(orderId)
-            .set({
-                ...updatedOrder,
-            })
+            .update({...updatedOrder})
             .then((snapshot: any) => {  
                     setOrder(snapshot.val())             
                 }).catch((err: any)=>{                  
