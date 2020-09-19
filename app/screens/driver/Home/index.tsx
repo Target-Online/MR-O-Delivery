@@ -15,6 +15,7 @@ import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
 import { add } from 'react-native-reanimated';
+import { sendPushNotification } from '../../../Notifs'//'Notifs';
 
 
 const shadow =  {
@@ -390,10 +391,12 @@ class Home extends React.Component<IProps, IState> {
 
                   <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
-                    onPress={()=>{
-                          console.log("===")
-                          sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{} )
-                    }} 
+         
+                    onPress={async () => {
+                      await sendPushNotification()
+                      sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{} )
+                    }}
+                         
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
                     </Btn>

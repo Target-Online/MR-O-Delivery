@@ -3,7 +3,7 @@
     "name": "MR O Delivery",
     "slug": "mr-o-delivery",
     "privacy": "public",
-    "sdkVersion": "37.0.0",
+    "sdkVersion": "38.0.0",
     "platforms": [
       "ios",
       "android"
@@ -29,6 +29,7 @@
     },
     "android": {
       "package": "com.mro.mrodelivery",
+      "useNextNotificationsApi": true,
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBaHGSfahA2b9YS3Pvguelo2yN8heE41cw"

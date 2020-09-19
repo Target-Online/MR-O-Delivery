@@ -5,6 +5,7 @@ import AppContextProvider, { withAppContext, AppContext, ContextConsumer, IConte
 import AlertModal from './components/AlertModal'
 import Store from './Store'
 import { Bubbles, DoubleBounce, Bars, Pulse } from 'react-native-loader';
+import Notifs from './Notifs'
 
 // ...
 
@@ -44,6 +45,7 @@ class App extends React.Component<IProps>{
     return(
       <View style={{flex : 1}}>
         <AlertModal/>
+        <Notifs/>
         {loading ? this.renderInitialLoading() : 
         <Navigator />
         }
