@@ -3,7 +3,7 @@ import Svg, {Rect,Path,Circle, SvgProps } from 'react-native-svg';
 
 const OrderIcon = (
   (props, ref) => 
-  <Svg id="Filled" height="60" viewBox="0 0 512 512" width="60" xmlns="http://www.w3.org/2000/svg">
+  <Svg id="Filled" height="40" viewBox="0 0 512 512" width="40" xmlns="http://www.w3.org/2000/svg">
     <Rect fill={props.fill} height="448" rx="16" width="352" x="24" y="40"/>
     <Path d="m56 88h288v368h-288z" fill="#fff"/>
     <Path d="m163.1 42.63 4.9 29.37v16h64v-16l4.9-29.37a16 16 0 0 0 -15.787-18.63h-42.226a16 16 0 0 0 -15.787 18.63z" fill="#d9dbdd"/>

@@ -6,6 +6,7 @@ import NavigationStack  from './UserNavigationStack'
 import DriverNavigationStack  from './DriverNavigationStack'
 import { IUser, withAppContext, IContextProps } from '../AppContext'
 import { CurrentUserContext } from '../Store';
+import moment from 'moment'
 
 
 const AuthStack = () => <Login />
@@ -23,7 +24,7 @@ const AppNavigator : any = (props: IProps) => {
     useEffect(() => {
       const {currentUser,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
       const {phoneNumber} = currentUser || {}
-      const isDriver =  isUserDriver(phoneNumber)//true
+      const isDriver =  true //isUserDriver(phoneNumber)//true
       setIsUserDriver(isDriver)
 
     }, []);
@@ -41,7 +42,6 @@ const AppNavigator : any = (props: IProps) => {
       )
     }
 
-    console.log({loadingUser})
     return [
       <StatusBar backgroundColor ={Colors.focusColor}
         barStyle = 'dark-content'

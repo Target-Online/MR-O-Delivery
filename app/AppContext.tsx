@@ -9,6 +9,7 @@ import * as api from "./api/index";
 import * as rootReducer from "./utils/rootReducer";
 import { IOrder } from "screens/user/PickUp";
 import { IUser, IDriver } from "types";
+import moment from "moment";
 export const ContextConsumer = AppContext.Consumer
 
 
@@ -102,10 +103,14 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
         
         const updateOrderStatus = (orderId : string, updatedOrder : IOrder) => {
+            const {status} = updatedOrder
             firebase.database()
             .ref(`/orders/`).child(orderId)
-            .set({...updatedOrder})
-            .then((snapshot: any) => {               
+            .set({
+                ...updatedOrder,
+            })
+            .then((snapshot: any) => {  
+                    setOrder(snapshot.val())             
                 }).catch((err: any)=>{                  
                     console.log(" failed to update")
             });
@@ -141,7 +146,9 @@ const AppContextProvider : React.SFC = ({children}) => {
             setOrder(theOrder)
             firebase.database()
                 .ref(`orders/`).child(orderID)
-                .set({...theOrder})
+                .set({...theOrder,
+                    createdAt : moment(new Date()).toString()
+                })
                 .then((snapshot: any) => {
                     onSuccess()
             

@@ -13,6 +13,8 @@ import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import LocationIcon from '../../../assets/icons/LocationIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
+import moment from 'moment';
+import { add } from 'react-native-reanimated';
 
 
 const shadow =  {
@@ -30,7 +32,7 @@ type IProps = IAppContext & StackNavigationProp;
 interface IState {
   isModalVisible: boolean;
   isOnline : boolean;
-  newRequestStep : "pending"| "confirmed" | "collected" | "delivered" ; 
+  newState : "pending"| "confirmed" | "collected" | "delivered" ; 
   order?: IOrder;
   orderId?: string;
 }
@@ -54,7 +56,7 @@ class Home extends React.Component<IProps, IState> {
         
        
           if(status === "pending" && driver && driver.phoneNumber === phoneNumber){ //and I'm the driver
-            this.setState({newRequestStep : "pending"})
+            this.setState({newState : "pending"})
             this.recordNewOrderOfFocus(order, orderId )
 
           }    
@@ -63,7 +65,7 @@ class Home extends React.Component<IProps, IState> {
       this.state = {
         isModalVisible : false,
         isOnline : true,
-        newRequestStep : "pending",
+        newState : "pending",
         order : undefined
       }
     }
@@ -99,12 +101,18 @@ class Home extends React.Component<IProps, IState> {
       this.setState({isModalVisible : false})
     }
 
-    changeOrderProgress = (newRequestStep : "pending" | "collected" | "confirmed" | "delivered") => { 
+    changeOrderProgress = (newState : "pending" | "collected" | "confirmed" | "delivered") => { 
       const { order,orderId } = this.state
       const { context : {updateOrderStatus } } = this.props
-      const updatedOrder = {...order, status : newRequestStep}
+ 
+      const nowNow = moment(new Date()).toString()
+      const addOn = newState === "confirmed" ? {confirmedAt : nowNow} : (newState === "collected" ? 
+      {collectedAt : nowNow} : newState === "delivered" ? {deliveredAt : nowNow} : {}
+      )
+      const updatedOrder = {...order, status : newState , ...addOn  }
+
       updateOrderStatus(orderId,updatedOrder)
-      this.setState({newRequestStep})
+      this.setState({newState})
     }
 
     renderCustomerCard = () => {
@@ -149,7 +157,7 @@ class Home extends React.Component<IProps, IState> {
 
     renderNewRequestDecision = () => {
 
-      const { order,newRequestStep } = this.state
+      const { order,newState } = this.state
 
 
       if(order){
@@ -159,7 +167,7 @@ class Home extends React.Component<IProps, IState> {
         return(
           <View style={styles.modalInnerContainer}>
             <View style={styles.newReqContainer}>
-              {newRequestStep === "pending" && <Text style={styles.incomingText}> Incoming Request</Text>}
+              {newState === "pending" && <Text style={styles.incomingText}> Incoming Request</Text>}
               {this.renderCustomerCard()}
               {this.renderParcelDetails()}
               <View style={{ height: 70, flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
@@ -210,8 +218,8 @@ class Home extends React.Component<IProps, IState> {
 
     renderOrderInProgress = () =>{
 
-      const {newRequestStep, order : {pickUpAddress, dropOffAddress}} = this.state
-      const orderCollected = newRequestStep === "collected"
+      const {newState, order : {pickUpAddress, dropOffAddress}} = this.state
+      const orderCollected = newState === "collected"
       return(
       <View style={styles.modalInnerContainer}>
          <View style={styles.newReqContainer}>
@@ -311,7 +319,7 @@ class Home extends React.Component<IProps, IState> {
 
     renderNewOrderModal = () => {
 
-      const {isModalVisible , newRequestStep} = this.state
+      const {isModalVisible , newState} = this.state
       return(
         <Modal 
           animated
@@ -321,9 +329,9 @@ class Home extends React.Component<IProps, IState> {
           visible={isModalVisible}
           onRequestClose={()=> this.closeModal()}
         >
-          {newRequestStep === "pending" ? 
+          {newState === "pending" ? 
             this.renderNewRequestDecision() : 
-            ["confirmed", "collected"].includes(newRequestStep) ? this.renderOrderInProgress():
+            ["confirmed", "collected"].includes(newState) ? this.renderOrderInProgress():
             this.renderDeliveredOrder()
           }
         </Modal>
@@ -381,6 +389,7 @@ class Home extends React.Component<IProps, IState> {
                   <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
                     onPress={()=>{
+                          console.log("===")
                           sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{} )
                     }} 
                   >
