@@ -3,7 +3,7 @@ import Svg, {Rect,Path,Circle, G } from 'react-native-svg';
 
 const BikeIcon = (
   (props, ref) => 
-<Svg id="Fill_out_line" height="65" viewBox="0 0 512 512" width="65" xmlns="http://www.w3.org/2000/svg" data-name="Fill out line">
+<Svg id="Fill_out_line" height="46" viewBox="0 0 512 512" width="65" xmlns="http://www.w3.org/2000/svg" data-name="Fill out line">
   <Path d="m328 176h96v96h-96z" fill="#e64042"/><Path d="m240 280-10.43111-13.74777a26.04 26.04 0 0 1 2.33166-34.15279l.27789-.27788a26.61059 26.61059 0 0 1 18.8986-7.84936c10.63306.01815 26.52521.02445 36.28037.02664a20.857 20.857 0 0 0 14.754-6.11029 13.9845 13.9845 0 0 1 19.77706 0l1.42518 1.42518a16 16 0 0 1 4.68635 11.31368v41.37259z" fill="#af7d4d"/>
   <Path d="m136 328h96v32h-96z" fill="#f0c033"/><Path d="m136 328h104v16h-104z" fill="#2f4054"/><Circle cx="80" cy="360" fill="#c6d6e2" r="40"/>
   <Circle cx="296" cy="360" fill="#c6d6e2" r="40"/><G fill="#f0c033"><Path d="m120 296v64h-9.58a26.969 26.969 0 0 1 -22.42-12 26.93962 26.93962 0 0 0 -22.42-12h-41.58a49.75242 49.75242 0 0 1 48.79-40z"/>

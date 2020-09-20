@@ -10,13 +10,13 @@ import { Colors } from '../../../constants';
 import { withAppContext, IAppContext, IOrder, mockOrder } from '../../../AppContext';
 import { RouteSummary } from '../../user/Payment';
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
+import OnlineIcon from '../../../assets/icons/OnlineIcon'
+import OfflineIcon from '../../../assets/icons/OfflineIcon'
 import LocationIcon from '../../../assets/icons/LocationIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
 import { add } from 'react-native-reanimated';
-import { sendPushNotification } from '../../../Notifs'//'Notifs';
-
 
 const shadow =  {
     shadowColor: '#000000',
@@ -47,19 +47,14 @@ class Home extends React.Component<IProps, IState> {
       this.onChildAdded = database()
         .ref('/orders')
         .on('child_added', snapshot => {
-          const {context : {currentUser :{phoneNumber}, user ,sendRequest}} = this.props
+          const {context : {currentUser :{phoneNumber}, sendPushNotification ,sendRequest}} = this.props
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
-
-          console.log(" new order arrived", order.status)
-          console.log({theDriver : order.driver })
-        
        
           if(status === "pending" && driver && driver.phoneNumber === phoneNumber){ //and I'm the driver
             this.setState({newState : "pending"})
-            this.recordNewOrderOfFocus(order, orderId )
-
+            this.recordNewOrderOfFocus(order, orderId)
           }    
       })
 
@@ -105,15 +100,10 @@ class Home extends React.Component<IProps, IState> {
     changeOrderProgress = (newState : "pending" | "collected" | "confirmed" | "delivered") => { 
       const { orderId } = this.state
       const { context : {updateOrderStatus, order } } = this.props
- 
       const nowNow = moment(new Date()).toString()
-      const addOn = newState === "confirmed" ? {confirmedAt : nowNow} : (newState === "collected" ? 
-      {collectedAt : nowNow} : newState === "delivered" ? {deliveredAt : nowNow} : {}
-      )
-      console.log("before the change ",order)
+      const addOn = newState === "confirmed" ? {confirmedAt : nowNow} : (newState === "collected" ? {collectedAt : nowNow} : newState === "delivered" ? {deliveredAt : nowNow} : {})
       const updatedOrder = {...order, status : newState , ...addOn  }
       this.setState({order :  updatedOrder})
-      console.log("after the change ", updatedOrder)
       updateOrderStatus(orderId,updatedOrder)
       this.setState({newState})
     }
@@ -161,10 +151,9 @@ class Home extends React.Component<IProps, IState> {
     renderNewRequestDecision = () => {
 
       const { order,newState } = this.state
-
+      const {context : {updateDriverStatus}} = this.props
 
       if(order){
-
         const {pickUpAddress, dropOffAddress} = order || { pickUpAddress : {}, dropOffAddress : {} }
 
         return(
@@ -200,13 +189,14 @@ class Home extends React.Component<IProps, IState> {
                       </View>
                   </View>
                 </View>
-
             </View>
 
             <View style={styles.bottomBtnswrapper}>
-
               <Btn 
-                onPress={()=> this.changeOrderProgress("confirmed")} 
+                onPress={()=> {
+                  updateDriverStatus("busy")
+                  this.changeOrderProgress("confirmed")                 
+                }} 
                 style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange}]} 
               >
                 <Text  style={styles.acceptDeclineText} > Accept </Text>
@@ -346,13 +336,17 @@ class Home extends React.Component<IProps, IState> {
     }
 
     toggleOnline = () =>{
+      const {context : {updateDriverStatus}} = this.props
       const {isOnline} = this.state
-      this.setState({isOnline : !isOnline})
+      const newState = !isOnline
+      this.setState({isOnline : newState})
+      updateDriverStatus(!newState ?  "offline" : "vacant")
+
     }
 
     render(){
 
-      const {context : {currentUser :{displayName}, user ,sendRequest}} = this.props
+      const {context : {currentUser :{displayName}, sendPushNotification ,sendRequest}} = this.props
       const {isOnline} = this.state
 
       return [
@@ -382,13 +376,22 @@ class Home extends React.Component<IProps, IState> {
             <View style={{ padding : 24, backgroundColor : "#fff",width : "100%", height : "65%", ...shadow , alignItems : "center",justifyContent : "space-between", position : "absolute", bottom : 0, borderTopLeftRadius : 24, borderTopRightRadius: 24}} >
                 
                   <View style={{flexDirection : "row", justifyContent: "flex-end",width : "100%" , alignItems : "center" ,paddingHorizontal : 24}} >
-                    <Text style={{fontSize : 16, fontWeight : "bold",marginRight : 4 }} >
+                    <Text style={{fontSize : 16, fontWeight : "bold",marginRight : 16 }} >
                      {isOnline ? "Online" : "Offline"}
                     </Text>
-                  
+                   <View style={{marginHorizontal: 8}} />
                     <Switch onValueChange={this.toggleOnline} value={isOnline} style={{width : 24,  }} />
                   </View>
 
+                  <View style={{width : "100%",height : 78,alignItems : "center"}}> 
+
+                    {isOnline ? <OnlineIcon /> : <OfflineIcon />}
+                    <Text style={styles.onOffText}>
+                      {isOnline ? "Currently accepting requests" :
+                      "You're offline and won't receive any requests"}
+                    </Text>
+
+                  </View>
                   <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
          
@@ -417,6 +420,10 @@ const randomNum =  Math.floor(Math.random() * Math.floor(100));
 const styles = StyleSheet.create({
     activeTextStyle:{
         color : 'red'
+    },
+    onOffText:{
+      alignSelf : "center",
+      marginVertical : 4,
     },
     serviceDescriptionText: {
       marginVertical :  8,textAlign  :"center", fontSize : 12 , color : "#878787" 

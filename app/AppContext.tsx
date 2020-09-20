@@ -1,4 +1,4 @@
-import { createContext, useState, Component, useEffect, useReducer } from "react";
+import { createContext, useState, Component, useEffect, useReducer, useRef } from "react";
 import  * as firebase from "firebase"
 import React from "react";
 import { IAlertProps } from "./components/AlertModal";
@@ -10,8 +10,18 @@ import * as rootReducer from "./utils/rootReducer";
 import { IOrder } from "screens/user/PickUp";
 import { IUser, IDriver } from "types";
 import moment from "moment";
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 export const ContextConsumer = AppContext.Consumer
 
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+  
 
 require('firebase/firestore')
 const initalState = {
@@ -27,21 +37,22 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [profile, setProfile] = useState<IUser>({});
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
-        const [initializing, setInitializing] = useState(true);
-        const [orderId, setOrderId] = useState("");
+        const [expoPushToken, setExpoPushToken] = useState('');
+        const [notification, setNotification] = useState(false);
         const [currentUser, setCurrentUser] = useState();
         const [loadingUser, setLoadingUser] = useState(true);
         const [order, setOrder] = useState({});
         const [users, setUsers] = useReducer(rootReducer.setStateReducer, initalState);
         const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
         const [drivers, setDrivers] = useState<IDriver[]>([]);
-
+        const notificationListener = useRef();
+        const responseListener = useRef();
         const generateOrderId = (userId : string) => {
             const Id = randomNum() + userId 
             return Id
         }
 
-        const storeUSer = (user ) => {
+        const storeUSer = (user) => {
 
             if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
@@ -57,7 +68,23 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.auth().onAuthStateChanged((user: any) => {
                 storeUSer(user)           
                 setTimeout(()=> {setLoadingUser(false)}, 3000)           
-            })          
+            }) 
+            
+            registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+            notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+                //setNotification(notification);
+                console.log({notification})
+            });
+
+            responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+                console.log(response);
+            });
+
+            return () => {
+                Notifications.removeNotificationSubscription(notificationListener);
+                Notifications.removeNotificationSubscription(responseListener);
+            };
           }, []);
     
     
@@ -113,6 +140,17 @@ const AppContextProvider : React.SFC = ({children}) => {
                     console.log(" failed to update")
             });
         }
+
+        const updateDriverStatus = (status : string) => {
+            const {phoneNumber} = currentUser
+            firebase.database().ref(`/users/`).child(phoneNumber)
+            .update({status}).then((snapshot: any) => {  
+                              
+            }).catch((err: any)=>{                  
+                console.log(" failed to update")
+            })
+        }
+
         const toggleDriverAvailability = (phoneNumber : string, updatedDriverState : IDriver) => {
             firebase.database().ref(`/users/`).child(phoneNumber)
             .set({...updatedDriverState})
@@ -153,6 +191,49 @@ const AppContextProvider : React.SFC = ({children}) => {
                 }).catch((err: any)=>{
                     onFailure()
             });
+        }
+
+        async function sendPushNotification() {
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "New incoming request",
+                    body: '',
+                    data: { data: 'goes here' }
+                },
+                trigger: { seconds: 2 }
+            })
+        }
+          
+        async function registerForPushNotificationsAsync() {
+            let token;
+            if (Constants.isDevice) {
+                const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+                let finalStatus = existingStatus;
+                if (existingStatus !== 'granted') {
+                const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+                finalStatus = status;
+                }
+                if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+                }
+                token = (await Notifications.getExpoPushTokenAsync()).data;
+                console.log(token);
+            } else {
+                alert('Must use physical device for Push Notifications');
+            }
+            
+            if (Platform.OS === 'android') {
+                Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+                });
+            }
+        
+            return token
+
         }
 
         const updateUserProfile = ( params: {profile : IUser, silentUpdate?: boolean, 
@@ -231,9 +312,9 @@ const AppContextProvider : React.SFC = ({children}) => {
                     alertBoxData, setAlertData, setUser,sendRequest,
                     login, register, logout, fetchUserProfile,isUserDriver,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
-                    resetPassword, updateUserProfile,profile,setProfile,
+                    resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
-                    orders, setOrders, toggleDriverAvailability
+                    orders, setOrders, toggleDriverAvailability,sendPushNotification
                 }}
             >
                 {children}

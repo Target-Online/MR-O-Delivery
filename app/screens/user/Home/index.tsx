@@ -93,72 +93,78 @@ const Home: any = (props: Props) => {
       console.log("Order fetch failed ", err)
       setLoading(false)
     })
-   
   }
 
   return [
     renderNewUserModal(),
-    <SafeAreaView style={{flex : 1 ,  marginTop: Constants.statusBarHeight,}} >
-      <ScrollView style={{backgroundColor : "#fff" }} >
-        <View style={{height : 200, width : "90%",alignSelf : "center" }}>
-            <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
-        </View>
+    <SafeAreaView style={{flex : 1 ,  marginTop: Constants.statusBarHeight}} >
+      <ScrollView style={{backgroundColor : "#fff", flex : 1 }} >
+        <View style={{flex : 1}}>
+          <View style={{height : 200, width : "90%",alignSelf : "center" }}>
+              <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
+          </View>
 
-        <View style={styles.bottomMain} >
+          <View style={styles.bottomMain} >
             <Text style={{ fontSize: 20, fontWeight: "700", color: "#fb9011", alignSelf: "center" }} >
               Welcome, {currentUser && (currentUser.displayName + " !!!")}
             </Text>
-          <View style={styles.orderOpts} >
-            <Btn
-              onPress={() => {
-                  setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
-                  buttons : [{
-                    label : "Ok",
-                    onPress : ()=> setShowAlert(false)
-                  }]})
-                  setShowAlert(true)
+            <View style={styles.orderOpts} >
+              <Btn
+                onPress={() => {
+                    setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
+                    buttons : [{
+                      label : "Ok",
+                      onPress : ()=> setShowAlert(false)
+                    }]})
+                    setShowAlert(true)
+                  }
                 }
-              }
-              style={{ width: width*0.4, height: 200 }}
-            >
-              <View style={styles.btnStyle}  >
-                <OrderIcon fill={"#F57301"} />
-                <Text style={styles.requestType}>
-                  Order Bike
-                </Text>
-                <Text style={styles.serviceDescriptionText} >
-                  Send a bike to a local shop to buy and return your goods.
-                </Text>
-              </View>
-            </Btn>
-            <Btn
-              onPress={() => props.navigation.navigate("PickUpRequest")}
-              style={{ width: width*0.4, height: 200}}
-            >
-              <View style={styles.btnStyle}  >
-                <BikeIcon fill={"#F57301"} />
-                <Text style={styles.requestType}>
-                  Pick-up
+                style={{ width: width*0.4, height: 200 }}
+              >
+                <View style={styles.btnStyle}  >
+                  <View style={{height : 46}}>
+                  <OrderIcon fill={"#F57301"} />
+                  </View>
+                  <Text style={styles.requestType}>
+                    Order Bike
                   </Text>
                   <Text style={styles.serviceDescriptionText} >
-                   Send a bike to go collect and deliver a package to your location.
+                    Send a bike to a local shop to buy and return your goods.
                   </Text>
-              </View>
-            </Btn>
-          </View>
-          <View>
-            <Text style={{ marginBottom: 4 }} >Track your order</Text>
-            <View overflow="hidden" style={styles.inputWrapper}>
-              <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={{ flex: 1, height: "100%", paddingHorizontal: 24, paddingVertical: 4 }} />
-              <Btn 
-                onPress={()=> {
-                  processTrackOrder()
-                }}
-                style={[styles.btnStyle, { width: 64, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
-                {loading ? <Bubbles style={{width : 24, height : 24}} color={Colors.primaryOrange} /> :
-                  <Icon size={24} style={{ fontSize: 34, color: "#fff" }} name="arrow-right" />
-                }
+                </View>
               </Btn>
+              <Btn
+                onPress={() => props.navigation.navigate("PickUpRequest")}
+                style={{ width: width*0.4, height: 200}}
+              >
+                <View style={styles.btnStyle}  >
+                  <View style={{height : 46}}>
+                    <BikeIcon fill={"#F57301"} />
+                  </View>
+
+                  <Text style={styles.requestType}>
+                    Pick-up
+                    </Text>
+                    <Text style={styles.serviceDescriptionText} >
+                    Send a bike to go collect and deliver a package to your location.
+                    </Text>
+                </View>
+              </Btn>
+            </View>
+            <View>
+              <Text style={{ marginBottom: 4, marginTop : 16 }} >Track your order</Text>
+              <View style={styles.inputWrapper}>
+                <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={{ flex: 1, height: "100%", paddingHorizontal: 24, paddingVertical: 4 }} />
+                <Btn 
+                  onPress={()=> {
+                    processTrackOrder()
+                  }}
+                  style={[styles.btnStyle, { width: 64, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
+                  {loading ? <Bubbles size={"large"} style={{width : 24, height : 24}} color={Colors.primaryOrange} /> :
+                    <Icon size={24} style={{ fontSize: 34, color: "#fff" }} name="arrow-right" />
+                  }
+                </Btn>
+              </View>
             </View>
           </View>
         </View>
@@ -182,7 +188,7 @@ const styles = StyleSheet.create({
   },
   bottomMain:{
      paddingTop: 12, backgroundColor: "#fff", 
-     width: "100%", ...shadow, height : 300,
+     width: "100%", ...shadow, flex : 1,paddingHorizontal : 24,
     alignItems: "center", justifyContent: "space-between", 
     borderTopLeftRadius: 24, borderTopRightRadius: 24 
   },
@@ -211,7 +217,7 @@ const styles = StyleSheet.create({
   btnStyle: {
     flex: 1,
     height: 86, borderRadius: 8, backgroundColor: "#EDF4F9",
-    alignItems: "center", justifyContent: "center", paddingHorizontal: 24
+    alignItems: "center", justifyContent: "space-evenly", paddingHorizontal: 24
   },
   tabStyle: { backgroundColor: 'white' }
 

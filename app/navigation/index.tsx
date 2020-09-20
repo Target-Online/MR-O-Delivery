@@ -15,8 +15,6 @@ type IProps =  IContextProps  & { user : any; profile : IUser; }
 
 const AppNavigator : any = (props: IProps) => {
 
-
-
     const [loading, setLoading] = useState<boolean>(false);
     const [isDriver, setIsUserDriver] = useState<boolean>(false);
     const {user, currentUser, setCurrentUser , loadingUser ,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
@@ -24,7 +22,8 @@ const AppNavigator : any = (props: IProps) => {
     useEffect(() => {
       const {currentUser,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
       const {phoneNumber} = currentUser || {}
-      const isDriver =  true //isUserDriver(phoneNumber)//true
+      console.log({currentUser})
+      const isDriver = false //isUserDriver(phoneNumber)//true
       setIsUserDriver(isDriver)
 
     }, []);

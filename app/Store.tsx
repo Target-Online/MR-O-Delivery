@@ -33,7 +33,6 @@ const Store: React.FunctionComponent = ({ children }) => {
 
     firebase.auth().onAuthStateChanged((user: any) => {
       setLoadingUser(true)
-      console.log("user fetch")
       if (user) {
         var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
         dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);

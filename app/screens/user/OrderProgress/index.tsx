@@ -99,22 +99,18 @@ class Payment extends Component<IProps> {
 
                 <View style={{width : "100%", height : 250 ,backgroundColor : "#F57301",alignItems : "center"}}>
                     <View style={{width : "100%" ,backgroundColor :"#000",height: 100, flexDirection : "row",alignItems : "center",paddingHorizontal : 24 }}>
-                        <Image source={driverPicURL} style={{width: 60, height : 60, borderRadius : 30}} />
+                        <Image source={driverPicURL} style={{width: 46, height : 46, borderRadius : 23}} />
                         <View style={{height : "100%", justifyContent : "center",padding : 16 }}>
                             <Text style={styles.driverName} >{displayName}</Text>
                             <Text style={styles.driverName} >Vehicle Name</Text>
                             <Text style={styles.driverName} >{vehicleRegistration}</Text>                            
                         </View>
-                        <View style={{position : "absolute",right : 0 ,width : 120, marginRight:24, flexDirection : "row",flex : 1, justifyContent : "space-between" }}>
-                            <Btn 
+                        <View style={{position : "absolute",right : 0 ,width : 120, marginRight: 16, flexDirection : "row",flex : 1, justifyContent : "space-between" }}>
+                            <Btn  
                                 onPress={() => {
-                                        setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
-                                        buttons : [{
-                                        label : "Ok",
-                                        onPress : ()=> setShowAlert(false)
-                                        }]})
-                                
-                                        setShowAlert(true)
+                                    setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
+                                    buttons : [{label : "Ok", onPress : ()=> setShowAlert(false)}]})
+                                    setShowAlert(true)
                                     }
                                 }
                              style={styles.contactBtn}>
@@ -174,7 +170,7 @@ const shadow =  {
 const styles = StyleSheet.create({
     driverName:{
         color : '#fff',
-        fontSize : 12,
+        fontSize : 10,
     },
     deliveryStep :{
         alignItems : "center",

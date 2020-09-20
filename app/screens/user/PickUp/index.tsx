@@ -231,12 +231,11 @@ class PickUp extends React.Component<Props, IState> {
         <View style={{width : "100%", height : 43, borderRadius : 8, flexDirection : "row",backgroundColor : "rgba(0,0,0,0.035)",
               alignItems:"center" ,borderWidth : 2, borderColor: "#f9f9f9", paddingHorizontal : 16 }} >
 
-          <Btn 
-            onPress={()=>{
+          <Btn onPress={()=>{
               this.openSearchModal(key)
             }} 
-            style={{ flex : 1, height : 43, justifyContent : "center"}}>
-            <Text  style={{ fontSize :  12 , color : address?  "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)"}} >
+            style={{ flex : 1, height : 43, justifyContent : "center" , paddingVertical : 2}}>
+            <Text numberOfLines={2} style={{ fontSize : 10 , color : address?  "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)"}} >
               {address || `Select ${addressVariant}`}
             </Text>
           </Btn>
