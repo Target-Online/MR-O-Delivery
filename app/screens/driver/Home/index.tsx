@@ -59,10 +59,10 @@ class Home extends React.Component<IProps, IState> {
       })
 
       this.state = {
-        isModalVisible : false,
+        isModalVisible : true,
         isOnline : true,
         newState : "pending",
-        order : undefined
+        order : mockOrder
       }
     }
 
@@ -162,7 +162,7 @@ class Home extends React.Component<IProps, IState> {
               {newState === "pending" && <Text style={styles.incomingText}> Incoming Request</Text>}
               {this.renderCustomerCard()}
               {this.renderParcelDetails()}
-              <View style={{ height: 70, flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
+              <View style={{ height: 100, flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
                   <View style={styles.routePath}>
                     <View style={styles.pickupIconOutter} >
                       <View style={styles.pickupIconInner} />
@@ -175,14 +175,14 @@ class Home extends React.Component<IProps, IState> {
                   </View>
                   <View style={styles.addressesWrapper}>
                       <View style={styles.textAreaStyles} >
-                          <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} >Pickup</Text>
+                          <Text style={[styles.addressInput,{fontSize :11, color : "grey"}]} >Pickup</Text>
                           <Text numberOfLines={2} style={styles.addressInput} >
                               {pickUpAddress.description}
                           </Text>    
                       </View>
                       <View style={{height : 1,backgroundColor: "grey", width: "100%",alignSelf : "center"}}></View>
                       <View style={styles.textAreaStyles} >
-                          <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} >Drop-Off</Text>
+                          <Text style={[styles.addressInput,{fontSize :11, color : "grey"}]} >Drop-Off</Text>
                           <Text numberOfLines={2} style={styles.addressInput} >
                             {dropOffAddress.description}
                           </Text>   
@@ -391,7 +391,7 @@ class Home extends React.Component<IProps, IState> {
                     </Text>
 
                   </View>
-                  {/* <Btn
+                  <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
          
                     onPress={async () => {
@@ -401,7 +401,7 @@ class Home extends React.Component<IProps, IState> {
                          
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                    </Btn> */}
+                    </Btn>
               </View>  
               
             </View>    
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
       backgroundColor : "#FEFEFE", 
       alignItems : "center"
     },
-    addressesWrapper : {flex : 1, height : 84, justifyContent : "space-between"},
+    addressesWrapper : {flex : 1, height : 100, justifyContent : "space-between"},
     inputWrapper :{ 
       width: "100%" , height : 54 , borderColor : Colors.primaryOrange ,
       borderWidth : 1,borderRadius : 8,justifyContent : "space-between" ,
@@ -515,12 +515,12 @@ const styles = StyleSheet.create({
       borderRadius : 2  ,paddingVertical : 0
     },
     addressInput : { 
-      fontSize :  12, 
+      fontSize :  10,
     },
     textAreaStyles:{
-      flex : 1, height : 32, borderRadius : 2,
-      borderWidth : 1, borderColor: "#f9f9f9", 
-      paddingHorizontal : 16, justifyContent : "center" 
+       height : 46, borderRadius : 2,
+      borderWidth : 1, borderColor: "#f9f9f9",paddingVertical:2,
+      paddingHorizontal : 12, justifyContent : "center" 
     },
   
   })

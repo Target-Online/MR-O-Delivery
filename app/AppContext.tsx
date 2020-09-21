@@ -359,7 +359,7 @@ export const mockOrder =  {
         "profilePicURL" : ""
       },
     "dropOffAddress" : {
-      "description" : "Washington, DC, USA",
+      "description" : "Washington, DC, USA,hcuytudduydiuydydydyiudyidyidydyy",
       "addressComponents" : [ {
         "name" : "Washington",
         "shortName" : "Washington",
@@ -400,7 +400,7 @@ export const mockOrder =  {
     "orderId" : "testID681",
     "orderType" : "Pick-Up",
     "pickUpAddress" : {
-      "description" : "Dubai - United Arab Emirates",
+      "description" : "Dubai - United Arab Emirates, hvvyiyuduydduyttctycycuycycctycyucuycyu",
       "addressComponents" : [ {
         "name" : "Dubai",
         "shortName" : "Dubai",
