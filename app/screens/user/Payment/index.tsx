@@ -113,15 +113,16 @@ class Payment extends Component<IProps> {
   
     processRequest(){
         if(this.props.context){
-            const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
+            const {context : {sendRequest , order,setOrder, drivers, users}} = this.props
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
-            getAllDrivers()
-            const freeDrivers = drivers.filter((driver: { isActive: any, status : string }) =>  driver.isActive && driver.status === "vacant")
+
+            const freeDrivers = users.data.filter((user: { isActive: any, isDriver : boolean, status : string }) =>  user.isDriver && user.isActive && user.status === "vacant")
             const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location),
             this.convertLocation(dropOffAddress.geometry.location))
             const orderTotal = this.getOrderTotal()
 
+            console.log({freeDrivers})
             if (freeDrivers){
                 let myOrder  = {...order, total : orderTotal,distance }
                 const {orderId} = myOrder
@@ -147,7 +148,7 @@ class Payment extends Component<IProps> {
     render () {
       const { paymentMethod } = this.state
       const paymentMethods = [
-        //   {label : "Card", icon : <MastercardIcon />},
+      //   {label : "Card", icon : <MastercardIcon />},
       {label : "Cash",icon : <CashIcon /> }
     ]
       const {context : {profile , order,setOrder}} = this.props

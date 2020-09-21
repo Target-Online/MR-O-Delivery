@@ -354,7 +354,6 @@ class Home extends React.Component<IProps, IState> {
             <View key="main" style={styles.container} >
             <StatusBar barStyle="dark-content" />    
             <ImageBackground source={images.homeBg} style={{width : "100%", height : "100%"}}>
-
               <View style={{width : "100%",justifyContent:"flex-end" ,alignItems : "flex-start",height: "35%",paddingHorizontal : 24,paddingBottom : 32}}>
                 <View style={{position: "absolute", bottom : 24,right:12}}>
                   <DeliveryGuyIcon />
@@ -373,9 +372,9 @@ class Home extends React.Component<IProps, IState> {
                 </View>
               </ImageBackground>
           
-            <View style={{ padding : 24, backgroundColor : "#fff",width : "100%", height : "65%", ...shadow , alignItems : "center",justifyContent : "space-between", position : "absolute", bottom : 0, borderTopLeftRadius : 24, borderTopRightRadius: 24}} >
+            <View style={{ padding : 24, backgroundColor : "#fff",width : "100%", height : "65%", ...shadow , alignItems : "center",justifyContent : "center", position : "absolute", bottom : 0, borderTopLeftRadius : 24, borderTopRightRadius: 24}} >
                 
-                  <View style={{flexDirection : "row", justifyContent: "flex-end",width : "100%" , alignItems : "center" ,paddingHorizontal : 24}} >
+                  <View style={{flexDirection : "row", justifyContent: "flex-end",width : "100%" , alignItems : "center" ,paddingHorizontal : 24 ,position: "absolute",top :24}} >
                     <Text style={{fontSize : 16, fontWeight : "bold",marginRight : 16 }} >
                      {isOnline ? "Online" : "Offline"}
                     </Text>
@@ -392,7 +391,7 @@ class Home extends React.Component<IProps, IState> {
                     </Text>
 
                   </View>
-                  <Btn
+                  {/* <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
          
                     onPress={async () => {
@@ -402,7 +401,7 @@ class Home extends React.Component<IProps, IState> {
                          
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                    </Btn>
+                    </Btn> */}
               </View>  
               
             </View>    
@@ -423,6 +422,7 @@ const styles = StyleSheet.create({
     },
     onOffText:{
       alignSelf : "center",
+      textAlign : "center",
       marginVertical : 4,
     },
     serviceDescriptionText: {
