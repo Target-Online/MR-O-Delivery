@@ -53,9 +53,11 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const storeUSer = (user) => {
-
+            console.log(user!==null)
             if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
+                console.log("num ", user.phoneNumber)
+                console.log(dbUser)
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
             }
         }
@@ -64,11 +66,13 @@ const AppContextProvider : React.SFC = ({children}) => {
             setLoadingUser(true)
             api.getCollection("users", setUsers);
             api.getCollection("orders", setOrders);
-            getAllDrivers()
+            storeUSer(currentUser)
             firebase.auth().onAuthStateChanged((user: any) => {
+                console.log("auth state")
                 storeUSer(user)           
                 setTimeout(()=> {setLoadingUser(false)}, 3000)           
-            }) 
+            })
+
             
             registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
@@ -91,7 +95,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         const logout = () => {
             
             firebase.auth().signOut().then((res: any)=> {
-
+                setCurrentUser(null) 
             }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
                 console.error(err)
                 Alert.alert("Error", err.userInfo.NSLocalizedDescription, [ {text : "Ok",onPress : ()=>{}} ])
@@ -155,7 +159,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.database().ref(`/users/`).child(phoneNumber)
             .set({...updatedDriverState})
             .then((snapshot: any) => {   
-                console.log(snapshot)               
+                // console.log(snapshot)               
             }).catch((err: any)=>{          
                     console.log(" failed to update")
             });
@@ -218,7 +222,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 return;
                 }
                 token = (await Notifications.getExpoPushTokenAsync()).data;
-                console.log(token);
+                // console.log(token);
             } else {
                 alert('Must use physical device for Push Notifications');
             }

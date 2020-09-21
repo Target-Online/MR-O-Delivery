@@ -299,10 +299,10 @@ class PickUp extends React.Component<Props, IState> {
                 </View>
               </View>
             
-              <Text style={{fontSize : 22, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
+              <Text style={styles.pickUpHeading} >
                   {"Pick up & Drop off"}
               </Text>
-              <Text style={{fontSize : 14, fontWeight : "400", color : "rgba(0,0,0,0.5)",alignSelf : "flex-start" }} >
+              <Text style={{fontSize : 12, fontWeight : "400", color : "rgba(0,0,0,0.5)",alignSelf : "flex-start" }} >
                   {"We will pick up documents, goods, electronics,groceries and whatever you need and drop off wherever you want!"}
               </Text>
 
@@ -320,7 +320,7 @@ class PickUp extends React.Component<Props, IState> {
                         this.setState({item })
                        }}
                       placeholder={"Item Name"} 
-                      style={{ fontSize :  14, height: "100%", flex : 1 ,textAlignVertical : "top"}}
+                      style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "center"}}
                     />        
                 </View>
                 <View style={styles.textAreaStyles} >              
@@ -332,7 +332,7 @@ class PickUp extends React.Component<Props, IState> {
                         this.setState({item})
                        }}
                       multiline  
-                     style={{ fontSize :  14, height: "100%", flex : 1 ,textAlignVertical : "top"}} />        
+                     style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "top"}} />        
                 </View>
                 <Btn 
                     disabled={dislabled}
@@ -368,6 +368,12 @@ const styles = StyleSheet.create({
       alignSelf : "flex-start",
       width : 30,height: 30
     },
+    pickUpHeading: {
+      fontSize : 22, fontWeight : "700",
+      color : "rgba(0,0,0,0.8)",
+      alignSelf : "flex-start",
+      marginBottom : 8 
+    },
     addressResultsItem : { 
       height :  54, borderBottomColor : "rgba(0,0,0,0.09)", 
       borderBottomWidth :  0.5, flexDirection : "row",
@@ -384,7 +390,8 @@ const styles = StyleSheet.create({
       textAlignVertical : "center"
     },
     textAreaStyles:{
-      flex : 1, height : 243, borderRadius : 8,paddingVertical: 16,
+      flex : 1, height : 243, 
+      borderRadius : 8,paddingVertical: 16,
       flexDirection : "row",backgroundColor : "rgba(0,0,0,0.035)",
       alignItems:"center" ,borderWidth : 2, borderColor: "#f9f9f9", 
       paddingHorizontal : 16 
@@ -402,10 +409,10 @@ const styles = StyleSheet.create({
       borderRadius: 3, ...shadow,
       backgroundColor :"#fff",alignItems : "center",
       justifyContent : "flex-start", 
-      flexDirection : "row",
-      paddingHorizontal : 24 
+      flexDirection : "row", paddingHorizontal : 24 
     },
-    tabStyle : {backgroundColor : 'white'}
+    tabStyle : { 
+      backgroundColor : 'white'}
   
   })
 

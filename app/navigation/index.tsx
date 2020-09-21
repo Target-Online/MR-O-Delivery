@@ -16,24 +16,22 @@ type IProps =  IContextProps  & { user : any; profile : IUser; }
 const AppNavigator : any = (props: IProps) => {
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [isDriver, setIsUserDriver] = useState<boolean>(false);
-    const {user, currentUser, setCurrentUser , loadingUser ,setUser,login ,profile, register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
+    const {user, currentUser, setCurrentUser , loadingUser ,users }  = props.context;
 
+    const driverCheck = (phoneNumber : string) =>(
+      users.data.find(u =>  u.id == phoneNumber)
+    )
     useEffect(() => {
       const {currentUser,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
       const {phoneNumber} = currentUser || {}
-      console.log({currentUser})
-      const isDriver = false //isUserDriver(phoneNumber)//true
-      setIsUserDriver(isDriver)
-
     }, []);
 
     function renderStack(){
+      const isDriver =  driverCheck(currentUser.phoneNumber)
       return isDriver ? <DriverNavigationStack /> : <NavigationStack />
     }
 
     function renderLoader(){
-
       return (
         <View style={{flex : 1 , width : "100%" , height : "100%", justifyContent : "center"}}>
             <ActivityIndicator size={"large"} color={Colors.primaryOrange}  />
@@ -48,7 +46,6 @@ const AppNavigator : any = (props: IProps) => {
         key={1}
        />,
         loadingUser ? renderLoader() : currentUser  ? renderStack() : <AuthStack  />
-
     ]
     
 }

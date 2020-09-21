@@ -153,7 +153,7 @@ const Home: any = (props: Props) => {
             </View>
             <View>
               <Text style={{ marginBottom: 4, marginTop : 16 }} >Track your order</Text>
-              <View style={styles.inputWrapper}>
+              <View overflow="hidden" style={styles.inputWrapper}>
                 <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={{ flex: 1, height: "100%", paddingHorizontal: 24, paddingVertical: 4 }} />
                 <Btn 
                   onPress={()=> {
