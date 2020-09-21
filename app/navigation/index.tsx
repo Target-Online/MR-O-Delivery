@@ -30,7 +30,7 @@ const AppNavigator : any = (props: IProps) => {
     }, []);
 
     function renderStack(){
-      const isDriver = false //driverCheck(currentUser.phoneNumber)
+      const isDriver = driverCheck(currentUser.phoneNumber)
 
       console.log({isDriver})
       return isDriver ? <DriverNavigationStack isDriver={isDriver} /> : <NavigationStack isDriver={isDriver} />
