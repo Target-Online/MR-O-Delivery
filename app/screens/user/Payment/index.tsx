@@ -85,13 +85,12 @@ class Payment extends Component<IProps> {
 
     renderCashOption(){
         const {context : {profile , order,setOrder}} = this.props
-        const {dropOffAddress , pickUpAddress , items, total}  = order
         const orderTotal = this.getOrderTotal()
         return(
             <View style={{width : "100%", minHeight : 100, justifyContent : "center", alignItems : "center" ,paddingHorizontal : 24}}>
                 <Text style={styles.cashDeliveryNote}> The driver will collect a total of 
-                    <Text style={[styles.cashDeliveryNote, {color : "red"}]}>{` N${orderTotal}`}</Text> on delivery </Text>
-                <Text style={styles.cashDeliveryNote} >Please make sure you make the right change with you</Text>                  
+                    <Text style={[styles.cashDeliveryNote, {color : "red"}]}>{` N${orderTotal}`}</Text> on delivery.</Text>
+                <Text style={styles.cashDeliveryNote} >Please make sure you make the right change with you.</Text>                  
             </View>
         )
     }
@@ -142,7 +141,6 @@ class Payment extends Component<IProps> {
                 }, ()=>{} )
             }
             
-
             else{
                 console.log("No drivers")
                 this.showNoDriversAlert()
@@ -237,7 +235,7 @@ const styles = StyleSheet.create({
         ...shadow ,padding : 24
     },
     cashDeliveryNote :{
-        fontSize : 14,
+        fontSize : 12,
         marginVertical : 4,
         textAlign : "center"
     },

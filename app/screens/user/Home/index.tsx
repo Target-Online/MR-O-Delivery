@@ -23,7 +23,7 @@ const shadow = {
   shadowOpacity: 0.15,
   shadowRadius: 4,
   shadowOffset: {
-    height: 2
+    height: -8
   },
   elevation: 10
 }
@@ -100,12 +100,12 @@ const Home: any = (props: Props) => {
     <SafeAreaView style={{flex : 1 ,  marginTop: Constants.statusBarHeight}} >
       <ScrollView style={{backgroundColor : "#fff", flex : 1 }} >
         <View style={{flex : 1}}>
-          <View style={{height : 200, width : "90%",alignSelf : "center" }}>
+          <View style={{height : 300, width : "90%",alignSelf : "center" }}>
               <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
           </View>
 
           <View style={styles.bottomMain} >
-            <Text style={{ fontSize: 20, fontWeight: "700", color: "#fb9011", alignSelf: "center" }} >
+            <Text style={styles.welcomText} >
               Welcome, {currentUser && (currentUser.displayName + " !!!")}
             </Text>
             <View style={styles.orderOpts} >
@@ -187,8 +187,13 @@ const styles = StyleSheet.create({
     marginVertical: 8, fontWeight: "500", 
     fontSize: 14, color: "#2B3135" 
   },
+  welcomText:{
+    fontSize: 20, fontWeight: "700", 
+    color: "#fb9011",
+    alignSelf: "center" , marginVertical : 24 
+  },
   bottomMain:{
-     paddingTop: 12, backgroundColor: "#fff", 
+     paddingTop: 12, backgroundColor: "#fff",height: "100%", 
      width: "100%", ...shadow, flex : 1,paddingHorizontal : 24,
     alignItems: "center", justifyContent: "space-between", 
     borderTopLeftRadius: 24, borderTopRightRadius: 24 

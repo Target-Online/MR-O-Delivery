@@ -23,7 +23,12 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mro.mrodelivery"
+      "bundleIdentifier": "com.mro.mrodelivery",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      }
     },
     "android": {
       "package": "com.mro.mrodelivery",

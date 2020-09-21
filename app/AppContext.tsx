@@ -12,6 +12,7 @@ import { IUser, IDriver } from "types";
 import moment from "moment";
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
+import { initAudio, notify } from "./api/audioApi";
 export const ContextConsumer = AppContext.Consumer
 
 Notifications.setNotificationHandler({
@@ -47,10 +48,12 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [drivers, setDrivers] = useState<IDriver[]>([]);
         const notificationListener = useRef();
         const responseListener = useRef();
+
         const generateOrderId = (userId : string) => {
             const Id = randomNum() + userId 
             return Id
         }
+
 
         const storeUSer = (user) => {
             console.log(user!==null)
@@ -64,6 +67,7 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         useEffect(() => {
             setLoadingUser(true)
+            
             api.getCollection("users", setUsers);
             api.getCollection("orders", setOrders);
             storeUSer(currentUser)
@@ -84,7 +88,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
                 console.log(response);
             });
-
+            initAudio()
             return () => {
                 Notifications.removeNotificationSubscription(notificationListener);
                 Notifications.removeNotificationSubscription(responseListener);
@@ -93,7 +97,6 @@ const AppContextProvider : React.SFC = ({children}) => {
     
     
         const logout = () => {
-            
             firebase.auth().signOut().then((res: any)=> {
                 setCurrentUser(null) 
             }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
@@ -104,10 +107,8 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const getAllDrivers = () => {
-            firebase.database()
-                .ref(`/users/`)
-                .once('value')
-                .then((snapshot: { val: () => any; }) => {
+            firebase.database().ref(`/users/`)
+                .once('value').then((snapshot: { val: () => any; }) => {
                     let users = snapshot.val() 
                     let drivers = []
                     for (var id in users){
@@ -115,16 +116,10 @@ const AppContextProvider : React.SFC = ({children}) => {
                             const user = users[id]
                             if (user.isDriver){
                                 drivers.push(user)
-                            }                        
-                        }                      
-                    }
-                    
+                            }
+                        }}
                     setDrivers(drivers)                   
-                    }).catch((err: any)=>{
-                        return {
-
-                        }
-                })
+                    }).catch((err: any)=>{return {}})
         }
 
         const isUserDriver = (phoneNumber : string) =>{
@@ -234,42 +229,35 @@ const AppContextProvider : React.SFC = ({children}) => {
                 vibrationPattern: [0, 250, 250, 250],
                 lightColor: '#FF231F7C',
                 });
-            }
-        
+            } 
             return token
 
         }
 
         const updateUserProfile = ( params: {profile : IUser, silentUpdate?: boolean, 
             newUser?: boolean ,onSuccess : () => void , onFailure : () => void }) => {
-
             const {profile , silentUpdate, newUser,onSuccess,onFailure } = params
+            const {phoneNumber} = profile
+            if(newUser){
+                const newRef = firebase.database().ref(`users/`).child(phoneNumber)
+                newRef.set({...profile}).then(()=>{
+                    setProfile(profile)
+                    onSuccess && onSuccess()
+                }).catch(()=>{
+                    onFailure && onFailure()
+                })    
+            }
+            else{
+                firebase.database().ref(`users/${phoneNumber}`).update(profile).then((ref: any)=>{
 
-                const {phoneNumber} = profile
-                // usersRef.doc(email).set(profile)
+                }).catch((err: any) => {
+                })
+            }
 
-                if(newUser){
-                    const newRef = firebase.database().ref(`users/`).child(phoneNumber)
-                    newRef.set({...profile}).then(()=>{
-                        setProfile(profile)
-                        onSuccess && onSuccess()
-                    }).catch(()=>{
-                        onFailure && onFailure()
-                    })
-                  
-                    
-                }
-                else{
-                    firebase.database().ref(`users/${phoneNumber}`).update(profile).then((ref: any)=>{
-
-                    }).catch((err: any) => {
-                    })
-                }
-
-                if(!silentUpdate){
-                    setAlertData({ text: "Your details have been updated" ,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Success",})
-                    setShowAlert(true)
-                }
+            if(!silentUpdate){
+                setAlertData({ text: "Your details have been updated" ,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Success",})
+                setShowAlert(true)
+            }
         }
 
         const register = (values: { email: string; password: string, firstname : string, lastname : string } ) => {
@@ -277,7 +265,6 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.auth().createUserWithEmailAndPassword(values.email,values.password).then((res: any) =>{ 
                 const {firstname , lastname, email} = values
                 updateUserProfile({firstname , lastname, email,profilePicURL : "" },true,true)
-                // setProfile()
             }
             ).catch((err: { userInfo: { NSLocalizedDescription: any; }; }) =>{
                 setAlertData({ text: err.userInfo.NSLocalizedDescription ,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Registration Failed",})
@@ -313,7 +300,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             <AppContext.Provider
                 value={{ 
                     user, showAlert, setShowAlert,updateOrderStatus,
-                    alertBoxData, setAlertData, setUser,sendRequest,
+                    alertBoxData, setAlertData, setUser,sendRequest,notify,
                     login, register, logout, fetchUserProfile,isUserDriver,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,

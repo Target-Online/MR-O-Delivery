@@ -47,22 +47,23 @@ class Home extends React.Component<IProps, IState> {
       this.onChildAdded = database()
         .ref('/orders')
         .on('child_added', snapshot => {
-          const {context : {currentUser :{phoneNumber}, sendPushNotification ,sendRequest}} = this.props
+          const {context : {currentUser :{phoneNumber}, notify ,sendRequest}} = this.props
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
        
           if(status === "pending" && driver && driver.phoneNumber === phoneNumber){ //and I'm the driver
+            notify()
             this.setState({newState : "pending"})
             this.recordNewOrderOfFocus(order, orderId)
           }    
       })
 
       this.state = {
-        isModalVisible : true,
+        isModalVisible : false,
         isOnline : true,
         newState : "pending",
-        order : mockOrder
+        order : null
       }
     }
 
@@ -77,7 +78,6 @@ class Home extends React.Component<IProps, IState> {
     componentWillMount = async () => {
 
       const {context : {profile :{firstname}, user : {_user : {email}} ,fetchUserProfile, getAllDrivers } } = this.props
-      let userFetch = await  fetchUserProfile(email)
       getAllDrivers()
 
     }
@@ -162,12 +162,11 @@ class Home extends React.Component<IProps, IState> {
               {newState === "pending" && <Text style={styles.incomingText}> Incoming Request</Text>}
               {this.renderCustomerCard()}
               {this.renderParcelDetails()}
-              <View style={{ height: 100, backgroundColor : "blue" ,flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
+              <View style={styles.routeSummaryRow}> 
                   <View style={styles.routePath}>
                     <View style={styles.pickupIconOutter} >
                       <View style={styles.pickupIconInner} />
-                    </View>
-                    
+                    </View>              
                     <View style={styles.path} />
                     <View style={{width:8,height:8,alignItems : "center" }} >
                       <LocationIcon width={12} height={12} />
@@ -180,7 +179,7 @@ class Home extends React.Component<IProps, IState> {
                               {pickUpAddress.description}
                           </Text>    
                       </View>
-                      <View style={{height : 1,backgroundColor: "grey", width: "100%",alignSelf : "center"}}></View>
+                      <View style={{height : 1,backgroundColor: "white", width: "100%",alignSelf : "center"}}></View>
                       <View style={styles.textAreaStyles} >
                           <Text style={[styles.addressInput,{fontSize :11, color : "grey"}]} >Drop-Off</Text>
                           <Text numberOfLines={2} style={styles.addressInput} >
@@ -190,7 +189,6 @@ class Home extends React.Component<IProps, IState> {
                   </View>
                 </View>
             </View>
-
             <View style={styles.bottomBtnswrapper}>
               <Btn 
                 onPress={()=> {
@@ -213,6 +211,7 @@ class Home extends React.Component<IProps, IState> {
 
       const {newState, order : {pickUpAddress, dropOffAddress}} = this.state
       const orderCollected = newState === "collected"
+
       return(
       <View style={styles.modalInnerContainer}>
          <View style={styles.newReqContainer}>
@@ -222,16 +221,13 @@ class Home extends React.Component<IProps, IState> {
             !orderCollected ? "On route to collect the parcel" : "Dropping off the parcel "
           } 
           </Text>
-          <View style={{ height: 70, flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
-              
+          <View style={styles.newReqInnerContainer}>        
               <View style={[styles.routePath,{height : 42} ]}>
-                
                 <View style={{width:8,height:8,alignItems : "center" }} >
                   <LocationIcon width={12} height={12} />
                 </View>
               </View>
-              <View style={[styles.addressesWrapper,{height : 42}]}>
-                 
+              <View style={[styles.addressesWrapper,{height : 42}]}>                
                   <View style={styles.textAreaStyles} >
                       <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} > {orderCollected? "Drop-Off" : "Pick-Up"}</Text>
                       <Text numberOfLines={2} style={styles.addressInput} >
@@ -240,24 +236,20 @@ class Home extends React.Component<IProps, IState> {
                   </View>
               </View>
             </View>
-
-        </View>
+          </View>
 
           <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 100,bottom : 64,alignItems : "center" } ]}>
-
-          <Btn style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
-            <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
-          </Btn>
-
-          <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
-            <Text  style={styles.acceptDeclineText} >
-              {orderCollected ? "Confirm Delivery" : "Confirm Collection"}
-            
-            </Text>
-          </Btn>
-
+            <Btn style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
+              <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
+            </Btn>
+            <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} 
+              style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
+              <Text  style={styles.acceptDeclineText} >
+                {orderCollected ? "Confirm Delivery" : "Confirm Collection"}
+              </Text>
+            </Btn>
+          </View>
         </View>
-      </View>
       )
     }
 
@@ -272,10 +264,10 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
-
     renderDeliveredOrder = () =>{
 
-      const {order : {total , paymentMethod}} = this.state
+      const {order : {total , paymentMethod , distance}} = this.state
+      const {context : {updateDriverStatus}} = this.props
 
       return(
       <View style={[styles.modalInnerContainer ]  }>
@@ -288,9 +280,8 @@ class Home extends React.Component<IProps, IState> {
             </Text>
             <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30}]}>Distance Travelled </Text>
             <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4,marginBottom : 16,fontSize : 16, fontWeight : "bold" }]}> 
-              2.5 km
+              {`${distance} km`} 
             </Text>
-            
             {this.renderPaymmentMethod(paymentMethod === "cash")}            
             <View style={styles.addressesWrapper}>               
             </View>
@@ -299,6 +290,7 @@ class Home extends React.Component<IProps, IState> {
 
         <View style={[styles.bottomBtnswrapper,{flexDirection : "column",alignItems : "center" } ]}>
           <Btn onPress={()=>{
+              updateDriverStatus("vacant")
               this.setState({isModalVisible : false})
             }} 
             style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange ,width : 192}]} >
@@ -386,7 +378,7 @@ class Home extends React.Component<IProps, IState> {
                       "You're offline and won't receive any requests"}
                     </Text>
                   </View>
-                  <Btn
+                  {/* <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
                     onPress={async () => {
                       await sendPushNotification()
@@ -394,7 +386,7 @@ class Home extends React.Component<IProps, IState> {
                     }}    
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                    </Btn>
+                  </Btn> */}
               </View>           
             </View>    
       ]
@@ -411,6 +403,17 @@ const randomNum =  Math.floor(Math.random() * Math.floor(100));
 const styles = StyleSheet.create({
     activeTextStyle:{
         color : 'red'
+    },
+    routeSummaryRow :{ 
+      height: 122,flexDirection : "row", 
+      alignItems : "center", justifyContent :"flex-start",
+      paddingVertical : 8 
+    },
+    newReqInnerContainer : { 
+      height: 70, flexDirection : "row", 
+      justifyContent :"flex-start",
+      backgroundColor : "#fff",
+      paddingVertical : 8 
     },
     onOffText:{
       alignSelf : "center",
@@ -454,7 +457,7 @@ const styles = StyleSheet.create({
       alignSelf : "center"
     },
     path : { 
-      width:1,height:24,borderRadius:4,
+      width:1,height:32,borderRadius:4,
       backgroundColor :"rgba(0,0,0,0.5)"
     },
     pickupIconInner : { 
@@ -484,7 +487,7 @@ const styles = StyleSheet.create({
       backgroundColor : "#FEFEFE", 
       alignItems : "center"
     },
-    addressesWrapper : {flex : 1, height : 108, justifyContent : "space-between"},
+    addressesWrapper : {flex : 1, height : 122, justifyContent : "space-evenly"},
     inputWrapper :{ 
       width: "100%" , height : 54 , borderColor : Colors.primaryOrange ,
       borderWidth : 1,borderRadius : 8,justifyContent : "space-between" ,
@@ -510,7 +513,7 @@ const styles = StyleSheet.create({
       fontSize :  10,
     },
     textAreaStyles:{
-      height : 46, borderRadius : 2,
+      height : 56, borderRadius : 2,
       borderWidth : 1, borderColor: "#f9f9f9",paddingVertical:2,
       paddingHorizontal : 12, justifyContent : "center" 
     },

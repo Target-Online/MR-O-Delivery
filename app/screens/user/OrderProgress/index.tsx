@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import { View, Text , TouchableOpacity as Btn, Image, StyleSheet , Linking} from 'react-native'
+import { View, Text , TouchableOpacity as Btn, Image, StyleSheet , Linking, Dimensions} from 'react-native'
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import images from '../../../assets/images'
 import ChatIcon from '../../../assets/icons/ChatIcon'
@@ -9,6 +9,7 @@ import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
+const  { height } = Dimensions.get('window')
 
 const labels = ["Confirmation", "Parcel Collection" ,"On Route","Delivered"]
 
@@ -62,7 +63,7 @@ class Payment extends Component<IProps> {
     render () {
 
         const {context : {sendRequest ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
+        const {dropOffAddress , pickUpAddress , items,status,  driver, orderId}  = order
         const { displayName , vehicleRegistration , phoneNumber , profilePicUrl}  = driver || {} 
         const driverPicURL = profilePicUrl ? {uri : profilePicUrl} : images.headShot
         let currentStep = orderProgress.indexOf(status) 
@@ -76,9 +77,15 @@ class Payment extends Component<IProps> {
                 }}
                 navigation={this.props.navigation}          
             >
-                <View style={{flex : 1}}>
+                <View style={{flex : 1 , }}>
                 <View style={{alignItems : "center"}}>
-                    <View style={{width : "100%", height:  340,}} >
+                    <View style={{width : "100%", height:  340, paddingVertical : 24}} >
+
+                        <View style={{height :  20 ,alignItems : "center"}}>
+                            <Text style={styles.orderTrackHead}> Order Tracking Number : </Text>
+
+                            <Text style={styles.trackingId}> {orderId}</Text>
+                        </View>
                         <View style={{flex: 1 ,paddingHorizontal : 16, paddingTop : 46}}>
                             <StepIndicator
                                 customStyles={customStyles}
@@ -88,16 +95,16 @@ class Payment extends Component<IProps> {
                             />
                              <View style={{ alignItems: 'center',paddingTop : 42 }}>
                                     <ParcelIcon width={80} height={80} />                                    
-                                    {(currentStep === 4) && <Text style={styles.deliveryStep} >Your parcel has been delivered</Text>}
-                                    {(currentStep === 3) && <Text style={styles.deliveryStep} >Your parcel has been collected and trhe driver is on route to drop it off</Text>}
-                                    {(currentStep === 2) && <Text style={styles.deliveryStep} >A driver has accepted your order and is  going to collect your parcel</Text>}
-                                    {(currentStep <= 1) && <Text style={styles.deliveryStep} >Waiting for drivers confirmation of your request</Text>}
+                                    {(currentStep === 3) && <Text style={styles.deliveryStep} >Your parcel has been delivered</Text>}
+                                    {(currentStep === 2) && <Text style={styles.deliveryStep} >Your parcel has been collected and trhe driver is on route to drop it off</Text>}
+                                    {(currentStep === 1) && <Text style={styles.deliveryStep} >A driver has accepted your order and is  going to collect your parcel</Text>}
+                                    {(currentStep < 1) && <Text style={styles.deliveryStep} >Waiting for drivers confirmation of your request</Text>}
                             </View>                        
                         </View>
                     </View>
                 </View>
 
-                <View style={{width : "100%", height : 250 ,backgroundColor : "#F57301",alignItems : "center"}}>
+                <View style={{width : "100%", height : height - 340 ,backgroundColor : "#F57301",alignItems : "center" , flex : 1}}>
                     <View style={{width : "100%" ,backgroundColor :"#000",height: 100, flexDirection : "row",alignItems : "center",paddingHorizontal : 24 }}>
                         <Image source={driverPicURL} style={{width: 46, height : 46, borderRadius : 23}} />
                         <View style={{height : "100%", justifyContent : "center",padding : 16 }}>
@@ -171,6 +178,15 @@ const styles = StyleSheet.create({
     driverName:{
         color : '#fff',
         fontSize : 10,
+    },
+    orderTrackHead : {
+        fontSize : 16,
+        fontWeight : "bold",
+    },
+    trackingId : {
+        height: 26 , borderColor :  "grey", 
+        borderWidth : 1, borderRadius : 3,
+        padding : 4, marginVertical : 8
     },
     deliveryStep :{
         alignItems : "center",
