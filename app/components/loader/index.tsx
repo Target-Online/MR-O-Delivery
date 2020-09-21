@@ -54,13 +54,13 @@ class Loader extends React.Component<Props, IState> {
                 <View style={{width : "100%" ,position:"absolute", bottom : 48 ,height : 180,justifyContent : "space-between", 
                     alignItems : "center", }}>
                   <Text>{text}</Text>
-                  <Btn style={{width : 160 , height : 36, borderColor : '#F57301', borderRadius : 3,
+                  {/* <Btn style={{width : 160 , height : 36, borderColor : '#F57301', borderRadius : 3,
                     justifyContent : "center", alignItems: "center" , borderWidth : 1, alignSelf: "center" }}>
                     <Text style={{fontSize : 12, color : '#F57301'}} > 
                       Cancel 
                     </Text>
  
-                  </Btn>
+                  </Btn> */}
 
                 </View>
           </View>

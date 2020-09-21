@@ -110,6 +110,16 @@ class Payment extends Component<IProps> {
         const orderTotal = 500 + distance * 200
         return Math.round(orderTotal)
     }
+
+    showNoDriversAlert(){
+        const {context : {setAlertData , setShowAlert ,order,setOrder, drivers, users}} = this.props
+        setAlertData({ text: `Looks like all our drivers are busy at the moment`,buttons : [ {label : "Try Again",onPress : ()=>{
+            this.processRequest()
+        }} , {label : "Cancel",onPress : ()=>{}} ],
+        title : "Oops",})
+        setShowAlert(true)
+
+    }
   
     processRequest(){
         if(this.props.context){
@@ -122,17 +132,23 @@ class Payment extends Component<IProps> {
             this.convertLocation(dropOffAddress.geometry.location))
             const orderTotal = this.getOrderTotal()
 
-            console.log({freeDrivers})
-            if (freeDrivers){
+            if (freeDrivers[0]){
                 let myOrder  = {...order, total : orderTotal,distance }
                 const {orderId} = myOrder
                 myOrder.driver = freeDrivers[0]
                 setOrder(myOrder)
                 sendRequest(orderId, myOrder, ()=>{
-                    setTimeout(()=> this.setState({loaderVisible : false}),3000)
                     this.props.navigation.navigate('OrderProgress')
                 }, ()=>{} )
             }
+            
+
+            else{
+                console.log("No drivers")
+                this.showNoDriversAlert()
+            }
+
+            setTimeout(()=> this.setState({loaderVisible : false}),3000)
         }
         
         // setTimeout(()=> this.setState({loaderVisible : false}),3000)
@@ -240,10 +256,10 @@ const styles = StyleSheet.create({
       borderRadius : 2  ,paddingVertical : 0
     },
     addressInput : { 
-      fontSize :  12, 
+      fontSize :  10, 
     },
     textAreaStyles:{
-      flex : 1, height : 32, borderRadius : 2,
+      height : 36, borderRadius : 2,paddingVertical : 4,
       borderWidth : 1, borderColor: "#f9f9f9", 
       paddingHorizontal : 16, justifyContent : "center" 
     },
@@ -290,14 +306,14 @@ export const RouteSummary = (props : IAddressParams) => {
                     </Text>
                 </View>
             </View>}
-            <View style={{height : 60, flexDirection : "row"}}>
+            <View style={{height : 80, flexDirection : "row"}}>
                 <View style={{width:  20,marginRight : 8,justifyContent:"space-between",paddingVertical:10 ,alignItems: "flex-start"}}>
                     <View style={{width:8,height:8,borderRadius:4,backgroundColor :"#000" }} />
                     <View style={{width:1,height:24,marginLeft : 3.5,borderRadius:4,backgroundColor :"rgba(0,0,0,0.5)" }} />
                     <View style={{width:8,height:8,backgroundColor :"#000" }} />
                 </View>
 
-                <View style={{flex:1, height: 70,justifyContent  :"space-between",backgroundColor : "#fff" }}> 
+                <View style={{flex:1, height: 80,justifyContent  :"space-between",backgroundColor : "#fff" }}> 
                     <View style={styles.textAreaStyles} >
                         <Text numberOfLines={2} style={styles.addressInput} >
                             {pickUpAddress.description}

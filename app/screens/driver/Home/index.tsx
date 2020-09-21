@@ -162,7 +162,7 @@ class Home extends React.Component<IProps, IState> {
               {newState === "pending" && <Text style={styles.incomingText}> Incoming Request</Text>}
               {this.renderCustomerCard()}
               {this.renderParcelDetails()}
-              <View style={{ height: 100, flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
+              <View style={{ height: 100, backgroundColor : "blue" ,flexDirection : "row", justifyContent :"flex-start",backgroundColor : "#fff",paddingVertical : 8 }}> 
                   <View style={styles.routePath}>
                     <View style={styles.pickupIconOutter} >
                       <View style={styles.pickupIconInner} />
@@ -345,7 +345,6 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-
       const {context : {currentUser :{displayName}, sendPushNotification ,sendRequest}} = this.props
       const {isOnline} = this.state
 
@@ -370,40 +369,33 @@ class Home extends React.Component<IProps, IState> {
                   {displayName}
                 </Text>
                 </View>
-              </ImageBackground>
+            </ImageBackground>
           
-            <View style={{ padding : 24, backgroundColor : "#fff",width : "100%", height : "65%", ...shadow , alignItems : "center",justifyContent : "center", position : "absolute", bottom : 0, borderTopLeftRadius : 24, borderTopRightRadius: 24}} >
-                
+            <View style={{ padding : 24, backgroundColor : "#fff",width : "100%", height : "65%", ...shadow , alignItems : "center",justifyContent : "center", position : "absolute", bottom : 0, borderTopLeftRadius : 24, borderTopRightRadius: 24}} >              
                   <View style={{flexDirection : "row", justifyContent: "flex-end",width : "100%" , alignItems : "center" ,paddingHorizontal : 24 ,position: "absolute",top :24}} >
                     <Text style={{fontSize : 16, fontWeight : "bold",marginRight : 16 }} >
                      {isOnline ? "Online" : "Offline"}
                     </Text>
-                   <View style={{marginHorizontal: 8}} />
+                    <View style={{marginHorizontal: 8}} />
                     <Switch onValueChange={this.toggleOnline} value={isOnline} style={{width : 24,  }} />
                   </View>
-
                   <View style={{width : "100%",height : 78,alignItems : "center"}}> 
-
                     {isOnline ? <OnlineIcon /> : <OfflineIcon />}
                     <Text style={styles.onOffText}>
                       {isOnline ? "Currently accepting requests" :
                       "You're offline and won't receive any requests"}
                     </Text>
-
                   </View>
                   <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
-         
                     onPress={async () => {
                       await sendPushNotification()
                       sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{} )
-                    }}
-                         
+                    }}    
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
                     </Btn>
-              </View>  
-              
+              </View>           
             </View>    
       ]
     }
@@ -426,7 +418,8 @@ const styles = StyleSheet.create({
       marginVertical : 4,
     },
     serviceDescriptionText: {
-      marginVertical :  8,textAlign  :"center", fontSize : 12 , color : "#878787" 
+      marginVertical :  8,textAlign  :"center",
+      fontSize : 12 , color : "#878787" 
     },
     acceptDeclineText : {
       fontSize : 14,
@@ -442,7 +435,6 @@ const styles = StyleSheet.create({
     customerHeader : {
       fontSize : 11,
       color : "#878787",
-
     },
     paymentMethod : { 
       borderWidth : 1.25 , borderColor : "green", 
@@ -451,7 +443,7 @@ const styles = StyleSheet.create({
       justifyContent : "center" 
     },
     newReqContainer : {
-      width : "100%" , minHeight : 360, maxHeight : 500,
+      width : "100%" , minHeight : 380, maxHeight : 500,
       borderRadius : 3, backgroundColor : "#fff",
       paddingTop: 12, paddingHorizontal : 24
     },
@@ -477,7 +469,7 @@ const styles = StyleSheet.create({
       borderColor :"#000" 
     },
     routePath : {
-       width:  14,marginRight : 8,
+      width:  14,marginRight : 8,
       justifyContent:"space-between",
       paddingVertical:10 ,
       alignItems: "center"
@@ -492,7 +484,7 @@ const styles = StyleSheet.create({
       backgroundColor : "#FEFEFE", 
       alignItems : "center"
     },
-    addressesWrapper : {flex : 1, height : 100, justifyContent : "space-between"},
+    addressesWrapper : {flex : 1, height : 108, justifyContent : "space-between"},
     inputWrapper :{ 
       width: "100%" , height : 54 , borderColor : Colors.primaryOrange ,
       borderWidth : 1,borderRadius : 8,justifyContent : "space-between" ,
@@ -518,7 +510,7 @@ const styles = StyleSheet.create({
       fontSize :  10,
     },
     textAreaStyles:{
-       height : 46, borderRadius : 2,
+      height : 46, borderRadius : 2,
       borderWidth : 1, borderColor: "#f9f9f9",paddingVertical:2,
       paddingHorizontal : 12, justifyContent : "center" 
     },

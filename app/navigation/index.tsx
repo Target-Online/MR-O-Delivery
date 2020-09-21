@@ -18,7 +18,6 @@ const AppNavigator : any = (props: IProps) => {
     const {user, currentUser, setCurrentUser , loadingUser ,users }  = props.context;
 
     const driverCheck = (phoneNumber : string) =>{
-      console.log("checking", phoneNumber)
       let res = users.data.find(u =>  u.id == phoneNumber && u.isDriver)
       return !_.isEmpty(res)
 
@@ -30,7 +29,7 @@ const AppNavigator : any = (props: IProps) => {
     }, []);
 
     function renderStack(){
-      const isDriver = true //driverCheck(currentUser.phoneNumber)
+      const isDriver = false //driverCheck(currentUser.phoneNumber)
 
       console.log({isDriver})
       return isDriver ? <DriverNavigationStack isDriver={isDriver} /> : <NavigationStack isDriver={isDriver} />
