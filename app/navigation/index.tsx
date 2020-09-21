@@ -5,6 +5,8 @@ import Login from '../screens/login/Login'
 import NavigationStack  from './UserNavigationStack'
 import DriverNavigationStack  from './DriverNavigationStack'
 import { IUser, withAppContext, IContextProps } from '../AppContext'
+import _ from 'lodash'
+
 
 const AuthStack = () => <Login />
 
@@ -15,9 +17,11 @@ const AppNavigator : any = (props: IProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const {user, currentUser, setCurrentUser , loadingUser ,users }  = props.context;
 
-    const driverCheck = (phoneNumber : string) =>(
-      users.data.find(u =>  u.id == phoneNumber)
-    )
+    const driverCheck = (phoneNumber : string) =>{
+      let res = users.data.find(u =>  u.id == phoneNumber)
+      return !_.isEmpty(res)
+
+    }
 
     useEffect(() => {
       const {currentUser,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context;
@@ -26,7 +30,7 @@ const AppNavigator : any = (props: IProps) => {
 
     function renderStack(){
       const isDriver =  driverCheck(currentUser.phoneNumber)
-      return isDriver ? <DriverNavigationStack isDriver={isDriver!==null} /> : <NavigationStack isDriver={isDriver!==null} />
+      return isDriver ? <DriverNavigationStack isDriver={isDriver} /> : <NavigationStack isDriver={isDriver} />
     }
 
     function renderLoader(){
