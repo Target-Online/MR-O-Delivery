@@ -156,10 +156,11 @@ const Home: any = (props: Props) => {
               <View overflow="hidden" style={styles.inputWrapper}>
                 <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={{ flex: 1, height: "100%", paddingHorizontal: 24, paddingVertical: 4 }} />
                 <Btn 
+                  disabled={!orderNumber}
                   onPress={()=> {
-                    processTrackOrder()
+                    orderNumber && processTrackOrder()
                   }}
-                  style={[styles.btnStyle, { width: 64, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
+                  style={[styles.btnStyle, { width: 64, opacity : orderNumber ? 1 : 0.8, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
                   {loading ? <Bubbles size={"large"} style={{width : 24, height : 24}} color={Colors.primaryOrange} /> :
                     <Icon size={24} style={{ fontSize: 34, color: "#fff" }} name="arrow-right" />
                   }
