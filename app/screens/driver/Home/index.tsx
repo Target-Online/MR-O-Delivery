@@ -17,6 +17,7 @@ import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
 import { add } from 'react-native-reanimated';
+import { notify } from 'api/audioApi';
 
 const shadow =  {
     shadowColor: '#000000',
@@ -76,10 +77,8 @@ class Home extends React.Component<IProps, IState> {
     }
 
     componentWillMount = async () => {
-
       const {context : {profile :{firstname}, user : {_user : {email}} ,fetchUserProfile, getAllDrivers } } = this.props
       getAllDrivers()
-
     }
 
     setMyOrder = (theOrder : IOrder) => {
@@ -111,7 +110,7 @@ class Home extends React.Component<IProps, IState> {
     renderCustomerCard = () => {
 
       const {context : {order}} = this.props
-      const { customer , items} = order || {}
+      const { customer , distance, items} = order || {}
       const {displayName , firstname} = customer || {}
       const profilePicURL = ""
       const cardSource = profilePicURL || images.headShot
@@ -123,7 +122,7 @@ class Home extends React.Component<IProps, IState> {
           <View style={{height : "100%",width : "100%",justifyContent : "center"}}>
      
               <Text style={styles.customerHeader} >{displayName || firstname}</Text>
-              <Text style={styles.customerHeader} >2.5 km 
+              <Text style={styles.customerHeader} >{`${distance} km`}  
               <Text style={[styles.activeTextStyle,{marginLeft : 16}]} > Payment</Text>
               </Text>
 
@@ -337,7 +336,7 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-      const {context : {currentUser :{displayName}, sendPushNotification ,sendRequest}} = this.props
+      const {context : {currentUser :{displayName}, notify,sendPushNotification ,sendRequest}} = this.props
       const {isOnline} = this.state
 
       return [
@@ -378,15 +377,18 @@ class Home extends React.Component<IProps, IState> {
                       "You're offline and won't receive any requests"}
                     </Text>
                   </View>
-                  {/* <Btn
+                  <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
                     onPress={async () => {
-                      await sendPushNotification()
+                      
                       sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{} )
+                      await notify()
+                      await sendPushNotification()
+                      
                     }}    
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                  </Btn> */}
+                  </Btn>
               </View>           
             </View>    
       ]

@@ -6,7 +6,8 @@ import Profile from '../screens/user/Profile'
 import PickUp from '../screens/user/PickUp'
 import OrderProgress from '../screens/user/OrderProgress'
 import { BottomMenu } from '../components'
-import OrderHistory from '../screens/driver/OrderScreen'
+import OrderHistory from '../screens/user/OrderScreen/History'
+import OrderDetails from '../screens/user/OrderScreen/Details'
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from '@react-navigation/native'
@@ -33,6 +34,7 @@ function RNApp(props) {
       <Tab.Navigator tabBar={(props) => <BottomMenu  {...props} />} >
         <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="Receipts" component={OrderHistory} />
+        <Tab.Screen name="OrderDetails" component={OrderDetails} />
       </Tab.Navigator>
     </NavigationContainer>
   );

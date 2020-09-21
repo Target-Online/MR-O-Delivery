@@ -21,8 +21,9 @@ export const notify = async () => {
     try {
         const { sound: soundObject, status } = await Audio.Sound.createAsync(
           require('../assets/audio/notif_tone.mp3'),
-          { shouldPlay: true, volume : 1, }, null
+          { shouldPlay: true, volume : 1, }
         );
+        console.log("playing ")
         // Your sound is playing!
       } catch (error) {
         // An error occurred!

@@ -2,20 +2,28 @@ import React, { Component } from 'react'
 // import PropTypes from 'prop-types';
 import { Dimensions, TouchableOpacity, View } from 'react-native'
 import * as Animatable from 'react-native-animatable'
-
+import { withAppContext, IAppContext, IOrder, mockOrder } from '../../AppContext';
 import Images from '../../assets/images'
 import Icons from '../../assets/icons'
-import { Image, Text } from '..'
+import { Text } from '..'
 import { Colors, Fonts, Metrics }from '../../constants'
 import { iPhoneLarge } from '../../utils/screenSize'
 import styles from './BottomMenuStyle'
 import { useNavigationState, StackActions } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack/lib/typescript/src/types';
 const activeFont =  iPhoneLarge ? Fonts.captionBold : Fonts.tinyBold
 const inactiveFont = iPhoneLarge ? Fonts.caption : Fonts.tiny
 
-class BottomMenu extends Component {
 
-  _nav (navString){
+type IProps = IAppContext & StackNavigationProp;
+
+interface IState {
+  currentNav?: string;
+}
+
+class BottomMenu extends Component<IProps, IState> {
+
+  _nav (navString: any){
     this.props.navigation.navigate(navString) 
     // if (["Home","Profile","Receipts"].includes(navString)) {
     //   this.props.navigation.dispatch(StackActions.pop(2))
@@ -23,7 +31,7 @@ class BottomMenu extends Component {
     this.setState({currentNav: navString}) 
   }
 
-  bottomButton (inactiveIcon, activeIcon , navString) {
+  bottomButton (inactiveIcon: {} | null | undefined, activeIcon: {} | null | undefined , navString: string) {
     
     const { navigation } = this.props
     const state = navigation.dangerouslyGetState()
@@ -48,11 +56,10 @@ class BottomMenu extends Component {
   }
 
   render () {  
-    const { isDriver } = this.props
-    console.log({isDriver})
+    const {context : {currentUser :{phoneNumber}, driverCheck,sendPushNotification ,sendRequest}} = this.props
+    const isDriver = driverCheck(phoneNumber)
     return (
       <View  style={styles.container}>
-
         {this.bottomButton(<Icons.HomeIcon fill={Colors.overlayDark20}/>,<Icons.HomeIcon fill={Colors.primaryOrange}/>,'Home')}
         {this.bottomButton(<Icons.ReceiptIcon fill={Colors.overlayDark20}/>,<Icons.ReceiptIcon fill={Colors.primaryOrange}/>, 'Receipts')}
         { !isDriver && this.bottomButton(<Icons.ProfileIcon fill={Colors.overlayDark20}/>,<Icons.ProfileIcon fill={Colors.primaryOrange}/>, 'Profile')}            
@@ -61,4 +68,4 @@ class BottomMenu extends Component {
   }
 }
 
-export default (BottomMenu)
+export default withAppContext(BottomMenu)

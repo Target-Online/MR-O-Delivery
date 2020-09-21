@@ -284,6 +284,11 @@ const AppContextProvider : React.SFC = ({children}) => {
             })
         }
 
+        const driverCheck = (phoneNumber : string) =>{
+            let res = users.data.find(u =>  u.id == phoneNumber && u.isDriver)
+            return !_.isEmpty(res)
+        }
+
         const login = (values: { email: string; password: string, firstname : string }) => {
 
             firebase.auth().signInWithEmailAndPassword(values.email, values.password).then((res: any) => {
@@ -299,7 +304,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         return (
             <AppContext.Provider
                 value={{ 
-                    user, showAlert, setShowAlert,updateOrderStatus,
+                    user, showAlert, setShowAlert,updateOrderStatus,driverCheck,
                     alertBoxData, setAlertData, setUser,sendRequest,notify,
                     login, register, logout, fetchUserProfile,isUserDriver,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
@@ -418,6 +423,6 @@ export const mockOrder =  {
     },
     "status" : "pending",
     "paymentMethod" : "cash",
-    "distance" : "22 km",
+    "distance" : "22",
     "total" : 1250
   }
