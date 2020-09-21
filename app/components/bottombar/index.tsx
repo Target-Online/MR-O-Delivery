@@ -49,6 +49,7 @@ class BottomMenu extends Component {
 
   render () {  
     const { isDriver } = this.props
+    console.log({isDriver})
     return (
       <View  style={styles.container}>
 

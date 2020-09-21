@@ -40,7 +40,7 @@ const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const {logout , setAlertData, setShowAlert, profile : {firstname}} = props.context
-  const [orderNumber, setOrderNumber] = useState('57');
+  const [orderNumber, setOrderNumber] = useState('');
   const [currentUser] = useContext(CurrentUserContext);
 
   useEffect(() => {
