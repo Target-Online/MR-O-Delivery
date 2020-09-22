@@ -17,7 +17,6 @@ import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
 import { add } from 'react-native-reanimated';
-import { notify } from 'api/audioApi';
 
 const shadow =  {
     shadowColor: '#000000',
@@ -54,7 +53,7 @@ class Home extends React.Component<IProps, IState> {
           const {status , driver} = order
        
           if(status === "pending" && driver && driver.phoneNumber === phoneNumber){ //and I'm the driver
-            notify()
+            // notify()
             this.setState({newState : "pending"})
             this.recordNewOrderOfFocus(order, orderId)
           }    
@@ -110,7 +109,7 @@ class Home extends React.Component<IProps, IState> {
     renderCustomerCard = () => {
 
       const {context : {order}} = this.props
-      const { customer , distance, items} = order || {}
+      const { customer , distance,paymentMethod ,items} = order || {}
       const {displayName , firstname} = customer || {}
       const profilePicURL = ""
       const cardSource = profilePicURL || images.headShot
@@ -118,13 +117,13 @@ class Home extends React.Component<IProps, IState> {
         <View style={{borderBottomWidth : 0.75 , borderBottomColor : Colors.overlayDark10,flexDirection : "row" , height : 74, alignItems : "center", width: "100%"}} >  
           <View style={{width : 40, height : 40, borderRadius : 20, backgroundColor : Colors.overlayDark10 ,marginRight: 12}} >
             <RnImg style={{width : "100%", height : "100%"}} source={cardSource} />
-            </View>
+          </View>
           <View style={{height : "100%",width : "100%",justifyContent : "center"}}>
      
-              <Text style={styles.customerHeader} >{displayName || firstname}</Text>
-              <Text style={styles.customerHeader} >{`${distance} km`}  
-              <Text style={[styles.activeTextStyle,{marginLeft : 16}]} > Payment</Text>
-              </Text>
+            <Text style={styles.customerHeader} >{displayName || firstname}</Text>
+            <Text style={styles.customerHeader} >{`${distance} km`}  
+              <Text style={[styles.activeTextStyle,{marginLeft : 16}]} >{`${paymentMethod} Payment`}</Text>
+            </Text>
 
           </View>
         </View>
@@ -377,16 +376,16 @@ class Home extends React.Component<IProps, IState> {
                       "You're offline and won't receive any requests"}
                     </Text>
                   </View>
-                  {/* <Btn
+                  <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
-                    onPress={async () => {
-                      sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{} )
-                      await notify()
+                    onPress={ async () => {
+                      sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{})
+                      // await notify()
                       await sendPushNotification()                     
                     }}    
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                  </Btn> */}
+                  </Btn>
               </View>           
             </View>    
       ]

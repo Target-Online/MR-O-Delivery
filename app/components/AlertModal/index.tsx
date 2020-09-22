@@ -1,10 +1,11 @@
-import { NativeBase, Picker } from 'native-base';
 import * as React from 'react';
-import { PickerItemProps, TextStyle,TouchableHighlight, View, Modal, Text, StyleProp, ViewStyle, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/EvilIcons'
+import { PickerItemProps, TextStyle,TouchableHighlight, View, Modal, Text, StyleProp, ViewStyle, StyleSheet, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from "react-native-animatable"
 import { Colors } from '../../constants';
-import { IAppContextProps, AppContext, withAppContext } from '../../AppContext';
+import {  withAppContext } from '../../AppContext';
+import { IContextProps } from 'types';
+const { width } = Dimensions.get('window')
 interface IBtn {
     label : string;
     onPress : () =>void
@@ -17,7 +18,7 @@ export interface IAlertProps {
   children?: React.ReactNode ;
 }
 
-type IProps = IAlertProps & {  context : IAppContextProps}
+type IProps = IAlertProps & IContextProps
 const AlertModal  : React.SFC<IProps>  = (props) => {
 
         const {user,setUser,login , register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context
@@ -26,12 +27,12 @@ const AlertModal  : React.SFC<IProps>  = (props) => {
 
         const hideAlert = () => { setShowAlert(false)}
 
+        console.log({showAlert})
         return (
             <Modal 
                 visible={showAlert}
                 transparent
                 animationType="fade"
-                animated
             >
                 <View style={styles.wrapper}>
                     <Animatable.View duration={300} easing="ease-in" animation="fadeIn" style={styles.dialogContainer} >
@@ -40,8 +41,8 @@ const AlertModal  : React.SFC<IProps>  = (props) => {
                             onPress={()=> setShowAlert(false)}
                             style={styles.closeIcon}                        
                         >
-                            <Icon  name="close" style={{fontSize : 24}} />
-
+                            <Ionicons  name="md-close-circle-outline" style={{fontSize : 24}} />
+                            
                         </TouchableHighlight>
                         <Text style={[styles.btnText,styles.title]}>
                             {title}
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
         alignSelf : "center",alignItems : "center",justifyContent : "center"
     },
     dialogContainer : { 
-        width : 300,height : 300 ,
+        width : width*0.9 ,height : 300 ,
         backgroundColor : "#fff" , borderRadius : 6,
         justifyContent : "center",
         padding : 16

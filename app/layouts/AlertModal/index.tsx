@@ -4,7 +4,8 @@ import { PickerItemProps, TextStyle,TouchableHighlight, View, Modal, Text, Style
 import Icon from 'react-native-vector-icons/EvilIcons'
 import * as Animatable from "react-native-animatable"
 import { Colors } from '../../constants';
-import { IAppContextProps, AppContext, withAppContext } from '../../AppContext';
+import {  AppContext, withAppContext } from '../../AppContext';
+import { IContextProps } from 'types';
 interface IBtn {
     label : string;
     onPress : () =>void
@@ -17,7 +18,7 @@ export interface IAlertProps {
   children?: React.ReactNode ;
 }
 
-type IProps = IAlertProps & {  context : IAppContextProps}
+type IProps = IAlertProps &  IContextProps
 const AlertModal  : React.SFC<IProps>  = (props) => {
 
         const {user,setUser,login , register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context

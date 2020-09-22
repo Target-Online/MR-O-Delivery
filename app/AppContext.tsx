@@ -8,13 +8,17 @@ export const AppContext = createContext({});
 import * as api from "./api/index";
 import * as rootReducer from "./utils/rootReducer";
 import { IOrder } from "screens/user/PickUp";
-import { IUser, IDriver } from "types";
+import { IUser, IDriver, IAppContext } from "types";
 import moment from "moment";
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
-import { initAudio, notify } from "./api/audioApi";
-export const ContextConsumer = AppContext.Consumer
+import { initAudio } from "./api/audioApi";
+import { Audio } from 'expo-av'
 
+export const ContextConsumer = AppContext.Consumer
+export type IContextProps = {
+    context : IAppContext
+}
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -34,7 +38,7 @@ const initalState = {
 const AppContextProvider : React.SFC = ({children}) => {
 
         const [user, setUser] = useState(null);
-        const [loading, setLoading] = useState<boolean>(false);
+        const [sound, setSound] = useState()
         const [profile, setProfile] = useState<IUser>({});
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
@@ -48,12 +52,12 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [drivers, setDrivers] = useState<IDriver[]>([]);
         const notificationListener = useRef();
         const responseListener = useRef();
+        const soundObject = new Audio.Sound();
 
         const generateOrderId = (userId : string) => {
             const Id = randomNum() + userId 
             return Id
         }
-
 
         const storeUSer = (user) => {
             console.log(user!==null)
@@ -66,18 +70,30 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         useEffect(() => {
+
+            // async function initSound() {
+            //     try {
+            //         await soundObject.loadAsync(require('./assets/audio/notif_tone.mp3')); 
+            //       } catch (error) { // An error occurred!
+            //     }
+            // }
+
+            // async function disableSound() {
+            //     try {
+            //         await soundObject.unloadAsync();
+            //       } catch (error) { // An error occurred!
+            //     }
+            // }
+
+            // initSound()
             setLoadingUser(true)
-            
             api.getCollection("users", setUsers);
             api.getCollection("orders", setOrders);
             storeUSer(currentUser)
             firebase.auth().onAuthStateChanged((user: any) => {
-                console.log("auth state")
                 storeUSer(user)           
                 setTimeout(()=> {setLoadingUser(false)}, 3000)           
             })
-
-            
             registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -88,13 +104,17 @@ const AppContextProvider : React.SFC = ({children}) => {
             responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
                 console.log(response);
             });
-            initAudio()
+
             return () => {
                 Notifications.removeNotificationSubscription(notificationListener);
                 Notifications.removeNotificationSubscription(responseListener);
+                // disableSound()
             };
-          }, []);
-    
+          }, [])
+
+        // const notify = async () => {
+        //     await soundObject.playAsync()
+        // }
     
         const logout = () => {
             firebase.auth().signOut().then((res: any)=> {
@@ -102,8 +122,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
                 console.error(err)
                 Alert.alert("Error", err.userInfo.NSLocalizedDescription, [ {text : "Ok",onPress : ()=>{}} ])
-            })
-            
+            }) 
         }
 
         const getAllDrivers = () => {
@@ -305,7 +324,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             <AppContext.Provider
                 value={{ 
                     user, showAlert, setShowAlert,updateOrderStatus,driverCheck,
-                    alertBoxData, setAlertData, setUser,sendRequest,notify,
+                    alertBoxData, setAlertData, setUser,sendRequest,
                     login, register, logout, fetchUserProfile,isUserDriver,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,

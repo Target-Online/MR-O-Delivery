@@ -53,7 +53,7 @@ class Payment extends Component<IProps> {
     renderLoader(){
         const {loaderVisible} = this.state
         return(
-            <Loader visible={loaderVisible} button={{text : "Cancel" , onPress :()=>{}}} text={"Requesting a driver"} />
+            <Loader visible={loaderVisible === true} button={{text : "Cancel" , onPress :()=>{}}} text={"Requesting a driver"} />
     )}
 
     renderCardOption(){
@@ -103,26 +103,25 @@ class Payment extends Component<IProps> {
     getOrderTotal = () => {
         const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items, total}  = order
-        const freeDrivers = drivers.filter((driver: { isActive: any }) =>  driver.isActive)
         const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
         this.convertLocation(dropOffAddress.geometry.location))
         const orderTotal = 500 + distance * 200
         return Math.round(orderTotal)
     }
 
-    showNoDriversAlert(){
-        const {context : {setAlertData , setShowAlert ,order,setOrder, drivers, users}} = this.props
-        setAlertData({ text: `Looks like all our drivers are busy at the moment`,buttons : [ {label : "Try Again",onPress : ()=>{
-            this.processRequest()
-        }} , {label : "Cancel",onPress : ()=>{}} ],
-        title : "Oops",})
+    showNoDriversAlert = () => {
+        const {context : {setAlertData , setShowAlert}} = this.props
+        setAlertData({
+            text: "Looks like all our drivers are busy at the moment",
+            buttons : [  {label : "Try Again",onPress : () => { }} , {label : "Cancel",onPress : ()=>{}} ],
+            title : "Oops",})
         setShowAlert(true)
-
     }
   
-    processRequest(){
+    processRequest = () => {
+        // this.showNoDriversAlert()
         if(this.props.context){
-            const {context : {sendRequest , order,setOrder, drivers, users}} = this.props
+            const {context : {sendRequest , order,setOrder, users}} = this.props
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
 
@@ -137,20 +136,18 @@ class Payment extends Component<IProps> {
                 myOrder.driver = freeDrivers[0]
                 setOrder(myOrder)
                 sendRequest(orderId, myOrder, ()=>{
-                    this.props.navigation.navigate('OrderProgress')
+                    setTimeout(()=> {
+                        this.setState({loaderVisible : false})
+                        this.props.navigation.navigate('OrderProgress')
+                    },2000)
                 }, ()=>{} )
             }
             
             else{
-                console.log("No drivers")
-                this.showNoDriversAlert()
+                setTimeout(()=>{ this.setState({loaderVisible : false})},1000) 
+                setTimeout(()=>{ this.showNoDriversAlert() },2000) 
             }
-
-            setTimeout(()=> this.setState({loaderVisible : false}),3000)
         }
-        
-        // setTimeout(()=> this.setState({loaderVisible : false}),3000)
-       
     }
 
     convertLocation = (location : {lat: string, lng:string}) =>(
@@ -168,8 +165,7 @@ class Payment extends Component<IProps> {
       const {context : {profile , order,setOrder}} = this.props
       const {dropOffAddress , pickUpAddress , items, total}  = order
       const {name , description } = items[0]
-      const orderTotal = this.getOrderTotal()
-      
+  
       return ( 
         <BackScreen
             title="Payment"
