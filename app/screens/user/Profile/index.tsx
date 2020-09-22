@@ -36,7 +36,7 @@ class Logout extends Component<Props> {
 
     renderUserDetails = () => {
       const { context } = this.props
-      const {logout ,setAlertData,setShowAlert,profile : {firstname}} = context
+      const {logout ,setAlertData,setShowAlert,currentUser : {displayName}} = context
 
       return(
         <ImageBackground source={images.homeBg} style={{width : "100%", height : 112, flexDirection :"row",alignItems : "center"}}>
@@ -54,8 +54,8 @@ class Logout extends Component<Props> {
                     </View>
               </Btn>
 
-            <RnText style={{fontSize : 20, fontWeight : "700", color : "#fff",marginLeft : 16 }} >
-                {firstname}
+            <RnText style={{fontSize : 14, fontWeight : "700", color : "#fff",marginLeft : 16 }} >
+                {displayName}
             </RnText>
             </View>
         </ImageBackground>

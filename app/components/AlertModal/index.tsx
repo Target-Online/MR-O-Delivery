@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
         width : width*0.9 ,height : 300 ,
         backgroundColor : "#fff" , borderRadius : 6,
         justifyContent : "center",
-        padding : 16
+        padding : 16,
     },
     title : {
         fontSize : 16,fontWeight: "700",
