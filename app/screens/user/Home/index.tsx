@@ -97,8 +97,8 @@ const Home: any = (props: Props) => {
 
   return [
     renderNewUserModal(),
-    <SafeAreaView style={{flex : 1 ,  marginTop: Constants.statusBarHeight}} >
-      <ScrollView style={{backgroundColor : "#fff", flex : 1 }} >
+    <SafeAreaView style={{flex : 1 ,backgroundColor : "#fff", marginTop: Constants.statusBarHeight,paddingBottom : 24  }} >
+      <ScrollView style={{backgroundColor : "#fff", flex : 1,}} >
         <View style={{flex : 1}}>
           <View style={{height : 300, width : "90%",alignSelf : "center" }}>
               <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
