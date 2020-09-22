@@ -376,7 +376,7 @@ class Home extends React.Component<IProps, IState> {
                       "You're offline and won't receive any requests"}
                     </Text>
                   </View>
-                  <Btn
+                  {/* <Btn
                     style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
                     onPress={ async () => {
                       sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{})
@@ -385,7 +385,7 @@ class Home extends React.Component<IProps, IState> {
                     }}    
                   >
                       <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                  </Btn>
+                  </Btn> */}
               </View>           
             </View>    
       ]
