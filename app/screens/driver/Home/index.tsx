@@ -13,6 +13,7 @@ import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import OnlineIcon from '../../../assets/icons/OnlineIcon'
 import OfflineIcon from '../../../assets/icons/OfflineIcon'
 import LocationIcon from '../../../assets/icons/LocationIcon';
+import DriverConfirmIcon from '../../../assets/icons/DriverConfirmIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
@@ -51,9 +52,10 @@ class Home extends React.Component<IProps, IState> {
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
-       
+
+          console.log("new order ", order.status)
+
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
-            // notify()
             this.setState({newState : "pending"})
             await sendPushNotification()
             this.recordNewOrderOfFocus(order, orderId)
@@ -123,7 +125,7 @@ class Home extends React.Component<IProps, IState> {
      
             <Text style={styles.customerHeader} >{displayName || firstname}</Text>
             <Text style={styles.customerHeader} >{`${distance} km`}  
-              <Text style={[styles.activeTextStyle,{marginLeft : 32}]} >{` ${paymentMethod} Payment`}</Text>
+              <Text style={[styles.activeTextStyle,{marginLeft : 32}]} >{` ${paymentMethod || "Cash"} Payment`}</Text>
             </Text>
 
           </View>
@@ -149,12 +151,12 @@ class Home extends React.Component<IProps, IState> {
 
 
 
-    _handlePressDirections = (target: { geometry: { location: any; }; postalCode: any; city: any; }) => {
+    _handlePressDirections = (target: { geometry: { location: any; }; postalCode: any; city: any; }, addressLabel : string) => {
       let { geometry : {location}, postalCode, city } = target;
       const {lat,lng} = location
       const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
       const latLng = `${lat},${lng}`;
-      const label = 'Custom Label';
+      const label = addressLabel || "Destination";
       const url = Platform.select({
         ios: `${scheme}${label}@${latLng}`,
         android: `${scheme}${latLng}(${label})`
@@ -170,7 +172,7 @@ class Home extends React.Component<IProps, IState> {
         // } else {
         //   Linking.openURL(`http://maps.google.com/?daddr=${daddr}`);
         // }
-      }
+    }
 
 
     renderNewRequestDecision = () => {
@@ -265,7 +267,7 @@ class Home extends React.Component<IProps, IState> {
 
           <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 100,bottom : 64,alignItems : "center" } ]}>
             <Btn
-              onPress={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress)}
+              onPress={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress , orderCollected ? "Delivery Address" : "Collection Address")}
              style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
               <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
             </Btn>
@@ -295,21 +297,25 @@ class Home extends React.Component<IProps, IState> {
 
       const {order : {total , paymentMethod , distance}} = this.state
       const {context : {updateDriverStatus}} = this.props
+      // const {total , paymentMethod , distance} = {total : 1000 , paymentMethod  : "cash", distance : 2}
 
       return(
       <View style={[styles.modalInnerContainer ]  }>
-        <View style={[styles.newReqContainer, {height : 400}]}>
+        <View style={[styles.newReqContainer, {height : 430}]}>
           {this.renderCustomerCard()}
-          <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 36 }}>  
-           <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30}]} >Amount due </Text>
-            <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 16, fontWeight : "bold" }]} >
+          <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 24 }}>
+
+          <DriverConfirmIcon/>
+          <Text style={{alignSelf : "center"}}> Trip Complete </Text> 
+           <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30 ,fontSize : 12}]} >Amount due </Text>
+            <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 11, fontWeight : "bold" }]} >
                {`N${total}`}
             </Text>
-            <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30}]}>Distance Travelled </Text>
-            <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4,marginBottom : 16,fontSize : 16, fontWeight : "bold" }]}> 
+            <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30, fontSize :12}]}>Distance Travelled </Text>
+            <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4,marginBottom : 16,fontSize : 11, fontWeight : "bold" }]}> 
               {`${distance} km`} 
             </Text>
-            {this.renderPaymmentMethod(paymentMethod === "cash")}            
+            {this.renderPaymmentMethod(paymentMethod == "cash")}            
             <View style={styles.addressesWrapper}>               
             </View>
           </View>
@@ -446,7 +452,8 @@ const styles = StyleSheet.create({
     onOffText:{
       alignSelf : "center",
       textAlign : "center",
-      marginVertical : 4,
+      color : "#878787",
+      marginVertical : 8,
     },
     serviceDescriptionText: {
       marginVertical :  8,textAlign  :"center",

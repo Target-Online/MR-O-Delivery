@@ -1,6 +1,7 @@
 import React, { Component} from 'react'
 import { View, Text , TouchableOpacity as Btn, Image, StyleSheet , Linking, Dimensions} from 'react-native'
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
+import ParcelDelivered from '../../../assets/icons/ParcelDelivered'
 import images from '../../../assets/images'
 import ChatIcon from '../../../assets/icons/ChatIcon'
 import CallIcon from '../../../assets/icons/CallIcon'
@@ -78,12 +79,11 @@ class Payment extends Component<IProps> {
                 navigation={this.props.navigation}          
             >
                 <View style={{flex : 1 , }}>
-                <View style={{alignItems : "center"}}>
-                    <View style={{width : "100%", height:  340, paddingVertical : 24}} >
+                <View style={{alignItems : "center", backgroundColor : "white"}}>
+                    <View style={{width : "100%", minHeight:  340, maxHeight: 400, flex : 1, paddingVertical : 24}} >
 
                         <View style={{height :  20 ,alignItems : "center"}}>
                             <Text style={styles.orderTrackHead}> Order Tracking Number : </Text>
-
                             <Text style={styles.trackingId}> {orderId}</Text>
                         </View>
                         <View style={{flex: 1 ,paddingHorizontal : 16, paddingTop : 46}}>
@@ -94,7 +94,7 @@ class Payment extends Component<IProps> {
                                 stepCount={4}
                             />
                              <View style={{ alignItems: 'center',paddingTop : 42 }}>
-                                    <ParcelIcon width={80} height={80} />                                    
+                                    {(currentStep > 2 ) ? <ParcelDelivered /> : <ParcelIcon width={80} height={80} /> }                                
                                     {(currentStep === 3) && <Text style={styles.deliveryStep} >Your parcel has been delivered</Text>}
                                     {(currentStep === 2) && <Text style={styles.deliveryStep} >Your parcel has been collected and trhe driver is on route to drop it off</Text>}
                                     {(currentStep === 1) && <Text style={styles.deliveryStep} >A driver has accepted your order and is  going to collect your parcel</Text>}
