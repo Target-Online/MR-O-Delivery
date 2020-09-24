@@ -120,8 +120,10 @@ class Payment extends Component<IProps> {
   
     processRequest = () => {
         // this.showNoDriversAlert()
+
         if(this.props.context){
             const {context : {sendRequest , order,setOrder, users}} = this.props
+            const {paymentMethod} = this.state
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
 
@@ -131,10 +133,12 @@ class Payment extends Component<IProps> {
             const orderTotal = this.getOrderTotal()
 
             if (freeDrivers[0]){
-                let myOrder  = {...order, total : orderTotal,distance }
+                let myOrder  = {...order, total : orderTotal,distance,paymentMethod }
                 const {orderId} = myOrder
                 myOrder.driver = freeDrivers[0]
                 setOrder(myOrder)
+
+                console.log({myOrder})
                 sendRequest(orderId, myOrder, ()=>{
                     setTimeout(()=> {
                         this.setState({loaderVisible : false})
@@ -145,7 +149,7 @@ class Payment extends Component<IProps> {
             
             else{
                 setTimeout(()=>{ this.setState({loaderVisible : false})},1000) 
-                setTimeout(()=>{ this.showNoDriversAlert() },2000) 
+                setTimeout(()=>{ this.showNoDriversAlert() },1000) 
             }
         }
     }

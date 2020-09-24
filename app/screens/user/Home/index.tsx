@@ -181,7 +181,8 @@ const styles = StyleSheet.create({
     color: 'red'
   },
   serviceDescriptionText: {
-    marginVertical: 4, textAlign: "center", fontSize: 11, color: "#878787"
+    marginVertical: 4, textAlign: "center",
+    fontSize: 11, color: "#878787"
   },
   requestType: { 
     marginVertical: 8, fontWeight: "500", 

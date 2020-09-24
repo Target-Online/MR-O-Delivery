@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   Modal,StyleSheet,TouchableOpacity as Btn,View,Image as RnImg,
-  Text,StatusBar, Dimensions, ImageBackground, TextInput} from 'react-native';
+  Text,StatusBar, Dimensions, ImageBackground, Linking, Platform} from 'react-native';
 import { Container,Button, Header, Tab, Tabs, Switch } from 'native-base'
 import images from '../../../assets/images'
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
@@ -46,15 +46,16 @@ class Home extends React.Component<IProps, IState> {
       super(props)
       this.onChildAdded = database()
         .ref('/orders')
-        .on('child_added', snapshot => {
-          const {context : {currentUser :{phoneNumber}, notify ,sendRequest}} = this.props
+        .on('child_added', async snapshot => {
+          const {context : {currentUser :{phoneNumber}, notify ,sendRequest , sendPushNotification}} = this.props
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
        
-          if(status === "pending" && driver && driver.phoneNumber === phoneNumber){ //and I'm the driver
+          if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
             // notify()
             this.setState({newState : "pending"})
+            await sendPushNotification()
             this.recordNewOrderOfFocus(order, orderId)
           }    
       })
@@ -122,7 +123,7 @@ class Home extends React.Component<IProps, IState> {
      
             <Text style={styles.customerHeader} >{displayName || firstname}</Text>
             <Text style={styles.customerHeader} >{`${distance} km`}  
-              <Text style={[styles.activeTextStyle,{marginLeft : 16}]} >{`${paymentMethod} Payment`}</Text>
+              <Text style={[styles.activeTextStyle,{marginLeft : 32}]} >{` ${paymentMethod} Payment`}</Text>
             </Text>
 
           </View>
@@ -145,6 +146,32 @@ class Home extends React.Component<IProps, IState> {
         </View>
       )
     }
+
+
+
+    _handlePressDirections = (target: { geometry: { location: any; }; postalCode: any; city: any; }) => {
+      let { geometry : {location}, postalCode, city } = target;
+      const {lat,lng} = location
+      const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
+      const latLng = `${lat},${lng}`;
+      const label = 'Custom Label';
+      const url = Platform.select({
+        ios: `${scheme}${label}@${latLng}`,
+        android: `${scheme}${latLng}(${label})`
+      }) || ""
+
+
+      Linking.openURL(url); 
+      console.log({target})
+      // let daddr = encodeURIComponent(`${address} ${postalCode}, ${city}`);
+  
+        // if (Platform.OS === 'ios') {
+        //   Linking.openURL(`http://maps.apple.com/?daddr=${daddr}`);
+        // } else {
+        //   Linking.openURL(`http://maps.google.com/?daddr=${daddr}`);
+        // }
+      }
+
 
     renderNewRequestDecision = () => {
 
@@ -237,7 +264,9 @@ class Home extends React.Component<IProps, IState> {
           </View>
 
           <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 100,bottom : 64,alignItems : "center" } ]}>
-            <Btn style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
+            <Btn
+              onPress={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress)}
+             style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
               <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
             </Btn>
             <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} 

@@ -253,7 +253,7 @@ class PickUp extends React.Component<Props, IState> {
       }
       else{
         const {context : {profile ,setOrder,currentUser,generateOrderId}} = this.props
-        const {phoneNumber} = currentUser
+        const {phoneNumber, displayName} = currentUser
         const orderId = generateOrderId(phoneNumber)
 
         const newOrder : IOrder = {
@@ -266,7 +266,7 @@ class PickUp extends React.Component<Props, IState> {
               name,
               description
             }],
-            customer : profile,
+            customer : {phoneNumber,displayName},
             total : 1250,
             status : "pending"
             
@@ -342,11 +342,9 @@ class PickUp extends React.Component<Props, IState> {
                       style={{width : "100%", height : 42 , opacity : dislabled ? 0.6 : 1,  borderRadius : 4, marginTop : 12,
                       backgroundColor : "#F57301",alignItems : "center", justifyContent : "center" 
                       }}>
-
                     <Text style={{fontSize :  13 ,color : "#fff" , fontWeight : "600"}}>
                       Continue
                     </Text>
-
                 </Btn>
               </View>
             </View>  

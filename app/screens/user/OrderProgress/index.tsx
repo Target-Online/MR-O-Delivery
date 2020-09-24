@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
       borderRadius : 2  ,paddingVertical : 0
     },
     addressInput : { 
-      fontSize :  12, 
+      fontSize :  10, 
     },
     textAreaStyles:{
       flex : 1, height : 32, borderRadius : 2,
