@@ -34,6 +34,7 @@ import fullScreenSplash from './splash/mrO.png'
 import bike from './home/motorcycle.png'
 import orderSchedule from './home/list.png'
 import headShot from './generic/headShot.png'
+import userPlaceholder from './user.png';
 
 export default {
   bike,
@@ -69,5 +70,6 @@ export default {
   whiteStar,
   brochure,
   DeliveryGuy,
-  banner
+  banner,
+  userPlaceholder
 }
