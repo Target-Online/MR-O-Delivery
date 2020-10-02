@@ -7,7 +7,7 @@ import { Block, Text, theme } from 'galio-framework';
 import { Images } from '../../constants';
 import { HeaderHeight } from '../../constants/utils';
 
-import PhoneSignin from './PhoneSignIn';
+import PhoneSignin from './OTPScreen';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -41,9 +41,8 @@ export default class Onboarding extends React.Component {
               <Image
                 source={Images.TargetOnlineLogo}
                 style={{
-                  height: 50,
-                  width: 50,
-                  marginLeft: theme.SIZES.BASE
+                  height: 40,
+                  width: 60,
                 }}
               />
             </Block>

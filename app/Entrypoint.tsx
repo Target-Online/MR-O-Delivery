@@ -20,12 +20,7 @@ class App extends React.Component<IProps>{
   async componentDidMount(){
     const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context
     this.setState({loading : true})
-    //fetch drivers and all
-
-
-
     this.setState({loading : false})
-
   }
 
   renderInitialLoading = () => {
@@ -40,13 +35,11 @@ class App extends React.Component<IProps>{
   render(){
     const { loading } = this.state 
     const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context
-    // setShowAlert(true)
+    
     return(
       <View style={{flex : 1}}>
         <AlertModal/>
-        {loading ? this.renderInitialLoading() : 
-        <Navigator />
-        }
+        {loading ? this.renderInitialLoading() : <Navigator />}
       </View>
     )
   }

@@ -56,13 +56,12 @@ class BottomMenu extends Component<IProps, IState> {
   }
 
   render () {  
-    const {context : {currentUser :{phoneNumber}, driverCheck,sendPushNotification ,sendRequest}} = this.props
-    const isDriver = driverCheck(phoneNumber)
+
     return (
       <View  style={styles.container}>
         {this.bottomButton(<Icons.HomeIcon fill={Colors.overlayDark20}/>,<Icons.HomeIcon fill={Colors.primaryOrange}/>,'Home')}
         {this.bottomButton(<Icons.ReceiptIcon fill={Colors.overlayDark20}/>,<Icons.ReceiptIcon fill={Colors.primaryOrange}/>, 'Receipts')}
-        { !isDriver && this.bottomButton(<Icons.ProfileIcon fill={Colors.overlayDark20}/>,<Icons.ProfileIcon fill={Colors.primaryOrange}/>, 'Profile')}            
+        {this.bottomButton(<Icons.ProfileIcon fill={Colors.overlayDark20}/>,<Icons.ProfileIcon fill={Colors.primaryOrange}/>, 'Profile')}            
       </View>
     )
   }
