@@ -16,8 +16,6 @@ const OTPScreen = (props: any) => {
   const recaptchaVerifier = useRef(null);
   const {verificationId, setVerificationId, phoneNumber} = props.context
   const [verificationCode, setVerificationCode] = useState<string>("");
-
-
   const numberConfirmed = (id : string) => {
     setVerificationId(id)
   }
