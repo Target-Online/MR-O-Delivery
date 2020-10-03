@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 function AuthStack() {
   return (
     <NavigationContainer>
-      <Stack.Navigator headerMode="none"  initialRouteName={"OTPScreen"} >
+      <Stack.Navigator headerMode="none"  initialRouteName={"PhoneNumberCapture"} >
         <Stack.Screen name="OTPScreen" component={OTPScreen} />
         <Stack.Screen name="PhoneNumberCapture" component={PhoneNumberCapture} />
       </Stack.Navigator>
