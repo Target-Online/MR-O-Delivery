@@ -36,7 +36,7 @@ const AppNavigator : any = (props: IProps) => {
         hidden = {false}
         key={1}
        />,
-        loadingUser ? renderLoader() : currentUser && false ? renderStack() : <AuthStack  />
+        loadingUser ? renderLoader() : currentUser ? renderStack() : <AuthStack  />
     ]
     
 }
