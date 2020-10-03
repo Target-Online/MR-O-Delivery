@@ -15,12 +15,13 @@ type StringNo = string | number
 const PhoneSignIn = (props: any) => {
   const recaptchaVerifier = useRef(null);
   const [phoneNumber, setPhoneNumber] = useState<StringNo>("");
-  const [verificationId, setVerificationId] = useState<string>("");
-  const [verificationCode, setVerificationCode] = useState<string>("");
+  const [verificationId, _setVerificationId] = useState<string>("");
+  const {setVerificationId} = props.context
 
   const numberConfirmed = (id : string) => {
     setPhoneNumber("")
     props.navigation.navigate("OTPScreen")
+    _setVerificationId(id)
     setVerificationId(id)
   }
 
@@ -35,8 +36,8 @@ const PhoneSignIn = (props: any) => {
           firebaseConfig={firebaseConfig}
         />
         <Image resizeMode="contain" source={Images.MROLogo} style={{ width: 100, height: 64}} />
-        <Text style={{marginTop : 42,marginBottom :16 , fontSize : 12, color : "rgba(0,0,0,0.65)"}}>
-          {!verificationId ? phoneText : (codeText+phoneNumber)}
+        <Text style={styles.promptText}>
+          {phoneText}
         </Text>
         <View style={{paddingHorizontal : 24, width : "100%"}}>
           <TextInput
@@ -55,18 +56,6 @@ const PhoneSignIn = (props: any) => {
         >
           {!verificationId ? "Submit" : "Confirm Code"}
         </Button>
-
-        {/* <View style={{flexDirection : "row", marginVertical : 16}}>
-          <Text>
-            {"Did not receive SMS ?"} 
-          </Text>
-          <TouchableOpacity onPress={()=>{
-              
-          }}
-          >
-            <Text style={styles.resendOTPText}>{" Resend OTP"}</Text>
-          </TouchableOpacity>      
-        </View> */}
       </KeyboardAvoidingView>
       </SafeAreaView>
   );
@@ -75,11 +64,15 @@ const PhoneSignIn = (props: any) => {
 export default  withAppContext(PhoneSignIn)
 
 const phoneText = "Please enter your mobile number to proceed."
-const codeText = "Please enter the verfication code that was sent by SMS to "
+
 const styles = StyleSheet.create({
   button: {
     marginTop: theme.SIZES.BASE,
     width: width - theme.SIZES.BASE * 7,
+  },
+  promptText :{ 
+    marginTop : 42,marginBottom :16 , 
+    fontSize : 12, color : "rgba(0,0,0,0.65)"
   },
   resendOTPText : {
     color : Colors.primaryOrange,

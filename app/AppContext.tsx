@@ -52,6 +52,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [drivers, setDrivers] = useState<IDriver[]>([]);
         const notificationListener = useRef();
         const responseListener = useRef();
+        const [verificationId, setVerificationId] = useState<string>("");
         const soundObject = new Audio.Sound();
 
         const generateOrderId = (userId : string) => {
@@ -329,7 +330,8 @@ const AppContextProvider : React.SFC = ({children}) => {
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
-                    orders, setOrders, toggleDriverAvailability,sendPushNotification
+                    orders, setOrders, toggleDriverAvailability, sendPushNotification,
+                    verificationId, setVerificationId
                 }}
             >
                 {children}

@@ -7,84 +7,102 @@ import { Button,TextInput } from '../../components';
 import PhoneIcon from  '../../assets/icons/PhoneIcon'
 import { firebaseConfig, verifyPhoneNumber, signInWithCredential } from '../../api/authApi'
 import { withAppContext } from "../../AppContext";
-
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('screen');
 type StringNo = string | number
 
-const PhoneSignIn = (props: any) => {
+const OTPScreen = (props: any) => {
   const recaptchaVerifier = useRef(null);
-  const [phoneNumber, setPhoneNumber] = useState<StringNo>("");
-  const [verificationId, setVerificationId] = useState<string>("");
+  const {verificationId, setVerificationId, phoneNumber} = props.context
   const [verificationCode, setVerificationCode] = useState<string>("");
 
+
   const numberConfirmed = (id : string) => {
-    setPhoneNumber("")
     setVerificationId(id)
   }
 
   return (
     <SafeAreaView style={{flex :1}}>
     <View style={styles.curvedLoginWrapper} >
-      <Text style={{color : "white" , fontSize : 18, fontWeight : "500"}} >{verificationId ? "Confirm OTP" :  "Login"} </Text>
+        <TouchableOpacity 
+          onPress={()=>{
+            props.navigation.canGoBack() && props.navigation.goBack()
+          }} 
+          style={styles.backButton}
+        >
+          <Ionicons name="md-arrow-round-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.title} >{"Confirm OTP"} </Text>
+      <TouchableOpacity  style={styles.backButton} />
     </View>
     <KeyboardAvoidingView style={styles.mainWrapper}>
-      <FirebaseRecaptchaVerifierModal
-        ref={recaptchaVerifier}
-        firebaseConfig={firebaseConfig}
-      />
-        <Image source={Images.MROLogo} style={{ width: 250, height: 124}} />
-        <Text style={{marginTop : 42,marginBottom :16}}>
-          {!verificationId ? phoneText : (codeText+phoneNumber)}
+        <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebaseConfig}
+        />
+        <Image resizeMode="contain" source={Images.MROLogo} style={{ width: 100, height: 64}} />
+        <Text style={styles.promptText}>
+          {(codeText+phoneNumber)}
         </Text>
         <View style={{paddingHorizontal : 24, width : "100%"}}>
-        <TextInput
-          keyboardType="phone-pad"
-          onBlur={() => {}}
-          label={!verificationId ? "+234..." : "Verification code"}
-          onChangeText={(value) => !verificationId ? setPhoneNumber(value) : setVerificationCode(value)}
-          value={!verificationId ? phoneNumber.toString() : verificationCode.toString() }
-        />
+          <TextInput
+            keyboardType="phone-pad"
+            onBlur={() => {}}
+            label={"Enter OTP..."}
+            onChangeText={(value) => setVerificationCode(value)}
+            value={verificationCode.toString()}
+          />
         </View>
 
         <Button
           textStyle={{ fontFamily: 'montserrat-regular', fontSize: 12 }}
           style={styles.button}
-          onPress={() => !verificationId ? verifyPhoneNumber(phoneNumber, recaptchaVerifier, numberConfirmed) : signInWithCredential(verificationId, verificationCode, props.navigation)}
+          onPress={() => signInWithCredential(verificationId, verificationCode, props.navigation)}
         >
-          {!verificationId ? "Submit" : "Confirm Code"}
+          {"Confirm Code"}
         </Button>
 
         <View style={{flexDirection : "row", marginVertical : 16}}>
           <Text>
             {"Did not receive SMS ?"} 
           </Text>
-          <TouchableOpacity onPress={()=>{
-              
-          }}
+          <TouchableOpacity onPress={()=>{  
+             verifyPhoneNumber(phoneNumber, recaptchaVerifier, numberConfirmed)}
+            }
           >
             <Text style={styles.resendOTPText}>{" Resend OTP"}</Text>
           </TouchableOpacity>      
         </View>
-
       </KeyboardAvoidingView>
       </SafeAreaView>
   );
 }
 
-export default  withAppContext(PhoneSignIn)
+export default  withAppContext(OTPScreen)
 
-const phoneText = "Please enter your mobile number to proceed."
 const codeText = "Please enter the verfication code that was sent by SMS to "
 const styles = StyleSheet.create({
   button: {
     marginTop: theme.SIZES.BASE,
     width: width - theme.SIZES.BASE * 7,
   },
+  promptText :{ 
+    marginTop : 42,marginBottom :16 , 
+    fontSize : 12, color : "rgba(0,0,0,0.65)"
+  },
+  title: {
+    color : "white" , fontSize : 18,
+    fontWeight : "500"
+  },
   resendOTPText : {
     color : Colors.primaryOrange,
     fontSize : 14,
     fontWeight :"bold"
+  },
+  backButton : {
+    width : 36,
+    height : 36,
   },
   mainWrapper : { 
     paddingHorizontal: 24, paddingTop: 62, 
@@ -95,8 +113,8 @@ const styles = StyleSheet.create({
   },
   curvedLoginWrapper : {
     backgroundColor : Colors.primaryOrange ,
-    height : 300,width : "100%",
-    position : "absolute", top : 0,
-    alignItems : "center",paddingTop : 62
+    height : 300,width : "100%",flexDirection:"row",justifyContent : "space-between",
+    position : "absolute", top : 0,paddingHorizontal : 24,
+    alignItems : "flex-start",paddingTop : 62
   }
 })
