@@ -11,6 +11,7 @@ import { Block, Text, theme, Icon } from "galio-framework";
 import MapView, { Marker } from 'react-native-maps';
 
 import nowTheme from "../../../constants/Theme";
+import * as images from '../../../assets/images';
 
 const TripDetails = (props: any) => {
     const order = props.route.params.order;
@@ -29,8 +30,8 @@ const TripDetails = (props: any) => {
                         color='green'
                         style={{ paddingRight: 0 }}
                     />
-                    <Text size={14} color="#525F7F">{order.pickUpAddress.address}</Text>
-                    <Text size={14} color="#525F7F">{moment(order.packagePickupAt).format('HH:ss')}</Text>
+                    <Text size={14} color="#525F7F">{order.pickUpAddress && order.pickUpAddress.description.substring(0, 50)}</Text>
+                    <Text size={14} color="#525F7F">{moment(order.collectedAt).format('HH:ss')}</Text>
                 </Block>
             </Block>
             <Block style={styles.rows}>
@@ -41,11 +42,12 @@ const TripDetails = (props: any) => {
                         color='red'
                         style={{ paddingRight: 1, transform: [{ rotate: '180deg' }] }}
                     />
-                    <Text size={14} color="#525F7F">{order.dropOffAddress.address}</Text>
-                    <Text size={14} color="#525F7F">{moment(order.orderCompletedAt).format('HH:ss')}</Text>
+                    <Text size={14} color="#525F7F">{order.dropOffAddress && order.dropOffAddress.description.substring(0, 50)}</Text>
+                    <Text size={14} color="#525F7F">{moment(order.deliveredAt).format('HH:ss')}</Text>
                 </Block>
             </Block>
             <View style={styles.mapContainer}>
+                {order.pickUpAddress &&
                 <MapView
                     ref={mapRef}
                     region={{
@@ -64,19 +66,20 @@ const TripDetails = (props: any) => {
                         description={order.dropOffAddress.address}
                         identifier={'drop-off'}
                     />
+                    {order.pickUpAddress && 
                     <Marker
                         coordinate={order.pickUpAddress.location}
                         title={order.pickUpAddress.address}
                         description={order.pickUpAddress.address}
                         pinColor={'green'}
                         identifier={'pick-up'}
-                    />
-                </MapView>
+                    />}
+                </MapView>}
             </View>
             {order.driver &&
             <Block style={styles.rows}>
                 <Block row middle space="between" style={{ paddingTop: 7 }}>
-                    <Image source={{ uri: order.driver.profilePicUrl }} style={styles.pic} />
+                    <Image source={order.driver.profilePicUrl ? { uri: order.driver.profilePicUrl} : images.default.userPlaceholder } style={styles.pic} />
                     <View>
                         <View style={styles.nameContainer}>
                             <Text style={styles.nameTxt} numberOfLines={1} ellipsizeMode="tail">{order.driver.displayName}</Text>

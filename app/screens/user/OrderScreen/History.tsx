@@ -10,14 +10,15 @@ import {
   RefreshControl
 } from 'react-native';
 
-import { OrdersContext } from "../../../Store";
+import { CurrentUserContext, OrdersContext } from "../../../Store";
 import images from '../../../assets/images'
 import orders from "./testData";
 
 const OrderHistory = (props: any) => {
-  //const [orders] = useContext(OrdersContext);
-  //console.log("orders", orders)
+  const [orders] = useContext<any>(OrdersContext);
+  const [currentUser] = useContext<any>(CurrentUserContext)
 
+  const data = orders.data.filter((o: any) => o.customer && o.customer.id == currentUser.id)
 
   return (
     <View style={styles.container}>
@@ -25,10 +26,10 @@ const OrderHistory = (props: any) => {
         <FlatList
           refreshControl={<RefreshControl
             colors={["orange", "#689F38"]}
-            refreshing={false} 
+            refreshing={orders.inProgress} 
           />}
           style={styles.eventList}
-          data={orders.reverse()}
+          data={data.reverse()}
           keyExtractor={(item: any) => {
             return item.id;
           }}
@@ -44,9 +45,9 @@ const OrderHistory = (props: any) => {
                     <Text style={styles.eventDateTime}>{moment(item.createdAt).format('DD MMM YYYY HH:ss')}</Text>
                     <View style={styles.tripDetails}>
                       <Text style={styles.description}>{item.orderType}</Text>
-                      <Text style={styles.description}>N{item.total}</Text>
+                      <Text style={styles.description}>{item.total && `N${item.total}`}</Text>
                     </View>
-                    <Text style={styles.destination}>{item.dropOffAddress.address}</Text>
+                    <Text style={styles.destination}>{item.dropOffAddress && item.dropOffAddress.description}</Text>
                   </View>
                 </View>
               </TouchableOpacity>
