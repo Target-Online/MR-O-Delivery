@@ -48,7 +48,7 @@ class Home extends React.Component<IProps, IState> {
       this.onChildAdded = database()
         .ref('/orders')
         .on('child_added', async snapshot => {
-          const {context : {currentUser :{phoneNumber}, notify ,sendRequest , sendPushNotification}} = this.props
+          const {context : {currentUser :{phoneNumber}, notify ,playSound , sendPushNotification}} = this.props
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
@@ -57,6 +57,7 @@ class Home extends React.Component<IProps, IState> {
 
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
             this.setState({newState : "pending"})
+            playSound()
             await sendPushNotification()
             this.recordNewOrderOfFocus(order, orderId)
           }    

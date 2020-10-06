@@ -26,15 +26,6 @@ export const verifyPhoneNumber = async (phoneNumber: any, recaptchaVerifier: any
   }
 }
 
-// export  const resendVerificationCode = (phoneNumber : string,token : string) => {
-// PhoneAuthProvider.getInstance().verifyPhoneNumber(
-// phoneNumber,        // Phone number to verify
-// 60,                 // Timeout duration
-// TimeUnit.SECONDS,   // Unit of timeout
-// this,               // Activity (for callback binding)
-// mCallbacks,         // OnVerificationStateChangedCallbacks
-// token);             // ForceResendingToken from callbacks
-// }
 
 export const signInWithCredential = async (verificationId: string, verificationCode: string, navigation: any) => {
   try {
@@ -44,7 +35,7 @@ export const signInWithCredential = async (verificationId: string, verificationC
     );
     await firebase.auth().signInWithCredential(credential);
     onSuccess("Phone authentication successful 👍");
-    navigation.navigate('Home')
+    // navigation.navigate('Home')
   } catch (err) {
     onError(err.message);
     console.log("Sign In Erro", err.message)

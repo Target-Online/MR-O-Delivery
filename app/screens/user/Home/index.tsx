@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { Modal, StyleSheet, ActivityIndicator as Bubbles,ScrollView, TouchableOpacity as Btn, View, Image as RnImg,
-  Text, StatusBar, Dimensions, ImageBackground, TextInput , SafeAreaView 
+  Text, Dimensions, ImageBackground, TextInput , SafeAreaView 
 } from 'react-native';
 import images from '../../../assets/images'
 import Icon from 'react-native-vector-icons/EvilIcons'
@@ -10,7 +10,7 @@ import BikeIcon from '../../../assets/icons/BikeIcon';
 import { Colors } from '../../../constants';
 import _ from "lodash"
 import { withAppContext, IContextProps } from '../../../AppContext';
-import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import ProfileLoad from '../Auth/ProfileLoad';
 import { CurrentUserContext } from '../../../Store';
 import firebase from 'firebase'
@@ -32,16 +32,13 @@ interface IProps { title?: string; }
 
 type Props = IProps & IContextProps & StackScreenProps<IProps>;
 
-interface IState {
-  isModalVisible: boolean;
-  authType: string;
-}
+
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {logout , setAlertData, setShowAlert, profile : {firstname}} = props.context
+  const { setAlertData, setShowAlert, currentUser,playSound, sendPushNotification } = props.context
   const [orderNumber, setOrderNumber] = useState('');
-  const [currentUser] = useContext(CurrentUserContext);
+  // const [currentUser] = useContext(CurrentUserContext);
 
   useEffect(() => {
     const userNull = _.isEmpty(currentUser)
@@ -97,11 +94,11 @@ const Home: any = (props: Props) => {
 
   return [
     renderNewUserModal(),
-    <SafeAreaView style={{flex : 1 ,backgroundColor : "#fff", marginTop: Constants.statusBarHeight,paddingBottom : 24  }} >
+    <SafeAreaView style={styles.mainWrapper} >
       <ScrollView style={{backgroundColor : "#fff", flex : 1,}} >
         <View style={{flex : 1}}>
           <View style={{height : 300, width : "90%",alignSelf : "center" }}>
-              <ImageBackground source={props.route.name == "Home" ? images.banner : images.homeBg} resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
+              <ImageBackground source={ images.banner } resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
           </View>
 
           <View style={styles.bottomMain} >
@@ -151,14 +148,15 @@ const Home: any = (props: Props) => {
                 </View>
               </Btn>
             </View>
-            <View>
-              <Text style={{ marginBottom: 4, marginTop : 16 }} >Track your order</Text>
+            <View style={styles.trackOrderWrapper}>
+              <Text style={styles.trackOrderTitle} >Track your order</Text>
               <View overflow="hidden" style={styles.inputWrapper}>
-                <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={{ flex: 1, height: "100%", paddingHorizontal: 24, paddingVertical: 4 }} />
+                <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={styles.trackOrderInput} />
                 <Btn 
-                  disabled={!orderNumber}
-                  onPress={()=> {
-                    orderNumber && processTrackOrder()
+                  //disabled={!orderNumber}
+                  onPress={() =>  {
+                    playSound() //orderNumber && processTrackOrder()
+                    sendPushNotification().then().catch()
                   }}
                   style={[styles.btnStyle, { width: 64, opacity : orderNumber ? 1 : 0.8, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
                   {loading ? <Bubbles size={"large"} style={{width : 24, height : 24}} color={Colors.primaryOrange} /> :
@@ -179,6 +177,22 @@ export default withAppContext(Home)
 const styles = StyleSheet.create({
   activeTextStyle: {
     color: 'red'
+  },
+  trackOrderTitle : { 
+    marginBottom: 4, marginTop : 24 
+  },
+  trackOrderInput : { 
+    flex: 1, height: "100%", 
+    paddingHorizontal: 24, 
+    paddingVertical: 4 
+  },
+  trackOrderWrapper:{
+    paddingHorizontal :12
+  },
+  mainWrapper: {
+    flex : 1 ,backgroundColor : "#fff",
+    marginTop: Constants.statusBarHeight,
+    paddingBottom : 24  
   },
   serviceDescriptionText: {
     marginVertical: 4, textAlign: "center",

@@ -14,6 +14,8 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import { initAudio } from "./api/audioApi";
 import { Audio } from 'expo-av'
+import Constants from "expo-constants";
+
 
 export const ContextConsumer = AppContext.Consumer
 export type IContextProps = {
@@ -69,24 +71,44 @@ const AppContextProvider : React.SFC = ({children}) => {
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
             }
         }
+        async function initSound() {
+            try {
+
+                console.log(" we loaded sound")
+                await soundObject.loadAsync(require('./assets/audio/notif_tone.mp3')); 
+              } catch (error) { // An error occurred!
+            }
+        }
+
+
+        const playSound = async () => {
+            console.log("ateempting to play")
+            try{
+                await initSound()
+                soundObject.playAsync().then(()=>{
+                    console.log(" this is then")
+                    setTimeout(()=> { 
+                        soundObject.pauseAsync() 
+                        disableSound()
+                    }, 7000) 
+                })
+            }catch(e){
+
+            }
+     
+        }
+
+        async function disableSound() {
+            try {
+                await soundObject.unloadAsync();
+              } catch (error) { // An error occurred!
+            }
+        }
 
         useEffect(() => {
 
-            // async function initSound() {
-            //     try {
-            //         await soundObject.loadAsync(require('./assets/audio/notif_tone.mp3')); 
-            //       } catch (error) { // An error occurred!
-            //     }
-            // }
-
-            // async function disableSound() {
-            //     try {
-            //         await soundObject.unloadAsync();
-            //       } catch (error) { // An error occurred!
-            //     }
-            // }
-
-            // initSound()
+            initAudio()
+            initSound()
             setLoadingUser(true)
             api.getCollection("users", setUsers);
             api.getCollection("orders", setOrders);
@@ -95,7 +117,10 @@ const AppContextProvider : React.SFC = ({children}) => {
                 storeUSer(user)           
                 setTimeout(()=> {setLoadingUser(false)}, 3000)           
             })
-            registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+            registerForPushNotificationsAsync().then(token => {
+                console.log("Notification set")
+                setExpoPushToken(token)
+            });
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 //setNotification(notification);
@@ -213,13 +238,10 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         async function sendPushNotification() {
-            await Notifications.scheduleNotificationAsync({
-                content: {
+            await Notifications.presentNotificationAsync({
                     title: "New incoming request",
                     body: '',
-                    data: { data: 'goes here' }
-                },
-                trigger: { seconds: 2 }
+                    // data: { data: 'goes here' }
             })
         }
           
@@ -331,7 +353,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
                     orders, setOrders, toggleDriverAvailability, sendPushNotification,
-                    verificationId, setVerificationId
+                    verificationId, setVerificationId, playSound
                 }}
             >
                 {children}

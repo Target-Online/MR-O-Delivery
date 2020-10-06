@@ -21,13 +21,11 @@ export interface IAlertProps {
 type IProps = IAlertProps & IContextProps
 const AlertModal  : React.SFC<IProps>  = (props) => {
 
-        const {user,setUser,login , register, setAlertData, alertBoxData, setShowAlert,showAlert }  = props.context
+        const {alertBoxData, setShowAlert,showAlert }  = props.context
         const {text,title,buttons}  = alertBoxData 
         const noButtons = buttons.length
-
         const hideAlert = () => { setShowAlert(false)}
 
-        console.log({showAlert})
         return (
             <Modal 
                 visible={showAlert}
@@ -41,8 +39,7 @@ const AlertModal  : React.SFC<IProps>  = (props) => {
                             onPress={()=> setShowAlert(false)}
                             style={styles.closeIcon}                        
                         >
-                            <Ionicons  name="md-close-circle-outline" style={{fontSize : 24}} />
-                            
+                            <Ionicons  name="md-close-circle-outline" style={{fontSize : 24}} />  
                         </TouchableHighlight>
                         <Text style={[styles.btnText,styles.title]}>
                             {title}

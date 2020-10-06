@@ -20,7 +20,7 @@ const PhoneSignIn = (props: any) => {
 
   const numberConfirmed = (id : string) => {
     setPhoneNumber("")
-    props.navigation.navigate("OTPScreen")
+    props.navigation.navigate("OTPScreen")  
     _setVerificationId(id)
     setVerificationId(id)
   }
@@ -43,7 +43,7 @@ const PhoneSignIn = (props: any) => {
           <TextInput
             keyboardType="phone-pad"
             onBlur={() => {}}
-            label={!verificationId ? "+234..." : "Verification code"}
+            label={"+234..."}
             onChangeText={(value) =>  setPhoneNumber(value)}
             value={phoneNumber.toString()}
           />
