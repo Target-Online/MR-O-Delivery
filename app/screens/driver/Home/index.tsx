@@ -45,16 +45,17 @@ class Home extends React.Component<IProps, IState> {
 
     constructor(props){
       super(props)
+      const {context : {currentUser :{phoneNumber , isVacant}, notify ,playSound , sendPushNotification}} = this.props
+
       this.onChildAdded = database()
         .ref('/orders')
         .on('child_added', async snapshot => {
-          const {context : {currentUser :{phoneNumber}, notify ,playSound , sendPushNotification}} = this.props
+
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
 
-          console.log("new order ", order.status)
-
+          
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
             this.setState({newState : "pending"})
             playSound()
@@ -65,7 +66,7 @@ class Home extends React.Component<IProps, IState> {
 
       this.state = {
         isModalVisible : false,
-        isOnline : true,
+        isOnline : isVacant && true,
         newState : "pending",
         order : null
       }

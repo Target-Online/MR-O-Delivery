@@ -35,7 +35,7 @@ type Props = IProps & IContextProps & StackScreenProps<IProps>;
 
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const { setAlertData, setShowAlert, currentUser,playSound,order, sendPushNotification } = props.context
   const [orderNumber, setOrderNumber] = useState('');
 

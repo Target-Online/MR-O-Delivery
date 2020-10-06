@@ -57,10 +57,9 @@ class BackScreen extends React.Component<Props, IState> {
 
   componentWillMount(){
     BackHandler.addEventListener('hardwareBackPress', this.back_Button_Press);
-    
   }
-  componentWillUnmount(){
 
+  componentWillUnmount(){
     BackHandler.removeEventListener('hardwareBackPress', this.back_Button_Press);
   }
 
@@ -94,16 +93,16 @@ class BackScreen extends React.Component<Props, IState> {
 
   render() {
     
-    const {onBackPress ,title, children,scroll } = this.props
+    const {title, children,scroll } = this.props
 
     return (
-      <SafeAreaView style={{flex : 1}}>
+      <SafeAreaView style={{flex : 1 , backgroundColor : "white"}}>
         <View style={styles.topBarStyles}>
                 <Btn style={styles.backBtnStyle} onPress={()=> this.navigateBack()}>
-                  <Ionicons name="md-arrow-round-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
+                  <Ionicons name="md-arrow-round-back" color="#000" style={styles.backIcon} size={24} />
                 </Btn>
                 <View style={{alignItems : "center"}}>
-                  <Text style={{fontSize : 16, fontWeight : "600"}}>{title}</Text>
+                  <Text style={styles.pageTitle}>{title}</Text>
                 </View>
                 <Btn style={styles.backBtnStyle} onPress={()=>{}} />
         </View>
@@ -122,14 +121,20 @@ const styles = StyleSheet.create({
     activeTextStyle:{
         color : 'red'
     },
+    pageTitle: {
+      fontSize : 16, fontWeight : "600"
+    },
     topBarStyles : { 
       width: "100%",justifyContent : "space-between", 
       alignSelf : "center",alignItems : "center",
       backgroundColor : "#fff", height : 56,paddingHorizontal : 16,
-      flexDirection : "row", ...shadow
+      flexDirection : "row", ...shadow,marginBottom : 16
     },
     backBtnStyle:{
       width : 30,height: 30
+    },
+    backIcon: {
+      fontSize : 24, fontWeight : "600"
     },
     addressResultsItem : { 
       height :  54, borderBottomColor : "rgba(0,0,0,0.09)", 

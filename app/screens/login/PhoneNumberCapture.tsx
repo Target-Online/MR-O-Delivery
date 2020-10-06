@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: theme.SIZES.BASE,
     width: width - theme.SIZES.BASE * 7,
+    backgroundColor : Colors.primaryOrange
   },
   promptText :{ 
     marginTop : 42,marginBottom :16 , 

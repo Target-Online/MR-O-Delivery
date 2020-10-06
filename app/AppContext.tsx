@@ -27,10 +27,10 @@ Notifications.setNotificationHandler({
       shouldPlaySound: true,
       shouldSetBadge: true,
     }),
-  });
+})
   
-
 require('firebase/firestore')
+
 const initalState = {
     data: [],
     search: "",
@@ -60,15 +60,13 @@ const AppContextProvider : React.SFC = ({children}) => {
             return Id
         }
 
-        const storeUSer = (user) => {
-            console.log(user!==null)
+        const storeUser = (user) => {
             if (user) {
-                var dbUser = users.data.find((u: any) => u.id == user.phoneNumber);
-                console.log("num ", user.phoneNumber)
-                console.log(dbUser)
+                var dbUser = users.data.find((u: any) => u.id == user.phoneNumber)
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
             }
         }
+
         async function initSound() {
             try {
                 await soundObject.loadAsync(require('./assets/audio/notif_tone.mp3')); 
@@ -80,16 +78,13 @@ const AppContextProvider : React.SFC = ({children}) => {
             try{
                 await initSound()
                 soundObject.playAsync().then(()=>{
-                    console.log(" this is then")
                     setTimeout(()=> { 
                         soundObject.pauseAsync() 
                         disableSound()
                     }, 7000) 
                 })
             }catch(e){
-
             }
-     
         }
 
         async function disableSound() {
@@ -106,15 +101,15 @@ const AppContextProvider : React.SFC = ({children}) => {
             setLoadingUser(true)
             api.getCollection("users", setUsers);
             api.getCollection("orders", setOrders);
-            storeUSer(currentUser)
+            storeUser(currentUser)
             firebase.auth().onAuthStateChanged((user: any) => {
-                storeUSer(user)           
+                storeUser(user)           
                 setTimeout(()=> {setLoadingUser(false)}, 3000)           
             })
+
             registerForPushNotificationsAsync().then(token => {
-                console.log("Notification set")
                 setExpoPushToken(token)
-            });
+            })
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 //setNotification(notification);
@@ -132,9 +127,6 @@ const AppContextProvider : React.SFC = ({children}) => {
             };
           }, [])
 
-        // const notify = async () => {
-        //     await soundObject.playAsync()
-        // }
     
         const logout = () => {
             firebase.auth().signOut().then((res: any)=> {
@@ -348,7 +340,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
                     orders, setOrders, toggleDriverAvailability, sendPushNotification,
-                    verificationId, setVerificationId, playSound
+                    verificationId, setVerificationId, playSound, storeUser
                 }}
             >
                 {children}

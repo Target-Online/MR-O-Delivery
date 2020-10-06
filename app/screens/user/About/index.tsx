@@ -39,7 +39,7 @@ const AboutUs : any = (props: Props) => {
     <BackScreen
       navigation={props.navigation}
     >
-        <ScrollView contentContainerStyle={{alignItems : "center", paddingVertical : 42 , paddingHorizontal : 24}} style={{flex : 1, backgroundColor : "white"}}> 
+        <ScrollView contentContainerStyle={{alignItems : "center", paddingVertical : 42 , paddingHorizontal : 24 , flex : 1, backgroundColor : "white"}} style={{flex : 1, backgroundColor : "white"}}> 
 
             <RnImg resizeMode={"contain"} source={Images.MROLogo} style={{width : 100, height: 62,marginBottom : 24}} />
             {writing.map(({title, description})=>{
