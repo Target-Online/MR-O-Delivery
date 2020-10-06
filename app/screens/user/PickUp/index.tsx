@@ -12,6 +12,7 @@ import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/typ
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const shadow =  {
     shadowColor: '#000000',
@@ -94,7 +95,7 @@ class PickUp extends React.Component<Props, IState> {
             animationType="fade"
             keyboardShouldPersistTaps='always'
         >
-        <View style={{flex : 1 , width : "100%"}}>
+        <SafeAreaView style={{flex : 1 , width : "100%"}}>
           <View style={{height : 64, width : "100%",alignItems: "center",flexDirection:"row",justifyContent : "space-between",paddingHorizontal : 16 }} >
              <Btn 
                 onPress={()=>{ this.setState({showPlaces : false})}}
@@ -108,6 +109,12 @@ class PickUp extends React.Component<Props, IState> {
           </View>
           <GooglePlacesAutocomplete
             placeholder="Search"
+
+            onFail={(error)=>{
+
+              console.log({error})
+
+            }}
             minLength={2} // minimum length of text to search
             autoFocus={false}
             returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -117,7 +124,6 @@ class PickUp extends React.Component<Props, IState> {
             onPress={(data, details) => {
               this.setState({[addressKey] :  {...data , ...details}})
               this.setState({showPlaces:false})
-
             }}
 
             query={{
@@ -143,7 +149,7 @@ class PickUp extends React.Component<Props, IState> {
             predefinedPlaces={[homePlace, workPlace]}
             debounce={200}
           />
-        </View>
+        </SafeAreaView>
       </Modal>
       )
     }

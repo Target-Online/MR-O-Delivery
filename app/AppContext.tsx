@@ -40,12 +40,10 @@ const initalState = {
 const AppContextProvider : React.SFC = ({children}) => {
 
         const [user, setUser] = useState(null);
-        const [sound, setSound] = useState()
         const [profile, setProfile] = useState<IUser>({});
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
         const [expoPushToken, setExpoPushToken] = useState('');
-        const [notification, setNotification] = useState(false);
         const [currentUser, setCurrentUser] = useState();
         const [loadingUser, setLoadingUser] = useState(true);
         const [order, setOrder] = useState({});
@@ -73,16 +71,12 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
         async function initSound() {
             try {
-
-                console.log(" we loaded sound")
                 await soundObject.loadAsync(require('./assets/audio/notif_tone.mp3')); 
               } catch (error) { // An error occurred!
             }
         }
 
-
         const playSound = async () => {
-            console.log("ateempting to play")
             try{
                 await initSound()
                 soundObject.playAsync().then(()=>{
@@ -224,6 +218,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         const sendRequest = async (id : string , theOrder: IOrder, onSuccess : () => void ,onFailure : () => void ) => {
             const orderID = (id)
             setOrder(theOrder)
+
             firebase.database()
                 .ref(`orders/`).child(orderID)
                 .set({...theOrder,

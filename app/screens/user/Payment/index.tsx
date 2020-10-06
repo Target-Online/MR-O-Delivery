@@ -101,7 +101,7 @@ class Payment extends Component<IProps> {
     }
 
     getOrderTotal = () => {
-        const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
+        const {context : {order}} = this.props
         const {dropOffAddress , pickUpAddress , items, total}  = order
         const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location) ,
         this.convertLocation(dropOffAddress.geometry.location))
@@ -137,14 +137,12 @@ class Payment extends Component<IProps> {
                 const {orderId} = myOrder
                 myOrder.driver = freeDrivers[0]
                 setOrder(myOrder)
-
-                console.log({myOrder})
                 sendRequest(orderId, myOrder, ()=>{
                     setTimeout(()=> {
                         this.setState({loaderVisible : false})
                         this.props.navigation.navigate('OrderProgress')
                     },2000)
-                }, ()=>{} )
+                }, ()=>{})
             }
             
             else{

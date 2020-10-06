@@ -36,20 +36,25 @@ type Props = IProps & IContextProps & StackScreenProps<IProps>;
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setAlertData, setShowAlert, currentUser,playSound, sendPushNotification } = props.context
+  const { setAlertData, setShowAlert, currentUser,playSound,order, sendPushNotification } = props.context
   const [orderNumber, setOrderNumber] = useState('');
-  // const [currentUser] = useContext(CurrentUserContext);
 
   useEffect(() => {
     const userNull = _.isEmpty(currentUser)
 
+    console.log({order})
+
+    if(!_.isEmpty(order)){
+      const {orderId} = order
+      setOrderNumber(orderId)
+    }
     if(userNull || (!userNull && !currentUser.displayName)) {
       setNewUserModalVisible(true)
     }
     else{
       setNewUserModalVisible(false)
     }
-  }, [currentUser])
+  }, [])
 
 
   const renderNewUserModal: any = () => {
@@ -61,35 +66,6 @@ const Home: any = (props: Props) => {
         />
       </Modal>
     )
-  }
-
-  const processTrackOrder = () => {
-    const {context : {setOrder ,order}} = props
-    setLoading(true)
-    firebase.database()
-    .ref(`orders/${orderNumber}`)
-    .once('value')
-    .then(snapshot => {
-        
-      if(!_.isEmpty(snapshot.val())){
-          setOrder(snapshot.val())
-          props.navigation.navigate("OrderProgress")
-        }
-        else{
-          setAlertData({
-            text : "We couldn't find any request linked to that tracking number.\nPlease check your order number or contact admin for any queries." , 
-            title: "Oops..." , 
-            buttons : [{
-              label : "Ok",
-              onPress : ()=> setShowAlert(false)
-          }]})
-          setShowAlert(true)
-        }
-        setLoading(false)
-    }).catch((err)=>{
-      console.log("Order fetch failed ", err)
-      setLoading(false)
-    })
   }
 
   return [
