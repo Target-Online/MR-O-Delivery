@@ -28,7 +28,6 @@ function HomeStack(props) {
 
 function RNApp(props) {
 
-  console.log("inside stack",props.isDriver)
   return (
     <NavigationContainer>
       <Tab.Navigator tabBar={(props) => <BottomMenu  {...props} />} >

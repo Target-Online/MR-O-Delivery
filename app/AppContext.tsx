@@ -102,22 +102,45 @@ const AppContextProvider : React.SFC = ({children}) => {
             api.getCollection("users", setUsers);
             api.getCollection("orders", setOrders);
             storeUser(currentUser)
+
+            registerForPushNotificationsAsync().then(token => {
+
+                setExpoPushToken(token)
+                // firebase.database().ref(`/users/`).child(phoneNumber).update({
+                //     expoToken : token
+                // })
+                
+            })
             firebase.auth().onAuthStateChanged((user: any) => {
-                storeUser(user)           
+
+               
+                storeUser(user) 
+                console.log({user})
+                const {phoneNumber} = user
+                Notifications.getExpoPushTokenAsync().then((data)=>{
+                    console.log( " setting  ",data)
+                    const token = data.data
+                    firebase.database().ref(`/users/`).child(phoneNumber).update({
+                        expoToken : token
+                    })
+                }).catch(e =>{
+                    console.log({e})
+                })
+
                 setTimeout(()=> {setLoadingUser(false)}, 3000)           
             })
 
-            registerForPushNotificationsAsync().then(token => {
-                setExpoPushToken(token)
-            })
+
+
+
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 //setNotification(notification);
-                console.log({notification})
+                // console.log({notification})
             });
 
             responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-                console.log(response);
+                // console.log(response);
             });
 
             return () => {
@@ -234,6 +257,10 @@ const AppContextProvider : React.SFC = ({children}) => {
           
         async function registerForPushNotificationsAsync() {
             let token;
+            Notifications.getExpoPushTokenAsync().then((data)=>{
+                console.log({data})
+            })
+
             if (Constants.isDevice) {
                 const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
                 let finalStatus = existingStatus;
@@ -246,7 +273,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 return;
                 }
                 token = (await Notifications.getExpoPushTokenAsync()).data;
-                // console.log(token);
+                
             } else {
                 alert('Must use physical device for Push Notifications');
             }
@@ -259,6 +286,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 lightColor: '#FF231F7C',
                 });
             } 
+        
             return token
 
         }

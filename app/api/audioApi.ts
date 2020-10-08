@@ -9,16 +9,10 @@ export const initAudio = ( ) => {
         await Audio.setAudioModeAsync({
             staysActiveInBackground : true,
             playsInSilentModeIOS : true,
+            playThroughEarpieceAndroid : true,
             interruptionModeAndroid : INTERRUPTION_MODE_IOS_DO_NOT_MIX,
             interruptionModeIOS: INTERRUPTION_MODE_IOS_DO_NOT_MIX,
         })
-
-        // await soundObject.loadAsync(require('../assets/audio/notif_tone.mp3'));
-        // // const { sound: soundObject, status } = await Audio.Sound.createAsync(
-        // //   require('../assets/audio/notif_tone.mp3'),
-        // //   { shouldPlay: false, volume : 1, }
-        // // )
-        // onDone(soundObject)
         
     }).catch((err)=>{
 

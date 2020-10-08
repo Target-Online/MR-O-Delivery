@@ -36,6 +36,7 @@ interface IState {
   isOnline : boolean;
   newState : "pending"| "confirmed" | "collected" | "delivered" ; 
   order?: IOrder;
+  status?: "offline" | "vacant" | "busy";
   orderId?: string;
 }
 
@@ -45,7 +46,7 @@ class Home extends React.Component<IProps, IState> {
 
     constructor(props){
       super(props)
-      const {context : {currentUser :{phoneNumber , isVacant}, notify ,playSound , sendPushNotification}} = this.props
+      const {context : {currentUser :{phoneNumber , status, isVacant}, notify ,playSound , sendPushNotification}} = this.props
 
       this.onChildAdded = database()
         .ref('/orders')
@@ -67,6 +68,7 @@ class Home extends React.Component<IProps, IState> {
       this.state = {
         isModalVisible : false,
         isOnline : isVacant && true,
+        status,
         newState : "pending",
         order : null
       }
@@ -288,7 +290,7 @@ class Home extends React.Component<IProps, IState> {
       return (
         <>
           <View style={styles.paymentMethod}>
-              <Text style={{fontWeight : "bold", fontSize :12, color : "green" }} >{cashPayment ? "Cash Payement" : "Card Payment"}</Text>
+              <Text style={{fontWeight : "bold", fontSize :12, color : "green" }} >{cashPayment || true ? "Cash Payement" : "Card Payment"}</Text>
           </View>
           {cashPayment && <Text style={{fontSize : 8, color : "red", marginTop: 8}}>*Please remember to collect cash upon deliver</Text> }
         </>
@@ -362,19 +364,18 @@ class Home extends React.Component<IProps, IState> {
         this.setState({authType, isModalVisible : true})
     }
 
-    toggleOnline = () =>{
+    toggleOnline = (newState : ("offline" | "vacant" | "busy")) =>{
       const {context : {updateDriverStatus}} = this.props
-      const {isOnline} = this.state
-      const newState = !isOnline
-      this.setState({isOnline : newState})
-      updateDriverStatus(!newState ?  "offline" : "vacant")
+
+      this.setState({status : newState})
+      updateDriverStatus(newState)
 
     }
 
     render(){
       const {context : {currentUser :{displayName}, notify,sendPushNotification ,sendRequest}} = this.props
-      const {isOnline} = this.state
-
+      const {status} = this.state
+      const isOnline = status ==="vacant"
       return [
           this.renderNewOrderModal(),      
             <View key="main" style={styles.container} >
@@ -404,7 +405,7 @@ class Home extends React.Component<IProps, IState> {
                      {isOnline ? "Online" : "Offline"}
                     </Text>
                     <View style={{marginHorizontal: 8}} />
-                    <Switch onValueChange={this.toggleOnline} value={isOnline} style={{width : 24,  }} />
+                    <Switch onValueChange={()=> this.toggleOnline(isOnline ? "offline" : "vacant")} value={isOnline} style={{width : 24,  }} />
                   </View>
                   <View style={{width : "100%",height : 78,alignItems : "center"}}> 
                     {isOnline ? <OnlineIcon /> : <OfflineIcon />}
