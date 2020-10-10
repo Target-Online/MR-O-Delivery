@@ -56,7 +56,6 @@ class Home extends React.Component<IProps, IState> {
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
-
           
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
             this.setState({newState : "pending"})
@@ -67,12 +66,12 @@ class Home extends React.Component<IProps, IState> {
       })
 
       this.state = {
-        isModalVisible : true,
+        isModalVisible : false,
         isOnline : isOnline || false,
         isVacant : isVacant || false,
         status,
         newState : "delivered",
-        order : mockOrder
+        order : null
       }
     }
 
