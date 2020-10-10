@@ -1,6 +1,6 @@
 import React from 'react'
 import Payment from '../screens/user/Payment'
-import Contact from '../screens/user/Contact'
+import About from '../screens/user/About'
 import Home from '../screens/driver/Home'
 import Profile from '../screens/user/Profile'
 import PickUp from '../screens/user/PickUp'
@@ -15,7 +15,7 @@ import { NavigationContainer } from '@react-navigation/native'
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function HomeStack(props) {
+function HomeStack() {
   return (
     <Stack.Navigator initialRouteName="Home" mode="card" headerMode="none">
       <Stack.Screen name="Home" component={Home} />
@@ -23,20 +23,30 @@ function HomeStack(props) {
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="PickUpRequest" component={PickUp} />
     </Stack.Navigator>
-  );
+  )
 }
 
-function RNApp(props) {
+function ProfileStack() {
+  return (
+    <Stack.Navigator  initialRouteName="Profile" mode="card" headerMode={"none"}>
+      <Stack.Screen  name="Profile" component={Profile}  />
+      <Stack.Screen name="AboutUs" component={About} />
+    </Stack.Navigator>
+  )
+}
 
+function RNApp() {
   return (
     <NavigationContainer>
       <Tab.Navigator tabBar={(props) => <BottomMenu  {...props} />} >
         <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="Receipts" component={OrderHistory} />
+        <Tab.Screen name="OrderHistory" component={OrderHistory} />
         <Tab.Screen name="OrderDetails" component={OrderDetails} />
+        <Tab.Screen name="Profile" component={ProfileStack} />
       </Tab.Navigator>
     </NavigationContainer>
-  );
+  )
 }
 
   

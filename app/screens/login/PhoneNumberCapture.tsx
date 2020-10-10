@@ -20,7 +20,7 @@ const PhoneSignIn = (props: any) => {
 
   const numberConfirmed = (id : string) => {
     setPhoneNumber("")
-    props.navigation.navigate("OTPScreen")  
+    props.navigation.navigate("OTPScreen" , {phoneNumber})  
     _setVerificationId(id)
     setVerificationId(id)
   }

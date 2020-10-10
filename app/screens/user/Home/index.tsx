@@ -9,7 +9,7 @@ import OrderIcon from '../../../assets/icons/OrderIcon';
 import BikeIcon from '../../../assets/icons/BikeIcon';
 import { Colors } from '../../../constants';
 import _ from "lodash"
-import { withAppContext, IContextProps } from '../../../AppContext';
+import { withAppContext, IContextProps, mockOrder } from '../../../AppContext';
 import { StackScreenProps } from '@react-navigation/stack';
 import ProfileLoad from '../Auth/ProfileLoad';
 import { CurrentUserContext } from '../../../Store';
@@ -36,7 +36,7 @@ type Props = IProps & IContextProps & StackScreenProps<IProps>;
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
   const [loading] = useState(false);
-  const { setAlertData, setShowAlert, currentUser,playSound,order, sendPushNotification } = props.context
+  const { setAlertData, setShowAlert, currentUser,sendRequest,order, sendPushNotification } = props.context
   const [orderNumber, setOrderNumber] = useState('');
 
   useEffect(() => {
@@ -67,6 +67,7 @@ const Home: any = (props: Props) => {
       </Modal>
     )
   }
+  const randomNum =  Math.floor(Math.random() * Math.floor(100))
 
   return [
     renderNewUserModal(),
@@ -119,7 +120,7 @@ const Home: any = (props: Props) => {
                     Pick-up
                     </Text>
                     <Text style={styles.serviceDescriptionText} >
-                    Send a bike to go collect and deliver a package to your location.
+                      Send a bike to go collect and deliver a package to your location.
                     </Text>
                 </View>
               </Btn>
@@ -131,8 +132,9 @@ const Home: any = (props: Props) => {
                 <Btn 
                   //disabled={!orderNumber}
                   onPress={() =>  {
-                    playSound() //orderNumber && processTrackOrder()
-                    sendPushNotification().then().catch()
+                    sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{})
+                    // playSound() //orderNumber && processTrackOrder()
+                    // sendPushNotification().then().catch()
                   }}
                   style={[styles.btnStyle, { width: 64, opacity : orderNumber ? 1 : 0.8, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
                   {loading ? <Bubbles size={"large"} style={{width : 24, height : 24}} color={Colors.primaryOrange} /> :

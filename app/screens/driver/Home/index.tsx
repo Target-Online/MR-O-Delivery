@@ -2,13 +2,12 @@
 import React from 'react';
 import {
   Modal,StyleSheet,TouchableOpacity as Btn,View,Image as RnImg,
-  Text,StatusBar, Dimensions, ImageBackground, Linking, Platform} from 'react-native';
-import { Container,Button, Header, Tab, Tabs, Switch } from 'native-base'
+  Text,StatusBar , ImageBackground, Linking, Platform} from 'react-native';
+import { Switch } from 'native-base'
 import images from '../../../assets/images'
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
 import { withAppContext, IAppContext, IOrder, mockOrder } from '../../../AppContext';
-import { RouteSummary } from '../../user/Payment';
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import OnlineIcon from '../../../assets/icons/OnlineIcon'
 import OfflineIcon from '../../../assets/icons/OfflineIcon'
@@ -17,7 +16,6 @@ import DriverConfirmIcon from '../../../assets/icons/DriverConfirmIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
-import { add } from 'react-native-reanimated';
 
 const shadow =  {
     shadowColor: '#000000',
@@ -33,7 +31,8 @@ type IProps = IAppContext & StackNavigationProp;
 
 interface IState {
   isModalVisible: boolean;
-  isOnline : boolean;
+  isOnline?: boolean;
+  isVacant?: boolean;
   newState : "pending"| "confirmed" | "collected" | "delivered" ; 
   order?: IOrder;
   status?: "offline" | "vacant" | "busy";
@@ -46,8 +45,10 @@ class Home extends React.Component<IProps, IState> {
 
     constructor(props){
       super(props)
-      const {context : {currentUser :{phoneNumber , status, isVacant}, notify ,playSound , sendPushNotification}} = this.props
+      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant}, currentUser ,playSound , sendPushNotification}} = this.props
 
+      console.log({currentUser})
+      console.log({isOnline, isVacant})
       this.onChildAdded = database()
         .ref('/orders')
         .on('child_added', async snapshot => {
@@ -66,11 +67,12 @@ class Home extends React.Component<IProps, IState> {
       })
 
       this.state = {
-        isModalVisible : false,
-        isOnline : isVacant && true,
+        isModalVisible : true,
+        isOnline : isOnline || false,
+        isVacant : isVacant || false,
         status,
-        newState : "pending",
-        order : null
+        newState : "delivered",
+        order : mockOrder
       }
     }
 
@@ -153,31 +155,16 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
-
-
     _handlePressDirections = (target: { geometry: { location: any; }; postalCode: any; city: any; }, addressLabel : string) => {
       let { geometry : {location}, postalCode, city } = target;
       const {lat,lng} = location
       const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
       const latLng = `${lat},${lng}`;
       const label = addressLabel || "Destination";
-      const url = Platform.select({
-        ios: `${scheme}${label}@${latLng}`,
-        android: `${scheme}${latLng}(${label})`
-      }) || ""
-
-
+      const url = Platform.select({ ios: `${scheme}${label}@${latLng}`, android: `${scheme}${latLng}(${label})`}) || ""
       Linking.openURL(url); 
-      console.log({target})
-      // let daddr = encodeURIComponent(`${address} ${postalCode}, ${city}`);
-  
-        // if (Platform.OS === 'ios') {
-        //   Linking.openURL(`http://maps.apple.com/?daddr=${daddr}`);
-        // } else {
-        //   Linking.openURL(`http://maps.google.com/?daddr=${daddr}`);
-        // }
-    }
 
+    }
 
     renderNewRequestDecision = () => {
 
@@ -190,7 +177,7 @@ class Home extends React.Component<IProps, IState> {
         return(
           <View style={styles.modalInnerContainer}>
             <View style={styles.newReqContainer}>
-              {newState === "pending" && <Text style={styles.incomingText}> Incoming Request</Text>}
+              {newState === "pending" && <Text style={styles.incomingText}>Incoming Request</Text>}
               {this.renderCustomerCard()}
               {this.renderParcelDetails()}
               <View style={styles.routeSummaryRow}> 
@@ -219,17 +206,18 @@ class Home extends React.Component<IProps, IState> {
                       </View>
                   </View>
                 </View>
-            </View>
-            <View style={styles.bottomBtnswrapper}>
-              <Btn 
-                onPress={()=> {
-                  updateDriverStatus("busy")
-                  this.changeOrderProgress("confirmed")                 
-                }} 
-                style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange}]} 
-              >
-                <Text  style={styles.acceptDeclineText} > Accept </Text>
-              </Btn>
+
+              <View style={styles.bottomBtnswrapper}>
+                <Btn 
+                  onPress={()=> {
+                    updateDriverStatus({isVacant : false})
+                    this.changeOrderProgress("confirmed")                 
+                  }} 
+                  style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange}]} 
+                >
+                  <Text  style={styles.acceptDeclineText} > Accept </Text>
+                </Btn>
+              </View>
             </View>
           </View>
         )
@@ -244,7 +232,7 @@ class Home extends React.Component<IProps, IState> {
       const orderCollected = newState === "collected"
 
       return(
-      <View style={styles.modalInnerContainer}>
+        <View style={styles.modalInnerContainer}>
          <View style={styles.newReqContainer}>
            {this.renderCustomerCard()}
            {this.renderParcelDetails()}
@@ -267,21 +255,23 @@ class Home extends React.Component<IProps, IState> {
                   </View>
               </View>
             </View>
+
+            <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 100,alignItems : "center" } ]}>
+              <Btn
+                onPress={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress , orderCollected ? "Delivery Address" : "Collection Address")}
+              style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
+                <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
+              </Btn>
+              <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} 
+                style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
+                <Text  style={styles.acceptDeclineText} >
+                  {orderCollected ? "Confirm Delivery" : "Confirm Collection"}
+                </Text>
+              </Btn>
+            </View>
           </View>
 
-          <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 100,bottom : 64,alignItems : "center" } ]}>
-            <Btn
-              onPress={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress , orderCollected ? "Delivery Address" : "Collection Address")}
-             style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
-              <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
-            </Btn>
-            <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} 
-              style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
-              <Text  style={styles.acceptDeclineText} >
-                {orderCollected ? "Confirm Delivery" : "Confirm Collection"}
-              </Text>
-            </Btn>
-          </View>
+
         </View>
       )
     }
@@ -301,17 +291,15 @@ class Home extends React.Component<IProps, IState> {
 
       const {order : {total , paymentMethod , distance}} = this.state
       const {context : {updateDriverStatus}} = this.props
-      // const {total , paymentMethod , distance} = {total : 1000 , paymentMethod  : "cash", distance : 2}
 
       return(
       <View style={[styles.modalInnerContainer ]  }>
         <View style={[styles.newReqContainer, {height : 430}]}>
           {this.renderCustomerCard()}
           <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 24 }}>
-
-          <DriverConfirmIcon/>
-          <Text style={{alignSelf : "center"}}> Trip Complete </Text> 
-           <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30 ,fontSize : 12}]} >Amount due </Text>
+            <DriverConfirmIcon/>
+            <Text style={{alignSelf : "center" ,fontSize : 18, color : Colors.overlayDark80}}> Trip Complete </Text> 
+            <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30 ,fontSize : 12}]} >Amount due </Text>
             <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 11, fontWeight : "bold" }]} >
                {`N${total}`}
             </Text>
@@ -323,18 +311,20 @@ class Home extends React.Component<IProps, IState> {
             <View style={styles.addressesWrapper}>               
             </View>
           </View>
+
+          <View style={[styles.bottomBtnswrapper,{flexDirection : "column",alignItems : "center" } ]}>
+            <Btn onPress={()=>{
+                updateDriverStatus({isVacant : true})
+                this.setState({isModalVisible : false})
+              }} 
+              style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange ,width : 192}]} >
+              <Text  style={styles.acceptDeclineText} > Done </Text>
+            </Btn>
+
+          </View>
         </View>
 
-        <View style={[styles.bottomBtnswrapper,{flexDirection : "column",alignItems : "center" } ]}>
-          <Btn onPress={()=>{
-              updateDriverStatus("vacant")
-              this.setState({isModalVisible : false})
-            }} 
-            style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange ,width : 192}]} >
-            <Text  style={styles.acceptDeclineText} > Done </Text>
-          </Btn>
 
-        </View>
       </View>)
     }
 
@@ -342,6 +332,7 @@ class Home extends React.Component<IProps, IState> {
     renderNewOrderModal = () => {
 
       const {isModalVisible , newState} = this.state
+
       return(
         <Modal 
           animated
@@ -364,18 +355,17 @@ class Home extends React.Component<IProps, IState> {
         this.setState({authType, isModalVisible : true})
     }
 
-    toggleOnline = (newState : ("offline" | "vacant" | "busy")) =>{
+    toggleOnline = (isOnline : boolean) =>{
       const {context : {updateDriverStatus}} = this.props
 
-      this.setState({status : newState})
-      updateDriverStatus(newState)
+      updateDriverStatus({isOnline})
+      this.setState({isOnline})
 
     }
 
     render(){
-      const {context : {currentUser :{displayName}, notify,sendPushNotification ,sendRequest}} = this.props
-      const {status} = this.state
-      const isOnline = status ==="vacant"
+      const {context : {currentUser :{displayName }, notify,sendPushNotification ,sendRequest}} = this.props
+      const {isOnline} = this.state
       return [
           this.renderNewOrderModal(),      
             <View key="main" style={styles.container} >
@@ -405,7 +395,7 @@ class Home extends React.Component<IProps, IState> {
                      {isOnline ? "Online" : "Offline"}
                     </Text>
                     <View style={{marginHorizontal: 8}} />
-                    <Switch onValueChange={()=> this.toggleOnline(isOnline ? "offline" : "vacant")} value={isOnline} style={{width : 24,  }} />
+                    <Switch onValueChange={()=> this.toggleOnline(isOnline ? false : true)} value={isOnline} style={{width : 24,  }} />
                   </View>
                   <View style={{width : "100%",height : 78,alignItems : "center"}}> 
                     {isOnline ? <OnlineIcon /> : <OfflineIcon />}
@@ -433,9 +423,6 @@ class Home extends React.Component<IProps, IState> {
 
 export default withAppContext(Home)
 
-
-
-const randomNum =  Math.floor(Math.random() * Math.floor(100));
 
 const styles = StyleSheet.create({
     activeTextStyle:{
@@ -490,7 +477,7 @@ const styles = StyleSheet.create({
     },
     bottomBtnswrapper : { 
       height : 64, width : "100%" ,position : "absolute", 
-      bottom : 56 ,paddingHorizontal : 16,
+      bottom : 4 ,paddingHorizontal : 16,
       flexDirection : "row", justifyContent :"center", 
       alignSelf : "center"
     },
@@ -518,7 +505,7 @@ const styles = StyleSheet.create({
     modalInnerContainer : { 
       width : "100%",height: "100%",
       paddingHorizontal : 16, backgroundColor : "rgba(0,0,0,0.3)", 
-      justifyContent: "flex-end",paddingBottom : 46
+      justifyContent: "center",paddingBottom : 46
     },
     container: {
       flex : 1 , width : "100%", height : "100%",

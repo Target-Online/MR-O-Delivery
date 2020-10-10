@@ -5,24 +5,15 @@ import Home from '../screens/user/Home'
 import Profile from '../screens/user/Profile'
 import PickUp from '../screens/user/PickUp'
 import OrderProgress from '../screens/user/OrderProgress'
-import Auth from '../screens/user/Auth'
-import SignIn from '../screens/user/Auth/SignIn'
 import About from '../screens/user/About'
-import ForgotPassword from '../screens/user/Auth/ForgotPassword'
 import { BottomMenu } from '../components'
 import OrderHistory from '../screens/user/OrderScreen/History'
 import OrderDetails from '../screens/user/OrderScreen/Details'
-
 import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from '@react-navigation/native'
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
-const noOptions = {
-  header : null
-}
 
 function HomeStack() {
   return (

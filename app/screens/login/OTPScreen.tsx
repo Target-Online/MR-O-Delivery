@@ -14,8 +14,11 @@ type StringNo = string | number
 
 const OTPScreen = (props: any) => {
   const recaptchaVerifier = useRef(null);
-  const {verificationId, setVerificationId, phoneNumber} = props.context
-  const [verificationCode, setVerificationCode] = useState<string>("");
+  const {verificationId, setVerificationId, } = props.context
+  const phoneNumber = props.route.params.phoneNumber
+  const [verificationCode, setVerificationCode] = useState<string>("")
+
+  console.log({phoneNumber})
   const numberConfirmed = (id : string) => {
     setVerificationId(id)
   }
@@ -41,7 +44,8 @@ const OTPScreen = (props: any) => {
         />
         <Image resizeMode="contain" source={Images.MROLogo} style={{ width: 100, height: 64}} />
         <Text style={styles.promptText}>
-          {(codeText+phoneNumber)}
+          {(codeText)}
+          <Text style={[styles.promptText, {fontWeight : "bold"}]}>{phoneNumber}</Text>
         </Text>
         <View style={{paddingHorizontal : 24, width : "100%"}}>
           <TextInput
@@ -87,8 +91,8 @@ const styles = StyleSheet.create({
     backgroundColor : Colors.primaryOrange
   },
   promptText :{ 
-    marginTop : 42,marginBottom :16 , 
-    fontSize : 12, color : "rgba(0,0,0,0.65)"
+    marginTop : 42,marginBottom :16 , textAlign : "center",
+    fontSize : 12, color : "rgba(0,0,0,0.65)",marginVertical : 1
   },
   title: {
     color : "white" , fontSize : 18,

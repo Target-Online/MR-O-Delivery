@@ -11,6 +11,7 @@ import { iPhoneLarge } from '../../utils/screenSize'
 import styles from './BottomMenuStyle'
 import { useNavigationState, StackActions } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack/lib/typescript/src/types';
+import _ from 'lodash';
 const activeFont =  iPhoneLarge ? Fonts.captionBold : Fonts.tinyBold
 const inactiveFont = iPhoneLarge ? Fonts.caption : Fonts.tiny
 
@@ -31,6 +32,12 @@ class BottomMenu extends Component<IProps, IState> {
     this.setState({currentNav: navString}) 
   }
 
+  driverCheck = (phoneNumber : string) =>{
+    const { context : {users , currentUser} } = this.props
+ 
+    let res = users.data.find(u =>  u.id == phoneNumber && u.isDriver)
+    return !_.isEmpty(res)
+  }
   bottomButton (inactiveIcon: {} | null | undefined, activeIcon: {} | null | undefined , navString: string) {
     
     const { navigation } = this.props
@@ -56,11 +63,12 @@ class BottomMenu extends Component<IProps, IState> {
   }
 
   render () {  
-
+    const { context : {users , currentUser} } = this.props
+    const isDriver = this.driverCheck(currentUser.phoneNumber)
     return (
       <View  style={styles.container}>
         {this.bottomButton(<Icons.HomeIcon fill={Colors.overlayDark20}/>,<Icons.HomeIcon fill={Colors.primaryOrange}/>,'Home')}
-        {this.bottomButton(<Icons.ReceiptIcon fill={Colors.overlayDark20}/>,<Icons.ReceiptIcon fill={Colors.primaryOrange}/>, 'Receipts')}
+        {!isDriver && this.bottomButton(<Icons.ReceiptIcon fill={Colors.overlayDark20}/>,<Icons.ReceiptIcon fill={Colors.primaryOrange}/>, 'Receipts')}
         {this.bottomButton(<Icons.ProfileIcon fill={Colors.overlayDark20}/>,<Icons.ProfileIcon fill={Colors.primaryOrange}/>, 'Profile')}            
       </View>
     )

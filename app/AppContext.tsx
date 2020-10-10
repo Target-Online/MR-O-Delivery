@@ -15,6 +15,7 @@ import * as Permissions from 'expo-permissions';
 import { initAudio } from "./api/audioApi";
 import { Audio } from 'expo-av'
 import Constants from "expo-constants";
+import { string } from "prop-types";
 
 
 export const ContextConsumer = AppContext.Consumer
@@ -78,13 +79,9 @@ const AppContextProvider : React.SFC = ({children}) => {
             try{
                 await initSound()
                 soundObject.playAsync().then(()=>{
-                    setTimeout(()=> { 
-                        soundObject.pauseAsync() 
-                        disableSound()
-                    }, 7000) 
-                })
-            }catch(e){
-            }
+                    setTimeout(()=> {  soundObject.pauseAsync() 
+                        disableSound()}, 7000) })
+            }catch(e){}
         }
 
         async function disableSound() {
@@ -99,40 +96,26 @@ const AppContextProvider : React.SFC = ({children}) => {
             initAudio()
             initSound()
             setLoadingUser(true)
-            api.getCollection("users", setUsers);
-            api.getCollection("orders", setOrders);
-            storeUser(currentUser)
-
+            api.getCollection("users", setUsers)
+            api.getCollection("orders", setOrders)
             registerForPushNotificationsAsync().then(token => {
-
                 setExpoPushToken(token)
-                // firebase.database().ref(`/users/`).child(phoneNumber).update({
-                //     expoToken : token
-                // })
-                
             })
-            firebase.auth().onAuthStateChanged((user: any) => {
-
-               
-                storeUser(user) 
-                console.log({user})
-                const {phoneNumber} = user
+            firebase.auth().onAuthStateChanged((user: any) => {               
+                user && storeUser(user)      
                 Notifications.getExpoPushTokenAsync().then((data)=>{
-                    console.log( " setting  ",data)
                     const token = data.data
-                    firebase.database().ref(`/users/`).child(phoneNumber).update({
-                        expoToken : token
-                    })
+                    if (user){
+                        const {phoneNumber} = user
+                        firebase.database().ref(`/users/`).child(phoneNumber).update({
+                        expoToken : token})
+                     }
                 }).catch(e =>{
                     console.log({e})
                 })
 
-                setTimeout(()=> {setLoadingUser(false)}, 3000)           
+                setTimeout(()=> { setLoadingUser(false)},3000)           
             })
-
-
-
-
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 //setNotification(notification);
@@ -183,7 +166,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
         
         const updateOrderStatus = (orderId : string, updatedOrder : IOrder) => {
-            const {status} = updatedOrder
             firebase.database()
             .ref(`/orders/`).child(orderId)
             .update({...updatedOrder})
@@ -194,11 +176,11 @@ const AppContextProvider : React.SFC = ({children}) => {
             });
         }
 
-        const updateDriverStatus = (status : string) => {
+        const updateDriverStatus = ( update : { key :[string] ; value : boolean}) => {
             const {phoneNumber} = currentUser
             firebase.database().ref(`/users/`).child(phoneNumber)
-            .update({status}).then((snapshot: any) => {  
-                              
+            .update({...update}).then((snapshot: any) => {  
+                          
             }).catch((err: any)=>{                  
                 console.log(" failed to update")
             })
@@ -402,12 +384,15 @@ export const mockOrder =  {
       "profilePicURL" : ""
     },
     "driver" : {
-        "email" : "menc9@coo9.com",
-        "displayName" : "Driver Name",
-        "lastname" : "TEst Last",
+        "displayName" : "Mnotho",
+        "expoToken" : "ExponentPushToken[vzKJbwE1inzvm5qSwtsTa7]",
+        "id" : "+27611801505",
+        "isActive" : true,
+        "isDriver" : true,
         "phoneNumber" : "+27611801505",
-        "profilePicURL" : ""
-      },
+        "status" : "vacant",
+        "vehicleRegistration" : "Mr-O-Test"
+    },
     "dropOffAddress" : {
       "description" : "Washington, DC, USA,hcuytudduydiuydydydyiudyidyidydyy",
       "addressComponents" : [ {

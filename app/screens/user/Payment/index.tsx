@@ -119,15 +119,13 @@ class Payment extends Component<IProps> {
     }
   
     processRequest = () => {
-        // this.showNoDriversAlert()
 
         if(this.props.context){
             const {context : {sendRequest , order,setOrder, users}} = this.props
             const {paymentMethod} = this.state
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
-
-            const freeDrivers = users.data.filter((user: { isActive: any, isDriver : boolean, status : string }) =>  user.isDriver && user.isActive && user.status === "vacant")
+            const freeDrivers = users.data.filter((user: { isActive: any, isDriver : boolean, isVacant : boolean, isOnline : boolean,  }) =>  user.isDriver && user.isActive && user.isOnline && user.isVacant )
             const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location),
             this.convertLocation(dropOffAddress.geometry.location))
             const orderTotal = this.getOrderTotal()
@@ -152,18 +150,13 @@ class Payment extends Component<IProps> {
         }
     }
 
-    convertLocation = (location : {lat: string, lng:string}) =>(
-        {
-            latitude : location.lat, longitude : location.lng
-        }
+    convertLocation = (location : {lat: string, lng:string}) => (
+        { latitude : location.lat, longitude : location.lng}
     )
 
     render () {
       const { paymentMethod } = this.state
-      const paymentMethods = [
-      //   {label : "Card", icon : <MastercardIcon />},
-      {label : "Cash",icon : <CashIcon /> }
-    ]
+      const paymentMethods = [ {label : "Cash",icon : <CashIcon /> }]
       const {context : {profile , order,setOrder}} = this.props
       const {dropOffAddress , pickUpAddress , items, total}  = order
       const {name , description } = items[0]
@@ -175,21 +168,19 @@ class Payment extends Component<IProps> {
             navigation={this.props.navigation}
             onBackPress={()=> { this.props.navigation.goBack() }}
         >
-        {this.renderLoader()}
-        <View style={{alignItems : "center" }}>
-            <View style={{width : "100%", height:  120,backgroundColor: "#F57301",opacity : 0.8, position : "absolute", top : 0}} />
-            
-            <RouteSummary item={name}  pickUpAddress={pickUpAddress} dropOffAddress={dropOffAddress} />
-
-        </View>
-        <ScrollView style={{flex : 1,paddingBottom : 40}} contentContainerStyle={{alignItems : "center" ,marginBottom : 40}} >
-            <View style={{ flexDirection : "row", padding : 24,marginTop : 4,  justifyContent: 'center', alignItems : 'center',width : '100%', height : 90 }}>
-                {paymentMethods.map((opt, index)=> this.renderPayTypeOption(opt))}
+            {this.renderLoader()}
+            <View style={{alignItems : "center" }}>
+                <View style={{width : "100%", height:  120,backgroundColor: "#F57301",opacity : 0.8, position : "absolute", top : 0}} />           
+                <RouteSummary item={name}  pickUpAddress={pickUpAddress} dropOffAddress={dropOffAddress} />
             </View>
+            <ScrollView style={{flex : 1,paddingBottom : 40}} contentContainerStyle={{alignItems : "center" ,marginBottom : 40}} >
+                <View style={{ flexDirection : "row", padding : 24,marginTop : 4,  justifyContent: 'center', alignItems : 'center',width : '100%', height : 90 }}>
+                    {paymentMethods.map((opt, index)=> this.renderPayTypeOption(opt))}
+                </View>
 
-            {paymentMethod === "Card" ? this.renderCardOption() : this.renderCashOption()}
+                {paymentMethod === "Card" ? this.renderCardOption() : this.renderCashOption()}
 
-            <Btn 
+                <Btn 
                 onPress={()=>{
                     this.processRequest()
                  }} 
@@ -199,8 +190,7 @@ class Payment extends Component<IProps> {
                 </Text>
             </Btn>
             </ScrollView>
-        </BackScreen>
-        
+        </BackScreen> 
       )
     }
 }

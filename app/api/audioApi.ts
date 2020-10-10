@@ -22,7 +22,6 @@ export const initAudio = ( ) => {
 export const notify = async () => {
     try {
        
-        console.log("playing ")
         soundObject.playAsync()
         // Your sound is playing!
       } catch (error) {
