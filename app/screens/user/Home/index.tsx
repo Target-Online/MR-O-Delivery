@@ -34,20 +34,19 @@ type Props = IProps & IContextProps & StackScreenProps<IProps>;
 
 
 const Home: any = (props: Props) => {
-  const [isNewUserModalVisible, setNewUserModalVisible] = useState(false);
-  const [loading] = useState(false);
-  const { setAlertData, setShowAlert, currentUser,sendRequest,order, sendPushNotification } = props.context
-  const [orderNumber, setOrderNumber] = useState('');
+  const [isNewUserModalVisible, setNewUserModalVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { setAlertData, setShowAlert, currentUser ,order } = props.context
+  const [orderNumber, setOrderNumber] = useState('')
 
   useEffect(() => {
     const userNull = _.isEmpty(currentUser)
-
-    console.log({order})
 
     if(!_.isEmpty(order)){
       const {orderId} = order
       setOrderNumber(orderId)
     }
+    
     if(userNull || (!userNull && !currentUser.displayName)) {
       setNewUserModalVisible(true)
     }
@@ -68,6 +67,36 @@ const Home: any = (props: Props) => {
     )
   }
   const randomNum =  Math.floor(Math.random() * Math.floor(100))
+
+
+  const processTrackOrder = () => {
+    const {context : {setOrder ,order}} = props
+    setLoading(true)
+    firebase.database()
+    .ref(`orders/${orderNumber}`)
+    .once('value')
+    .then(snapshot => {
+        
+      if(!_.isEmpty(snapshot.val())){
+          setOrder(snapshot.val())
+          props.navigation.navigate("OrderProgress")
+        }
+        else{
+          setAlertData({
+            text : "We couldn't find any request linked to that tracking number.\nPlease check your order number or contact admin for any queries." , 
+            title: "Oops..." , 
+            buttons : [{
+              label : "Ok",
+              onPress : ()=> setShowAlert(false)
+          }]})
+          setShowAlert(true)
+        }
+        setLoading(false)
+    }).catch((err)=>{
+      console.log("Order fetch failed ", err)
+      setLoading(false)
+    })
+  }
 
   return [
     renderNewUserModal(),
@@ -130,10 +159,10 @@ const Home: any = (props: Props) => {
               <View overflow="hidden" style={styles.inputWrapper}>
                 <TextInput value={orderNumber} onChangeText={(t)=>{ setOrderNumber(t) }} placeholder={"Enter Order Number"} style={styles.trackOrderInput} />
                 <Btn 
-                  //disabled={!orderNumber}
+                  disabled={!orderNumber}
                   onPress={() =>  {
-                    sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{})
-                    // playSound() //orderNumber && processTrackOrder()
+                    //sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{})
+                    orderNumber && processTrackOrder()
                     // sendPushNotification().then().catch()
                   }}
                   style={[styles.btnStyle, { width: 64, opacity : orderNumber ? 1 : 0.8, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
