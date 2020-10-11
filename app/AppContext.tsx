@@ -64,6 +64,8 @@ const AppContextProvider : React.SFC = ({children}) => {
         const storeUser = (user) => {
             if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber)
+
+
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
             }
         }
@@ -101,8 +103,10 @@ const AppContextProvider : React.SFC = ({children}) => {
             registerForPushNotificationsAsync().then(token => {
                 setExpoPushToken(token)
             })
-            firebase.auth().onAuthStateChanged((user: any) => {               
-                user && storeUser(user)      
+            firebase.auth().onAuthStateChanged((user: any) => {   
+                
+                console.log("auth state changes")
+                storeUser(user)      
                 Notifications.getExpoPushTokenAsync().then((data)=>{
                     const token = data.data
                     if (user){
@@ -215,7 +219,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         const sendRequest = async (id : string , theOrder: IOrder, onSuccess : () => void ,onFailure : () => void ) => {
             const orderID = (id)
             setOrder(theOrder)
-
             firebase.database()
                 .ref(`orders/`).child(orderID)
                 .set({...theOrder,

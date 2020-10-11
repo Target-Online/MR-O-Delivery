@@ -45,9 +45,9 @@ class Home extends React.Component<IProps, IState> {
 
     constructor(props){
       super(props)
-      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant}, currentUser ,playSound , sendPushNotification}} = this.props
+      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},users, currentUser ,playSound , sendPushNotification}} = this.props
 
-      console.log({currentUser})
+      console.log({users})
       console.log({isOnline, isVacant})
       this.onChildAdded = database()
         .ref('/orders')
@@ -56,11 +56,13 @@ class Home extends React.Component<IProps, IState> {
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
+
+          console.log({order})
           
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
             this.setState({newState : "pending"})
             playSound()
-            await sendPushNotification()
+            // await sendPushNotification()
             this.recordNewOrderOfFocus(order, orderId)
           }    
       })
@@ -70,7 +72,7 @@ class Home extends React.Component<IProps, IState> {
         isOnline : isOnline || false,
         isVacant : isVacant || false,
         status,
-        newState : "delivered",
+        newState : "pending",
         order : null
       }
     }
@@ -374,7 +376,7 @@ class Home extends React.Component<IProps, IState> {
                 <View style={{position: "absolute", bottom : 24,right:12}}>
                   <DeliveryGuyIcon />
                 </View>
-                <Btn onPress={()=> { this.openModal("DriversignIn") }} >
+                <Btn onPress={()=> {  }} >
                   <View style={{width : 40,height: 40, borderRadius : 20,backgroundColor : "grey", borderWidth : 0.75, borderColor : "#fff",marginBottom : 12}}>                 
                     <RnImg style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={images.headShot} />
                   </View>
