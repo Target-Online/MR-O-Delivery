@@ -42,7 +42,7 @@ const PhoneSignIn = (props: any) => {
         <View style={{paddingHorizontal : 24, width : "100%"}}>
           <TextInput
             keyboardType="phone-pad"
-            onBlur={() => {}}
+            onClear={() => setPhoneNumber('')}
             label={"+234..."}
             onChangeText={(value) =>  setPhoneNumber(value)}
             value={phoneNumber.toString()}
