@@ -52,6 +52,7 @@ const OTPScreen = (props: any) => {
             keyboardType="phone-pad"
             onBlur={() => {}}
             label={"Enter OTP..."}
+            onClear={() => {setVerificationCode('')}}
             onChangeText={(value) => setVerificationCode(value)}
             value={verificationCode.toString()}
           />

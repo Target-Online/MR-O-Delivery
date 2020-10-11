@@ -4,7 +4,7 @@ import VerifiedIcon from '../../../assets/icons/VerfiedIcon'
 import MastercardIcon from '../../../assets/icons/MastercardIcon'
 import CashIcon from '../../../assets/icons/CashIcon'
 import Icon from 'react-native-vector-icons/EvilIcons'
-import EFTIcon from '../../../assets/icons/EFTIcon'
+import * as api from "../../../api"
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import { withAppContext, IContextProps, IAddress } from '../../../AppContext'
 import BackScreen from '../../../layouts/BackScreen'
@@ -121,13 +121,17 @@ class Payment extends Component<IProps> {
     processRequest = () => {
 
         if(this.props.context){
-            const {context : {sendRequest , order,setOrder, users}} = this.props
+            const {context : {sendRequest ,setUsers, order,setOrder, users}} = this.props
             const {paymentMethod} = this.state
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
+
+            api.getCollection("users", setUsers)
+
             const freeDrivers = users.data.filter((user: { isActive: any, isDriver : boolean, isVacant : boolean, isOnline : boolean,  }) =>  user.isDriver && user.isActive && user.isOnline && user.isVacant )
             const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location),
             this.convertLocation(dropOffAddress.geometry.location))
+            
             const orderTotal = this.getOrderTotal()
 
             if (freeDrivers[0]){

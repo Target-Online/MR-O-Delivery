@@ -62,10 +62,9 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const storeUser = (user) => {
+         
             if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber)
-
-
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
             }
         }
@@ -94,7 +93,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         useEffect(() => {
-
             initAudio()
             initSound()
             setLoadingUser(true)
@@ -102,14 +100,17 @@ const AppContextProvider : React.SFC = ({children}) => {
             api.getCollection("orders", setOrders)
             registerForPushNotificationsAsync().then(token => {
                 setExpoPushToken(token)
+            }).catch(e=>{
+
             })
             firebase.auth().onAuthStateChanged((user: any) => {   
-                
-                console.log("auth state changes")
-                storeUser(user)      
+         
+                storeUser(user) 
+                     
                 Notifications.getExpoPushTokenAsync().then((data)=>{
                     const token = data.data
                     if (user){
+                        
                         const {phoneNumber} = user
                         firebase.database().ref(`/users/`).child(phoneNumber).update({
                         expoToken : token})
@@ -243,7 +244,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         async function registerForPushNotificationsAsync() {
             let token;
             Notifications.getExpoPushTokenAsync().then((data)=>{
-                console.log({data})
+                // console.log({data})
             })
 
             if (Constants.isDevice) {

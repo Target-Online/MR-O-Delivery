@@ -42,7 +42,7 @@ const PhoneSignIn = (props: any) => {
         <View style={{paddingHorizontal : 24, width : "100%"}}>
           <TextInput
             keyboardType="phone-pad"
-            onClear={() => setPhoneNumber('')}
+            onClear={() => { setPhoneNumber('')}}
             label={"+234..."}
             onChangeText={(value) =>  setPhoneNumber(value)}
             value={phoneNumber.toString()}
@@ -54,7 +54,7 @@ const PhoneSignIn = (props: any) => {
           style={styles.button}
           onPress={() => verifyPhoneNumber(phoneNumber, recaptchaVerifier, numberConfirmed)}
         >
-          {!verificationId ? "Submit" : "Confirm Code"}
+          {"Submit" }
         </Button>
       </KeyboardAvoidingView>
       </SafeAreaView>

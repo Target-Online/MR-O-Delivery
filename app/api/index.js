@@ -12,11 +12,13 @@ export const getCollection = async (ref, dispatch) =>
   db.ref(ref).on(
     "value",
     (data) => {
+
+      console.log("data ", data)
       data.val() && dispatch({ type: "setData", data: O2A(data) });
       dispatch({ type: "setInProgress", inProgress: false });
     },
     (error) => {
- 
+      console.log({error})
       dispatch({ type: "setInProgress", inProgress: false });
     }
   );
@@ -33,8 +35,7 @@ export const set = (ref, data, key = 0) => {
 };
 
 export const update = (ref, id, data) =>
-  db
-    .ref(ref)
+  db.ref(ref)
     .child(id)
     .update({ ...data });
 

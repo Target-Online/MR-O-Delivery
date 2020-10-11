@@ -47,8 +47,6 @@ class Home extends React.Component<IProps, IState> {
       super(props)
       const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},users, currentUser ,playSound , sendPushNotification}} = this.props
 
-      console.log({users})
-      console.log({isOnline, isVacant})
       this.onChildAdded = database()
         .ref('/orders')
         .on('child_added', async snapshot => {
@@ -56,13 +54,10 @@ class Home extends React.Component<IProps, IState> {
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver} = order
-
-          console.log({order})
           
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
             this.setState({newState : "pending"})
             playSound()
-            // await sendPushNotification()
             this.recordNewOrderOfFocus(order, orderId)
           }    
       })
@@ -85,9 +80,9 @@ class Home extends React.Component<IProps, IState> {
 
     }
 
-    componentWillMount = async () => {
+    componentDidMount = async () => {
       const {context : {profile :{firstname}, user : {_user : {email}} ,fetchUserProfile, getAllDrivers } } = this.props
-      getAllDrivers()
+
     }
 
     setMyOrder = (theOrder : IOrder) => {
