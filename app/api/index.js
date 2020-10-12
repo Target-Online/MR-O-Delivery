@@ -8,12 +8,6 @@ if (!firebase.apps.length)
 
 const db = firebase.database();
 
-// const obj2arr = (obj : any) => {
-
-//   const arr  = Object.keys(obj).map(function(k) { return obj[k] })
-//   return arr
-// }
-
 export const getCollection = async (ref, dispatch) =>
   db.ref(ref).on(
     "value",

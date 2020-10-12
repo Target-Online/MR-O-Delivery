@@ -50,8 +50,8 @@ class Home extends React.Component<IProps, IState> {
       
       this.state = {
         isModalVisible : false,
-        isOnline : isOnline || false,
-        isVacant : isVacant || false,
+        isOnline : false,
+        isVacant : false,
         status,
         newState : "pending",
         order : null
@@ -86,8 +86,16 @@ class Home extends React.Component<IProps, IState> {
         }    
       })
 
+
+      console.log("mounted again")
       this.setState({isOnline,isVacant})
-      console.log(currentUser)
+
+    }
+
+    componentWillUpdate = async () => {
+
+      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},users, currentUser ,playSound , sendPushNotification}} = this.props
+
     }
 
     setMyOrder = (theOrder : IOrder) => {
@@ -356,16 +364,20 @@ class Home extends React.Component<IProps, IState> {
     }
 
     toggleOnline = (isOnline : boolean) =>{
-      const {context : {updateDriverStatus}} = this.props
 
+      console.log("toggling to ", isOnline)
+      const {context : {updateDriverStatus , reloadData}} = this.props
       updateDriverStatus({isOnline})
+      reloadData()
       this.setState({isOnline})
 
     }
 
     render(){
-      const {context : {currentUser :{displayName }, usersArr,users ,sendRequest}} = this.props
+      const {context : {currentUser :{displayName }, currentUser,users ,sendRequest}} = this.props
       const {isOnline} = this.state
+
+      console.log({isOnline})
       return [
           this.renderNewOrderModal(),      
             <View key="main" style={styles.container} >

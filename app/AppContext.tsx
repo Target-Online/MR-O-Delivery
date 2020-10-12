@@ -92,15 +92,22 @@ const AppContextProvider : React.SFC = ({children}) => {
             }
         }
 
+        const reloadData = () =>{
+            setLoadingUser(true)
+            api.getCollection("users", setUsers)
+            api.getCollection("orders", setOrders)
+
+            setLoadingUser(false)
+
+        }
+
         useEffect(() => {
 
             const fetchUserProfiles = async () => {
 
                 const res = await firebase.database().ref(`/users/`).once('value')
-    
                 const usersObj = res.val()
                 const usersArray  = Object.keys(usersObj).map(function(k) { return usersObj[k] });
-    
                 //setUsersArr(usersArray)
                 setProfile("test data ")
                 return usersArray
@@ -108,14 +115,8 @@ const AppContextProvider : React.SFC = ({children}) => {
             initAudio()
             initSound()
             setLoadingUser(true)
-            api.getCollection("users", setUsers)
-            api.getCollection("orders", setOrders)
+            reloadData()
             fetchUserProfiles()
-            firebase.database().ref(`/users/`).once('value').then((data)=>{
-
-                console.log("data")
-                setProfile("test profil")
-            })
 
             registerForPushNotificationsAsync().then(token => {
                 setExpoPushToken(token)
@@ -134,7 +135,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                     }).catch(e =>{
                         console.log({e})
                     })
-                setLoadingUser(false)          
+                 setTimeout(()=> setLoadingUser(false) , 3000)           
                 })
             }
 
@@ -347,7 +348,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 value={{ 
                     user, showAlert, setShowAlert,updateOrderStatus,driverCheck,
                     alertBoxData, setAlertData, setUser,sendRequest,
-                    login, register, logout,isUserDriver,
+                    login, register, logout,isUserDriver,reloadData,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
