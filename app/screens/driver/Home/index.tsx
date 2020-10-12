@@ -336,7 +336,6 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
-
     renderNewOrderModal = () => {
 
       const {isModalVisible , newState} = this.state
@@ -363,21 +362,24 @@ class Home extends React.Component<IProps, IState> {
         this.setState({authType, isModalVisible : true})
     }
 
-    toggleOnline = (isOnline : boolean) =>{
-
-      console.log("toggling to ", isOnline)
-      const {context : {updateDriverStatus , reloadData}} = this.props
+    toggleOnline = (isOnline : boolean) => {
+      const {context : {updateDriverStatus , setCurrentUser, users , storeUser, currentUser : {phoneNumber} }} = this.props
+      console.log("going to" , isOnline)
       updateDriverStatus({isOnline})
-      reloadData()
-      this.setState({isOnline})
 
+      const user = users.data.find(u => u.id == phoneNumber)
+
+      console.log("from db", user.isOnline)
+      if (user){
+        storeUser(user)
+      }
     }
 
     render(){
-      const {context : {currentUser :{displayName,profilePicURL }, currentUser,users ,sendRequest}} = this.props
-      const {isOnline} = this.state
+      const {context : {currentUser :{displayName,profilePicURL, isOnline }}} = this.props
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
       console.log({isOnline})
+      
       return [
           this.renderNewOrderModal(),      
             <View key="main" style={styles.container} >
@@ -401,7 +403,7 @@ class Home extends React.Component<IProps, IState> {
                 </View>
             </ImageBackground>
           
-            <View style={{ padding : 24, backgroundColor : "#fff",width : "100%", height : "65%", ...shadow , alignItems : "center",justifyContent : "center", position : "absolute", bottom : 0, borderTopLeftRadius : 24, borderTopRightRadius: 24}} >              
+            <View style={styles.bottom} >              
                   <View style={{flexDirection : "row", justifyContent: "flex-end",width : "100%" , alignItems : "center" ,paddingHorizontal : 24 ,position: "absolute",top :24}} >
                     <Text style={{fontSize : 16, fontWeight : "bold",marginRight : 16 }} >
                      {isOnline ? "Online" : "Offline"}
@@ -450,6 +452,13 @@ const styles = StyleSheet.create({
       justifyContent :"flex-start",
       backgroundColor : "#fff",
       paddingVertical : 8 
+    },
+    bottom : { 
+      padding : 24, backgroundColor : "#fff",
+      width : "100%", height : "65%", ...shadow , 
+      alignItems : "center",justifyContent : "center",
+      position : "absolute", bottom : 0, borderTopLeftRadius : 24, 
+      borderTopRightRadius: 24
     },
     onOffText:{
       alignSelf : "center",

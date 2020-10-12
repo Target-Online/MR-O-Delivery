@@ -8,10 +8,13 @@ const _appsettings: any = appsettings;
 if (!firebase.apps.length)
   firebase.initializeApp(_appsettings[appsettings.environment].firebaseConfig);
 
-const db = firebase.database();
+const db = firebase.database()
 
-export const getCollection = async (ref: any, dispatch: any) =>
-  db.ref(ref).on(
+export const getCollection = async (ref: any, dispatch: any) =>{
+
+  console.log("fired get collection")
+
+  return db.ref(ref).on(
     "value",
     (data: any) => {
       data.val() && dispatch({ type: "setData", data: O2A(data) });
@@ -21,7 +24,7 @@ export const getCollection = async (ref: any, dispatch: any) =>
  
       dispatch({ type: "setInProgress", inProgress: false });
     }
-  );
+  )}
 
 export const set = (ref: any, data: any, key = 0) => {
   var id = key == 0 ? firebase.database().ref().child(ref).push().key : key;

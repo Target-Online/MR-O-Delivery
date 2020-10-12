@@ -15,8 +15,6 @@ import * as Permissions from 'expo-permissions';
 import { initAudio } from "./api/audioApi";
 import { Audio } from 'expo-av'
 import Constants from "expo-constants";
-import { O2A } from "object-to-array-convert";
-
 
 export const ContextConsumer = AppContext.Consumer
 export type IContextProps = {
@@ -98,25 +96,14 @@ const AppContextProvider : React.SFC = ({children}) => {
             api.getCollection("orders", setOrders)
 
             setLoadingUser(false)
-
         }
 
         useEffect(() => {
-
-            const fetchUserProfiles = async () => {
-
-                const res = await firebase.database().ref(`/users/`).once('value')
-                const usersObj = res.val()
-                const usersArray  = Object.keys(usersObj).map(function(k) { return usersObj[k] });
-                //setUsersArr(usersArray)
-                setProfile("test data ")
-                return usersArray
-            }
+            console.log("running effect")
             initAudio()
             initSound()
             setLoadingUser(true)
             reloadData()
-            fetchUserProfiles()
 
             registerForPushNotificationsAsync().then(token => {
                 setExpoPushToken(token)
@@ -124,7 +111,7 @@ const AppContextProvider : React.SFC = ({children}) => {
            
            if(usersArr) {
                firebase.auth().onAuthStateChanged((user: any) => {   
-                storeUser(user)      
+                    storeUser(user)      
                     Notifications.getExpoPushTokenAsync().then((data)=>{
                         const token = data.data
                         if (user){

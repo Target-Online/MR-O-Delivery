@@ -11,7 +11,7 @@ type IProps =  IContextProps  & { user : any; profile : IUser; }
 const AppNavigator : any = (props: IProps) => {
 
     const [loading, setLoading] = useState<boolean>(false);
-    const {user, currentUser, setCurrentUser , loadingUser ,users }  = props.context
+    const {currentUser, loadingUser ,users }  = props.context
     const driverCheck = (phoneNumber : string) =>{
       let res = users.data.find(u =>  u.id == phoneNumber && u.isDriver)
       return !_.isEmpty(res)
@@ -36,7 +36,7 @@ const AppNavigator : any = (props: IProps) => {
         hidden = {false}
         key={1}
        />,
-        loadingUser ? renderLoader() : currentUser ? renderStack() : <AuthStack  />
+        users.inProgress ? renderLoader() : currentUser ? renderStack() : <AuthStack  />
     ]
     
 }
