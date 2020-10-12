@@ -147,7 +147,6 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.auth().signOut().then((res: any)=> {
                 setCurrentUser(null) 
             }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
-                console.error(err)
                 Alert.alert("Error", err.userInfo.NSLocalizedDescription, [ {text : "Ok",onPress : ()=>{}} ])
             }) 
         }
@@ -324,9 +323,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.auth().signInWithEmailAndPassword(values.email, values.password).then((res: any) => {
                 
             }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
-
                 Alert.alert("Login Failed", err.userInfo.NSLocalizedDescription, [ {text : "Ok",onPress : ()=>{}} ])
-
             })
         }
 

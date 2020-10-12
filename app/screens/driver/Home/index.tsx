@@ -45,9 +45,8 @@ class Home extends React.Component<IProps, IState> {
 
     constructor(props: any){
       super(props)
-      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},usersArr, currentUser ,playSound , sendPushNotification}} = this.props
+      const {context : {currentUser :{status}}} = this.props
 
-      
       this.state = {
         isModalVisible : false,
         isOnline : false,
@@ -58,7 +57,7 @@ class Home extends React.Component<IProps, IState> {
       }
     }
 
-    recordNewOrderOfFocus = (newOrder : IOrder , orderId : string) =>{
+    recordNewOrderOfFocus = (newOrder : IOrder , orderId : string) => {
       
       const {context : {order}} = this.props
       this.setMyOrder(newOrder)
@@ -81,20 +80,11 @@ class Home extends React.Component<IProps, IState> {
         if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
           this.setState({newState : "pending"})
           playSound()
-          // await sendPushNotification()
           this.recordNewOrderOfFocus(order, orderId)
         }    
       })
 
-
-      console.log("mounted again")
-      this.setState({isOnline,isVacant})
-
-    }
-
-    componentWillUpdate = async () => {
-
-      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},users, currentUser ,playSound , sendPushNotification}} = this.props
+      this.setState({isOnline , isVacant})
 
     }
 
@@ -364,8 +354,9 @@ class Home extends React.Component<IProps, IState> {
 
     toggleOnline = (isOnline : boolean) => {
       const {context : {updateDriverStatus , setCurrentUser, users , storeUser, currentUser : {phoneNumber} }} = this.props
-      console.log("going to" , isOnline)
+
       updateDriverStatus({isOnline})
+      this.setState({isOnline})
 
       const user = users.data.find(u => u.id == phoneNumber)
 
@@ -376,9 +367,9 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-      const {context : {currentUser :{displayName,profilePicURL, isOnline }}} = this.props
+      const {context : {currentUser :{displayName,profilePicURL }}} = this.props
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
-      console.log({isOnline})
+      const {isOnline} = this.state
       
       return [
           this.renderNewOrderModal(),      
