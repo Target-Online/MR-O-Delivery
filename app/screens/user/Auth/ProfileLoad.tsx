@@ -21,7 +21,7 @@ type FormProps = IProps & WithSignUpFormProps & StackScreenProps<{ navigation: a
 
 const ProfileLoad: React.FunctionComponent<FormProps> = (props: any) => {
     const [displayName, setDisplayName] = useState('');
-    const {navigation, context :{ storeUser }, onBack, setVisible, currentUser } = props
+    const {navigation, context :{ storeUser ,currentUser, setCurrentUser }, onBack, setVisible } = props
 
     return (
         <BackScreen
@@ -49,7 +49,9 @@ const ProfileLoad: React.FunctionComponent<FormProps> = (props: any) => {
                         onPress={() => {
                            if(displayName.length > 0){
                                 updateUser(currentUser.phoneNumber, { 'displayName': displayName }) 
-                                storeUser(currentUser)
+                                const newCurrent = {...currentUser,displayName}
+                                setCurrentUser(newCurrent)
+
                             }
                            setVisible(false)
                         }}

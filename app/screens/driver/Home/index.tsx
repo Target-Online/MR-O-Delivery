@@ -43,30 +43,11 @@ class Home extends React.Component<IProps, IState> {
 
     onChildAdded: (a: import("firebase").RNFirebase.database.DataSnapshot | null, b?: string | undefined) => import("firebase").RNFirebase.database.QuerySuccessCallback;
 
-    constructor(props){
+    constructor(props: any){
       super(props)
-      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},users, currentUser ,playSound , sendPushNotification}} = this.props
+      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},usersArr, currentUser ,playSound , sendPushNotification}} = this.props
 
-      console.log({users})
-      console.log({isOnline, isVacant})
-      this.onChildAdded = database()
-        .ref('/orders')
-        .on('child_added', async snapshot => {
-
-          const order = snapshot.val()
-          const orderId = snapshot.key
-          const {status , driver} = order
-
-          console.log({order})
-          
-          if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
-            this.setState({newState : "pending"})
-            playSound()
-            // await sendPushNotification()
-            this.recordNewOrderOfFocus(order, orderId)
-          }    
-      })
-
+      
       this.state = {
         isModalVisible : false,
         isOnline : isOnline || false,
@@ -86,8 +67,27 @@ class Home extends React.Component<IProps, IState> {
     }
 
     componentWillMount = async () => {
-      const {context : {profile :{firstname}, user : {_user : {email}} ,fetchUserProfile, getAllDrivers } } = this.props
-      getAllDrivers()
+
+      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},users, currentUser ,playSound , sendPushNotification}} = this.props
+
+      this.onChildAdded = database()
+      .ref('/orders')
+      .on('child_added', async (snapshot: { val: () => any; key: any; }) => {
+
+        const order = snapshot.val()
+        const orderId = snapshot.key
+        const {status , driver} = order
+        
+        if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
+          this.setState({newState : "pending"})
+          playSound()
+          // await sendPushNotification()
+          this.recordNewOrderOfFocus(order, orderId)
+        }    
+      })
+
+      this.setState({isOnline,isVacant})
+      console.log(currentUser)
     }
 
     setMyOrder = (theOrder : IOrder) => {
@@ -324,9 +324,8 @@ class Home extends React.Component<IProps, IState> {
 
           </View>
         </View>
-
-
-      </View>)
+      </View>
+      )
     }
 
 
@@ -365,7 +364,7 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-      const {context : {currentUser :{displayName }, notify,sendPushNotification ,sendRequest}} = this.props
+      const {context : {currentUser :{displayName }, usersArr,users ,sendRequest}} = this.props
       const {isOnline} = this.state
       return [
           this.renderNewOrderModal(),      

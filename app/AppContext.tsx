@@ -15,7 +15,7 @@ import * as Permissions from 'expo-permissions';
 import { initAudio } from "./api/audioApi";
 import { Audio } from 'expo-av'
 import Constants from "expo-constants";
-import { string } from "prop-types";
+import { O2A } from "object-to-array-convert";
 
 
 export const ContextConsumer = AppContext.Consumer
@@ -41,14 +41,15 @@ const initalState = {
 const AppContextProvider : React.SFC = ({children}) => {
 
         const [user, setUser] = useState(null);
-        const [profile, setProfile] = useState<IUser>({});
+        const [profile, setProfile] = useState<any>({});
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
         const [expoPushToken, setExpoPushToken] = useState('');
         const [currentUser, setCurrentUser] = useState();
         const [loadingUser, setLoadingUser] = useState(true);
         const [order, setOrder] = useState({});
-        const [users, setUsers] = useReducer(rootReducer.setStateReducer, initalState);
+        const [usersArr, setUsersArr] = useState([]); //  useReducer(rootReducer.setStateReducer, initalState);
+        const [users, setUsers] =  useReducer(rootReducer.setStateReducer, initalState);
         const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
         const [drivers, setDrivers] = useState<IDriver[]>([]);
         const notificationListener = useRef();
@@ -64,8 +65,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         const storeUser = (user) => {
             if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber)
-
-
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
             }
         }
@@ -95,31 +94,49 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         useEffect(() => {
 
+            const fetchUserProfiles = async () => {
+
+                const res = await firebase.database().ref(`/users/`).once('value')
+    
+                const usersObj = res.val()
+                const usersArray  = Object.keys(usersObj).map(function(k) { return usersObj[k] });
+    
+                //setUsersArr(usersArray)
+                setProfile("test data ")
+                return usersArray
+            }
             initAudio()
             initSound()
             setLoadingUser(true)
             api.getCollection("users", setUsers)
             api.getCollection("orders", setOrders)
+            fetchUserProfiles()
+            firebase.database().ref(`/users/`).once('value').then((data)=>{
+
+                console.log("data")
+                setProfile("test profil")
+            })
+
             registerForPushNotificationsAsync().then(token => {
                 setExpoPushToken(token)
             })
-            firebase.auth().onAuthStateChanged((user: any) => {   
-                
-                console.log("auth state changes")
+           
+           if(usersArr) {
+               firebase.auth().onAuthStateChanged((user: any) => {   
                 storeUser(user)      
-                Notifications.getExpoPushTokenAsync().then((data)=>{
-                    const token = data.data
-                    if (user){
-                        const {phoneNumber} = user
-                        firebase.database().ref(`/users/`).child(phoneNumber).update({
-                        expoToken : token})
-                     }
-                }).catch(e =>{
-                    console.log({e})
+                    Notifications.getExpoPushTokenAsync().then((data)=>{
+                        const token = data.data
+                        if (user){
+                            const {phoneNumber} = user
+                            firebase.database().ref(`/users/`).child(phoneNumber).update({
+                            expoToken : token})
+                        }
+                    }).catch(e =>{
+                        console.log({e})
+                    })
+                setLoadingUser(false)          
                 })
-
-                setTimeout(()=> { setLoadingUser(false)},3000)           
-            })
+            }
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 //setNotification(notification);
@@ -135,7 +152,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 Notifications.removeNotificationSubscription(responseListener);
                 // disableSound()
             };
-          }, [])
+          }, [users.inProgress])
 
     
         const logout = () => {
@@ -193,29 +210,12 @@ const AppContextProvider : React.SFC = ({children}) => {
         const toggleDriverAvailability = (phoneNumber : string, updatedDriverState : IDriver) => {
             firebase.database().ref(`/users/`).child(phoneNumber)
             .set({...updatedDriverState})
-            .then((snapshot: any) => {   
-                // console.log(snapshot)               
+            .then((snapshot: any) => {              
             }).catch((err: any)=>{          
                     console.log(" failed to update")
             });
         }
       
-        const fetchUserProfile = async (uid : string) => {
-
-            firebase.database().ref(`/users/${uid}`)
-                .once('value')
-                .then((snapshot: { val: () => any; }) => {
-                    let userProfile = snapshot.val() 
-                    const hasProfile = !_.isEmpty(userProfile)
-                    hasProfile && setProfile(userProfile)
-                    return userProfile
-                }).catch((err: any)=>{
-                    return {}
-            });
-
-
-        }
-
         const sendRequest = async (id : string , theOrder: IOrder, onSuccess : () => void ,onFailure : () => void ) => {
             const orderID = (id)
             setOrder(theOrder)
@@ -334,7 +334,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         const login = (values: { email: string; password: string, firstname : string }) => {
 
             firebase.auth().signInWithEmailAndPassword(values.email, values.password).then((res: any) => {
-                fetchUserProfile(values.email)
                 
             }).catch((err: { userInfo: { NSLocalizedDescription: string | undefined; }; }) => {
 
@@ -348,7 +347,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 value={{ 
                     user, showAlert, setShowAlert,updateOrderStatus,driverCheck,
                     alertBoxData, setAlertData, setUser,sendRequest,
-                    login, register, logout, fetchUserProfile,isUserDriver,
+                    login, register, logout,isUserDriver,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
