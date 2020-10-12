@@ -374,9 +374,9 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-      const {context : {currentUser :{displayName }, currentUser,users ,sendRequest}} = this.props
+      const {context : {currentUser :{displayName,profilePicURL }, currentUser,users ,sendRequest}} = this.props
       const {isOnline} = this.state
-
+      const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
       console.log({isOnline})
       return [
           this.renderNewOrderModal(),      
@@ -389,7 +389,7 @@ class Home extends React.Component<IProps, IState> {
                 </View>
                 <Btn onPress={()=> {  }} >
                   <View style={{width : 40,height: 40, borderRadius : 20,backgroundColor : "grey", borderWidth : 0.75, borderColor : "#fff",marginBottom : 12}}>                 
-                    <RnImg style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={images.headShot} />
+                    <RnImg style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={imgSrc} />
                   </View>
                 </Btn>
                 <Text style={{fontSize : 16, fontWeight : "400", color : "#fff",alignSelf : "flex-start" }} >

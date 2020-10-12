@@ -36,8 +36,8 @@ class Logout extends Component<Props> {
 
     renderUserDetails = () => {
       const { context } = this.props
-      const {logout ,setAlertData,setShowAlert,currentUser : {displayName}} = context
-
+      const {logout ,setAlertData,setShowAlert,currentUser : {displayName ,profilePicURL}} = context
+      const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
       return(
         <ImageBackground source={images.homeBg} style={{width : "100%", height : 112, flexDirection :"row",alignItems : "center"}}>
           <View style={{ flexDirection : 'row' , alignItems : 'center', width : '100%', height : 96,paddingHorizontal : 24 }}>
@@ -50,7 +50,7 @@ class Logout extends Component<Props> {
                     <View
                       style={{width : 40,height: 40, borderRadius : 20,backgroundColor : "grey", borderWidth : 0.75, borderColor : "#fff",marginBottom : 12}}
                     >                 
-                    <Image style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={images.headShot} />
+                    <Image style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={profilePicURL} />
                     </View>
               </Btn>
 
