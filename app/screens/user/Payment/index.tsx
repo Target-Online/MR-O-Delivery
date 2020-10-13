@@ -125,7 +125,7 @@ class Payment extends Component<IProps> {
             const {paymentMethod} = this.state
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
-            const freeDrivers = users.filter((user: { isActive: any, isDriver : boolean, isVacant : boolean, isOnline : boolean,  }) =>  user.isDriver && user.isActive && user.isOnline && user.isVacant )
+            const freeDrivers = users.data.filter((user: { isActive: any, isDriver : boolean, isVacant : boolean, isOnline : boolean,  }) =>  user.isDriver && user.isActive && user.isOnline && user.isVacant )
             const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location),
             this.convertLocation(dropOffAddress.geometry.location))
             const orderTotal = this.getOrderTotal()
