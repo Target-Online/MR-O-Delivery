@@ -361,12 +361,7 @@ class Home extends React.Component<IProps, IState> {
       }
       this.setState({isOnline})
 
-      const user = users.data.find(u => u.id == phoneNumber)
-
-      console.log("from db", user.isOnline)
-      if (user){
-        storeUser(user)
-      }
+   
     }
 
     render(){

@@ -5,7 +5,7 @@ import AppContextProvider, { withAppContext, AppContext, ContextConsumer, IConte
 import AlertModal from './components/AlertModal'
 import Store from './Store'
 import { Bubbles, DoubleBounce, Bars, Pulse } from 'react-native-loader';
-import NoConnection from 'components/NoConnection'
+// import NoConnection from 'components/NoConnection'
 
 // ...
 
@@ -40,7 +40,7 @@ class App extends React.Component<IProps>{
     return(
       <View style={{flex : 1}}>
         <AlertModal/>
-        <NoConnection />
+        {/* <NoConnection /> */}
         {loading ? this.renderInitialLoading() : <Navigator />}
       </View>
     )
