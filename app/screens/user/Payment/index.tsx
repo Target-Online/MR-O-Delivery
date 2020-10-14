@@ -122,6 +122,8 @@ class Payment extends Component<IProps> {
 
         if(this.props.context){
             const {context : {sendRequest , order,setOrder, users}} = this.props
+
+            console.log({users})
             const {paymentMethod} = this.state
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})

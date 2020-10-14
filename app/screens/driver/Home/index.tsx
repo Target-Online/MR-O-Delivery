@@ -356,6 +356,9 @@ class Home extends React.Component<IProps, IState> {
       const {context : {updateDriverStatus , setCurrentUser, users , storeUser, currentUser : {phoneNumber} }} = this.props
 
       updateDriverStatus({isOnline})
+      if (isOnline){
+        updateDriverStatus({isVacant : true})
+      }
       this.setState({isOnline})
 
       const user = users.data.find(u => u.id == phoneNumber)
