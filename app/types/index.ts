@@ -4,7 +4,7 @@ export interface IVehicle {
     model : string;
   }
 
-export interface IDriver {
+export interface IUser {
     vehicel : IVehicle;
     status : "busy" | "vacant" | "offline"
     address: string;
@@ -43,7 +43,7 @@ export interface IOrder {
     orderId : "Pick-Up" | "Shopping";
     customer : any;
     status : "pending" | "confirmed" | "collected" | "delivered"
-    driver?: IDriver;
+    driver?: IUser;
     dropOffAddress : IAddress ;
     pickUpAddress : IAddress;
     orderType : any;
@@ -57,11 +57,12 @@ export type IContextProps = {
 
 export interface IAppContext{
         user : any ;
-        drivers : IDriver[];
+        drivers : IUser[];
         profile: IUser;
         generateOrderId : (uid: string) => string;
         showAlert:  boolean;
         order: IOrder;
+        currentUser:IUser;
         isUserDriver : (phoneNumber : string) => boolean ;
         setOrder : (order : IOrder) => void;
         setShowAlert : (newState : boolean) => void ;
@@ -75,6 +76,8 @@ export interface IAppContext{
         logout: () => void;
         getAllDrivers: () => void;
         resetPassword : (email : string) => void;
+        orderNumber : string; 
+        setOrderNumber : (id : string) => void;
 }
 
 export type IUser = {
@@ -82,5 +85,14 @@ export type IUser = {
     phoneNumber?: number;
     firstname?: string;
     lastname?: string;
+    isDriver?:boolean;
+    isActive?:boolean;
+    isVacant?:boolean;
+    displayName?:boolean;
     profilePicURL?: string;
+    createdAt: any;
+    id: string;
+    object_key: string
+    profilePicUrl: string;
+    vehicleRegistration: string;
 }

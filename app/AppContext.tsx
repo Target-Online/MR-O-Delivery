@@ -8,7 +8,7 @@ export const AppContext = createContext({});
 import * as api from "./api/index";
 import * as rootReducer from "./utils/rootReducer";
 import { IOrder } from "screens/user/PickUp";
-import { IUser, IDriver, IAppContext } from "types";
+import { IUser, IAppContext } from "types";
 import moment from "moment";
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
@@ -49,11 +49,12 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [usersArr, setUsersArr] = useState([]); //  useReducer(rootReducer.setStateReducer, initalState);
         const [users, setUsers] =  useReducer(rootReducer.setStateReducer, initalState);
         const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
-        const [drivers, setDrivers] = useState<IDriver[]>([]);
+        const [drivers, setDrivers] = useState<IUser[]>([]);
         const notificationListener = useRef();
         const responseListener = useRef();
         const [verificationId, setVerificationId] = useState<string>("");
         const soundObject = new Audio.Sound();
+        const [orderNumber, setOrderNumber] = useState('')
 
         const generateOrderId = (userId : string) => {
             const Id = randomNum() + userId 
@@ -194,7 +195,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             })
         }
 
-        const toggleDriverAvailability = (phoneNumber : string, updatedDriverState : IDriver) => {
+        const toggleDriverAvailability = (phoneNumber : string, updatedDriverState : IUser) => {
             firebase.database().ref(`/users/`).child(phoneNumber)
             .set({...updatedDriverState})
             .then((snapshot: any) => {              
@@ -206,6 +207,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         const sendRequest = async (id : string , theOrder: IOrder, onSuccess : () => void ,onFailure : () => void ) => {
             const orderID = (id)
             setOrder(theOrder)
+            setOrderNumber(orderID)
             firebase.database()
                 .ref(`orders/`).child(orderID)
                 .set({...theOrder,
@@ -331,8 +333,8 @@ const AppContextProvider : React.SFC = ({children}) => {
             <AppContext.Provider
                 value={{ 
                     user, showAlert, setShowAlert,updateOrderStatus,driverCheck,
-                    alertBoxData, setAlertData, setUser,sendRequest,
-                    login, register, logout,isUserDriver,reloadData,
+                    alertBoxData, setAlertData, setUser,sendRequest,orderNumber,
+                    login, register, logout,isUserDriver,reloadData,setOrderNumber,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,

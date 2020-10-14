@@ -36,7 +36,7 @@ export interface IVehicle {
   model : string;
 }
 
-interface IDriver {
+interface IUser {
   name : string;
   vehicel : IVehicle;
   location ?: any;
@@ -48,7 +48,7 @@ export interface IOrder {
   customer : any;
   pickUpAddress: any;
   dropOffAddress :  any;
-  driver?: IDriver;
+  driver?: IUser;
   orderType : "Pick-Up" | "Shopping";
   status: string;
   items : any[]

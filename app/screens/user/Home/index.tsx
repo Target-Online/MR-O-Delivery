@@ -36,8 +36,8 @@ type Props = IProps & IContextProps & StackScreenProps<IProps>;
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { setAlertData, setShowAlert, currentUser ,order } = props.context
-  const [orderNumber, setOrderNumber] = useState('')
+  const { setAlertData, setShowAlert, orderNumber, setOrderNumber, currentUser ,order } = props.context
+  
 
   useEffect(() => {
     const userNull = _.isEmpty(currentUser)

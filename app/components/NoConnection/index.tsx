@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { PickerItemProps, TextStyle,TouchableHighlight, View, Modal, Text, StyleProp, ViewStyle, StyleSheet, Dimensions } from 'react-native';
+import { PickerItemProps, TextStyle,TouchableHighlight, View, Modal, Text, StyleProp, ViewStyle, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import * as Animatable from "react-native-animatable"
 import { Colors } from '../../constants';
 import {  withAppContext } from '../../AppContext';
 import * as Network from 'expo-network';
 import { useState } from 'react';
+import { useEffect } from 'react';
 const { width } = Dimensions.get('window')
 interface IBtn {
     label : string;
@@ -20,8 +21,33 @@ export interface IAlertProps {
 
 type IProps = {}
 const NoConnection  : React.SFC<IProps>  = (props) => {
+
+    const [show, setShow] = useState<boolean>(true)
+    const [reload, setReload] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const checkNetwork = async () => {
+            
+        const netState = await Network.getNetworkStateAsync();
+        // {
+        //   type: NetworkStateType.CELLULAR,
+        //   isConnected: true,
+        //   isInternetReachable: true,
+        // }
+        const {isConnected} = netState
+        console.log("==",{isConnected})
+        if(!isConnected){ setShow(true) }
+        else{
+            setShow(false)
+        }
+        setLoading(false)
+    }
+
+    useEffect(()=>{
+        checkNetwork()
+    },[reload])
  
-        const [show, setShow] = useState<boolean>(false)
+
 
         return (
             <Modal 
@@ -31,11 +57,25 @@ const NoConnection  : React.SFC<IProps>  = (props) => {
             >
                 <View style={styles.wrapper}>
                     <Animatable.View duration={300} easing="ease-in" animation="fadeIn" style={styles.dialogContainer} >
-
-
-                        <Text numberOfLines={6} style={[styles.btnText,{textAlign :"center"}]} >
-                            No Connection
+                        <Text numberOfLines={6} style={[styles.btnText,{textAlign :"center",marginVertical :24}]} >
+                            {"No Connection.\nPlease check your network or try again later."}
                         </Text>
+
+                        <TouchableHighlight
+                                    // rippleSize={290}
+                                    underlayColor={"#DFE3E8"}
+                                    onPress={()=>{                
+                                        setLoading(true)
+                                        setTimeout(()=> { checkNetwork() } , 2000)
+                                    }}
+                                    style={[styles.buttonStyle]}                           
+                                >
+                                   {loading ? 
+                                            <ActivityIndicator size="small" color={Colors.white} />
+                                    :
+                                        <Text style={[styles.btnText,{color : "#fff"}]}>{"Reload"}</Text> 
+                                    }
+                        </TouchableHighlight>
                   
                      </Animatable.View>
 
@@ -78,7 +118,8 @@ const styles = StyleSheet.create({
     },
     btnText:{
         color:"#454F5B",
-        fontSize :14
+        fontSize :14,
+
     },
     textBold : {
       fontSize :14
