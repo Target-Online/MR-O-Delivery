@@ -17,6 +17,7 @@ import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
 import { cond } from 'lodash';
+import Inactive from  '../../../components/Inactive'
 
 const shadow =  {
     shadowColor: '#000000',
@@ -341,6 +342,15 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
+    renderInactiveModal = () =>{
+
+        const { isActive } = this.state
+
+        return(
+          <Inactive isActive={isActive} />
+        )
+    }
+
     renderNewOrderModal = () => {
 
       const {isModalVisible , newState} = this.state
@@ -379,7 +389,8 @@ class Home extends React.Component<IProps, IState> {
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
  
       return [
-          this.renderNewOrderModal(),      
+          this.renderNewOrderModal(), 
+          this.renderInactiveModal(),     
             <View key="main" style={styles.container} >
             <StatusBar barStyle="dark-content" />    
             <ImageBackground source={images.homeBg} style={{width : "100%", height : "100%"}}>
