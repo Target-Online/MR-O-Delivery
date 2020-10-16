@@ -16,6 +16,7 @@ import DriverConfirmIcon from '../../../assets/icons/DriverConfirmIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
+import { cond } from 'lodash';
 
 const shadow =  {
     shadowColor: '#000000',
@@ -33,6 +34,7 @@ interface IState {
   isModalVisible: boolean;
   isOnline?: boolean;
   isVacant?: boolean;
+  isActive?: boolean;
   newState : "pending"| "confirmed" | "collected" | "delivered" ; 
   order?: IOrder;
   status?: "offline" | "vacant" | "busy";
@@ -42,10 +44,11 @@ interface IState {
 class Home extends React.Component<IProps, IState> {
 
     onChildAdded: (a: import("firebase").RNFirebase.database.DataSnapshot | null, b?: string | undefined) => import("firebase").RNFirebase.database.QuerySuccessCallback;
+  onDriverUpdated: any;
 
     constructor(props: any){
       super(props)
-      const {context : {currentUser :{status}}} = this.props
+      const {context : {currentUser :{status }}} = this.props
 
       this.state = {
         isModalVisible : false,
@@ -67,24 +70,34 @@ class Home extends React.Component<IProps, IState> {
 
     componentWillMount = async () => {
 
-      const {context : {currentUser :{phoneNumber , status, isOnline, isVacant},users, currentUser ,playSound , sendPushNotification}} = this.props
+      const {context : {currentUser :{phoneNumber , isActive, isOnline, isVacant} , playSound , sendPushNotification}} = this.props
 
+      this.setState({isOnline , isVacant , isActive})
       this.onChildAdded = database()
-      .ref('/orders')
-      .on('child_added', async (snapshot: { val: () => any; key: any; }) => {
+        .ref('/orders')
+        .on('child_added', async (snapshot: { val: () => any; key: any; }) => {
+          const order = snapshot.val()
+          const orderId = snapshot.key
+          const {status , driver} = order
+          
+          if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
+            this.setState({newState : "pending"})
+            playSound()
+            this.recordNewOrderOfFocus(order, orderId)
+          }    
+      })        
 
-        const order = snapshot.val()
-        const orderId = snapshot.key
-        const {status , driver} = order
-        
-        if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
-          this.setState({newState : "pending"})
-          playSound()
-          this.recordNewOrderOfFocus(order, orderId)
-        }    
+      this.onDriverUpdated = database()
+        .ref(`/users/${phoneNumber}`)
+        .on('value', (snapshot: { val: () => any; key: any; }) => {
+
+          console.log("driver changes", snapshot.val())
+          const driver = snapshot.val()
+          if(driver){
+            const {phoneNumber , status, isOnline, isVacant , isActive}  = driver
+            this.setState({isOnline , isVacant , isActive})
+          }         
       })
-
-      this.setState({isOnline , isVacant})
 
     }
 
@@ -93,10 +106,15 @@ class Home extends React.Component<IProps, IState> {
       setOrder(theOrder)
     }
 
+    componentWillUpdate(_nextProps: any, nextState: { open: boolean; }) {
+
+      const {context : { currentUser }} = this.props
+
+    }
+
     componentWillUnmount = () => {
-      database()
-        .ref('/orders')
-        .off('child_added', this.onChildAdded );
+      database().ref('/orders').off('child_added', this.onChildAdded )
+      database().ref('/orders').off('value', this.onDriverUpdated )   
     }
 
     closeModal = () =>{
@@ -121,6 +139,7 @@ class Home extends React.Component<IProps, IState> {
       const {displayName , firstname} = customer || {}
       const profilePicURL = ""
       const cardSource = profilePicURL || images.headShot
+
       return(
         <View style={{borderBottomWidth : 0.75 , borderBottomColor : Colors.overlayDark10,flexDirection : "row" , height : 74, alignItems : "center", width: "100%"}} >  
           <View style={{width : 40, height : 40, borderRadius : 20, backgroundColor : Colors.overlayDark10 ,marginRight: 12}} >
@@ -138,10 +157,11 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
-    renderParcelDetails = () =>{
+    renderParcelDetails = () => {
 
       const {order} = this.state
       const {name, description} = order.items[0]
+
       return(
         <View style={{flexDirection : "row", height: 56, width : "100%",alignItems : "center"}}>
           <ParcelIcon width={30} height={30} />
@@ -149,7 +169,6 @@ class Home extends React.Component<IProps, IState> {
             <Text style={{fontSize : 12,}}>{name}</Text>
             <Text numberOfLines={1} style={{fontSize : 11, color : "grey"}} >{description}</Text>
           </View>
-
         </View>
       )
     }
@@ -162,7 +181,6 @@ class Home extends React.Component<IProps, IState> {
       const label = addressLabel || "Destination";
       const url = Platform.select({ ios: `${scheme}${label}@${latLng}`, android: `${scheme}${latLng}(${label})`}) || ""
       Linking.openURL(url); 
-
     }
 
     renderNewRequestDecision = () => {
@@ -236,8 +254,7 @@ class Home extends React.Component<IProps, IState> {
            {this.renderCustomerCard()}
            {this.renderParcelDetails()}
           <Text style={{alignSelf : "center" , marginVertical : 4}} >{
-            !orderCollected ? "On route to collect the parcel" : "Dropping off the parcel "
-          } 
+            !orderCollected ? "On route to collect the parcel" : "Dropping off the parcel "} 
           </Text>
           <View style={styles.newReqInnerContainer}>        
               <View style={[styles.routePath,{height : 42} ]}>
@@ -269,8 +286,6 @@ class Home extends React.Component<IProps, IState> {
               </Btn>
             </View>
           </View>
-
-
         </View>
       )
     }
@@ -292,37 +307,37 @@ class Home extends React.Component<IProps, IState> {
       const {context : {updateDriverStatus}} = this.props
 
       return(
-      <View style={[styles.modalInnerContainer ]  }>
-        <View style={[styles.newReqContainer, {height : 430}]}>
-          {this.renderCustomerCard()}
-          <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 24 }}>
-            <DriverConfirmIcon/>
-            <Text style={{alignSelf : "center" ,fontSize : 18, color : Colors.overlayDark80}}> Trip Complete </Text> 
-            <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30 ,fontSize : 12}]} >Amount due </Text>
-            <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 11, fontWeight : "bold" }]} >
-               {`N${total}`}
-            </Text>
-            <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30, fontSize :12}]}>Distance Travelled </Text>
-            <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4,marginBottom : 16,fontSize : 11, fontWeight : "bold" }]}> 
-              {`${distance} km`} 
-            </Text>
-            {this.renderPaymmentMethod(paymentMethod == "cash")}            
-            <View style={styles.addressesWrapper}>               
+        <View style={styles.modalInnerContainer}>
+          <View style={[styles.newReqContainer, {height : 430}]}>
+            {this.renderCustomerCard()}
+            <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 24 }}>
+              <DriverConfirmIcon/>
+              <Text style={{alignSelf : "center" ,fontSize : 18, color : Colors.overlayDark80}}> Trip Complete </Text> 
+              <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30 ,fontSize : 12}]} >Amount due </Text>
+              <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 11, fontWeight : "bold" }]} >
+                {`N${total}`}
+              </Text>
+              <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30, fontSize :12}]}>Distance Travelled </Text>
+              <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4,marginBottom : 16,fontSize : 11, fontWeight : "bold" }]}> 
+                {`${distance} km`} 
+              </Text>
+              {this.renderPaymmentMethod(paymentMethod == "cash")}            
+              <View style={styles.addressesWrapper}>               
+              </View>
+            </View>
+
+            <View style={[styles.bottomBtnswrapper,{flexDirection : "column",alignItems : "center" } ]}>
+              <Btn onPress={()=>{
+                  updateDriverStatus({isVacant : true})
+                  this.setState({isModalVisible : false})
+                }} 
+                style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange ,width : 192}]} >
+                <Text  style={styles.acceptDeclineText} > Done </Text>
+              </Btn>
+
             </View>
           </View>
-
-          <View style={[styles.bottomBtnswrapper,{flexDirection : "column",alignItems : "center" } ]}>
-            <Btn onPress={()=>{
-                updateDriverStatus({isVacant : true})
-                this.setState({isModalVisible : false})
-              }} 
-              style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange ,width : 192}]} >
-              <Text  style={styles.acceptDeclineText} > Done </Text>
-            </Btn>
-
-          </View>
         </View>
-      </View>
       )
     }
 
@@ -348,10 +363,6 @@ class Home extends React.Component<IProps, IState> {
       )
     }
   
-    openModal(authType : string){
-        this.setState({authType, isModalVisible : true})
-    }
-
     toggleOnline = (isOnline : boolean) => {
       const {context : {updateDriverStatus , setCurrentUser, users , storeUser, currentUser : {phoneNumber} }} = this.props
 
@@ -359,16 +370,14 @@ class Home extends React.Component<IProps, IState> {
       if (isOnline){
         updateDriverStatus({isVacant : true})
       }
-      this.setState({isOnline})
-
-   
+ 
     }
 
     render(){
-      const {context : {currentUser :{displayName,profilePicURL }}} = this.props
-      const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
+      const {context : {currentUser :{ displayName, profilePicURL}}} = this.props
       const {isOnline} = this.state
-      
+      const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
+ 
       return [
           this.renderNewOrderModal(),      
             <View key="main" style={styles.container} >

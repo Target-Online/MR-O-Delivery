@@ -10,7 +10,7 @@ if (!firebase.apps.length)
 
 const db = firebase.database()
 
-export const getCollection = async (ref: any, dispatch: any) =>{
+export const getCollection = async (ref: any, dispatch: any, callBack?: any) =>{
 
   console.log("fired get collection")
 
@@ -19,12 +19,17 @@ export const getCollection = async (ref: any, dispatch: any) =>{
     (data: any) => {
       data.val() && dispatch({ type: "setData", data: O2A(data) });
       dispatch({ type: "setInProgress", inProgress: false });
+
+      callBack && callBack()
+
+      
     },
     (error: any) => {
  
       dispatch({ type: "setInProgress", inProgress: false });
     }
-  )}
+  )
+}
 
 export const set = (ref: any, data: any, key = 0) => {
   var id = key == 0 ? firebase.database().ref().child(ref).push().key : key;

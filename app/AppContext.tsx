@@ -15,6 +15,7 @@ import * as Permissions from 'expo-permissions';
 import { initAudio } from "./api/audioApi";
 import { Audio } from 'expo-av'
 import Constants from "expo-constants";
+import { O2A } from "object-to-array-convert";
 
 export const ContextConsumer = AppContext.Consumer
 export type IContextProps = {
@@ -62,6 +63,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const storeUser = (user) => {
+            console.log("here")
             if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber)
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
@@ -93,7 +95,9 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const reloadData = () =>{
             setLoadingUser(true)
-            api.getCollection("users", setUsers)
+            api.getCollection("users", setUsers, () =>{ 
+                console.log(" we have updated" ) 
+            })
             api.getCollection("orders", setOrders)
 
             setLoadingUser(false)
@@ -105,31 +109,38 @@ const AppContextProvider : React.SFC = ({children}) => {
             initSound()
             setLoadingUser(true)
             reloadData()
+            var ref = firebase.database().ref("users");
+            ref.on('value', function(snapshot) {
+                // Do whatev
+                const  user = firebase.auth().currentUser
+                console.log({user})
+                setUsers({ type: "setData", data: O2A(snapshot) })
+                storeUser(user)
+                console.log("user here ")
+            });
 
             registerForPushNotificationsAsync().then(token => {
                 setExpoPushToken(token)
             })
            
-           if(usersArr) {
-               firebase.auth().onAuthStateChanged((user: any) => {   
-                    storeUser(user)      
-                    Notifications.getExpoPushTokenAsync().then((data)=>{
-                        const token = data.data
-                        if (user){
-                            const {phoneNumber} = user
-                            firebase.database().ref(`/users/`).child(phoneNumber).update({
-                            expoToken : token})
-                        }
-                    }).catch(e =>{
-                        console.log({e})
-                    })
-                 setTimeout(()=> setLoadingUser(false) , 3000)           
+            firebase.auth().onAuthStateChanged((user: any) => {   
+                storeUser(user)      
+                Notifications.getExpoPushTokenAsync().then((data)=>{
+                    const token = data.data
+                    if (user){
+                        const {phoneNumber} = user
+                        firebase.database().ref(`/users/`).child(phoneNumber).update({
+                        expoToken : token})
+                    }
+                }).catch(e =>{
+                    console.log({e})
                 })
-            }
+                setTimeout(()=> setLoadingUser(false) , 3000)           
+            })
+            
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 //setNotification(notification);
-                // console.log({notification})
             });
 
             responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
@@ -231,9 +242,6 @@ const AppContextProvider : React.SFC = ({children}) => {
           
         async function registerForPushNotificationsAsync() {
             let token;
-            Notifications.getExpoPushTokenAsync().then((data)=>{
-                console.log({data})
-            })
 
             if (Constants.isDevice) {
                 const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
@@ -251,7 +259,6 @@ const AppContextProvider : React.SFC = ({children}) => {
             } else {
                 alert('Must use physical device for Push Notifications');
             }
-            
             if (Platform.OS === 'android') {
                 Notifications.setNotificationChannelAsync('default', {
                 name: 'default',
@@ -260,9 +267,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                 lightColor: '#FF231F7C',
                 });
             } 
-        
             return token
-
         }
 
         const updateUserProfile = ( params: {profile : IUser, silentUpdate?: boolean, 
@@ -315,7 +320,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             })
         }
 
-        const driverCheck = (phoneNumber : string) =>{
+        const driverCheck = (phoneNumber : string) => {
             let res = users.data.find(u =>  u.id == phoneNumber && u.isDriver)
             return !_.isEmpty(res)
         }
