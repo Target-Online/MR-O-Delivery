@@ -20,8 +20,6 @@ const ShoppingListItem = () => (
         <Btn style={{width: 30,height :30, borderRadius: 15,justifyContent : "center",alignItems : "center", backgroundColor : Colors.overlayLight70}}>
             <EvilIcons name="trash" size={24} color="black" />
         </Btn>
-
-
     </View>
 )
 
@@ -30,12 +28,12 @@ export default ShoppingListItem
 
 const styles = StyleSheet.create({
     wrapper:{
-        width : "100%", height : 52,
+        width : "100%", height : 58,
         marginVertical : 3, alignItems : "center",
         borderColor :Colors.overlayDark20,
         borderWidth : 1,
         borderRadius : 4, flexDirection : "row", 
-        justifyContent : "space-between", paddingHorizontal : 8
+        justifyContent : "space-between", paddingHorizontal : 16
     }
   }
 )

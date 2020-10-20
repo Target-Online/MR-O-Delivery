@@ -47,13 +47,13 @@ export interface IAddress {
 }
 
 export interface IOrder {
-    orderId : "Pick-Up" | "Shopping";
+    orderId : string;
     customer : IUser;
     status : "pending" | "confirmed" | "collected" | "delivered"
     driver?: IUser;
     dropOffAddress : IAddress ;
     pickUpAddress : IAddress;
-    orderType : any;
+    orderType : "Pick-Up" | "Shopping";
     items : any[];
     total : number;
 }

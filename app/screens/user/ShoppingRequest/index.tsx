@@ -4,7 +4,8 @@ import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput,FlatList }
 import Icon from 'react-native-vector-icons/Ionicons'
 import TruckIcon from '../../../assets/icons/TruckIcon'
 import PinIcon from '../../../assets/icons/PinIcon'
-import LocationIcon from '../../../assets/icons/LocationIcon'
+import BagIcon from '../../../assets/icons/BagIcon'
+import { AntDesign } from '@expo/vector-icons';
 import Loader from '../../../components/loader'
 import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
@@ -14,6 +15,9 @@ import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ShoppingListItem from './ShoppingListItem'
+import { Colors } from '../../../constants'
+import { IOrder } from 'types'
+import AddItemPrompt from './AddItemComponent'
 
 const shadow =  {
     shadowColor: '#000000',
@@ -33,6 +37,7 @@ interface IState {
   isModalVisible: boolean;
   authType: string;
   showPlaces : boolean;
+  showPrompt : boolean;
   items : any[];
   orderType : "Pick-Up" | "Shopping";
   addressKey : string;
@@ -47,11 +52,11 @@ class ShoppingRequest extends React.Component<Props, IState> {
       orderType : "Shopping",
       items : [],
       addressKey: "",
+      showPrompt : false,
       showPlaces: false
     }
 
     componentDidMount(){
-
       let testCount = [1,1,1,1,1,1,1]
       let items = testCount.map((index)=>({name : `item${index}`, description : "none"}))
       this.setState({items})
@@ -70,59 +75,59 @@ class ShoppingRequest extends React.Component<Props, IState> {
             animationType="fade"
             keyboardShouldPersistTaps='always'
         >
-        <SafeAreaView style={{flex : 1 , width : "100%"}}>
-          <View style={{height : 64, width : "100%",alignItems: "center",flexDirection:"row",justifyContent : "space-between",paddingHorizontal : 16 }} >
-             <Btn 
-                onPress={()=>{ this.setState({showPlaces : false})}}
-                style={{width : 26,height : 26,marginTop :4}}>
-                <Ionicons name="md-arrow-round-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
-             </Btn>
-             <Text>
-               {addressLabel}
-             </Text>
-             <Btn style={{width : 40,height : 40}} ></Btn>
-          </View>
-          <GooglePlacesAutocomplete
-            placeholder="Search"
+          <SafeAreaView style={{flex : 1 , width : "100%"}}>
+            <View style={styles.placesModalHeader} >
+              <Btn 
+                  onPress={()=>{ this.setState({showPlaces : false})}}
+                  style={{width : 26,height : 26,marginTop :4}}>
+                  <Ionicons name="md-arrow-round-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
+              </Btn>
+              <Text>
+                {addressLabel}
+              </Text>
+              <Btn style={{width : 40,height : 40}} ></Btn>
+            </View>
+            <GooglePlacesAutocomplete
+              placeholder="Search"
 
-            onFail={(error)=>{
+              onFail={(error)=>{
 
-            }}
-            minLength={2} // minimum length of text to search
-            autoFocus={false}
-            returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-            listViewDisplayed={false} // true/false/undefined
-            fetchDetails={true}
-            // renderDescription={row => row.description} // custom description render
-            onPress={(data, details) => {
-              this.setState({[addressKey] :  {...data , ...details}})
-              this.setState({showPlaces:false})
-            }}
+              }}
+              minLength={2} // minimum length of text to search
+              autoFocus={false}
+              returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+              listViewDisplayed={false} // true/false/undefined
+              fetchDetails={true}
+              // renderDescription={row => row.description} // custom description render
+              onPress={(data, details) => {
+                this.setState({[addressKey] :  {...data , ...details}})
+                this.setState({showPlaces:false})
+              }}
 
-            query={{
-              // available options: https://developers.google.com/places/web-service/autocomplete
-              key: 'AIzaSyDQBBCtTFs_pu7bJamKGWgEVaCf5KC_7LA',
-              language: 'en', // language of the results
-              // types: '(cities)', // default: 'geocode'
-            }}
+              query={{
+                // available options: https://developers.google.com/places/web-service/autocomplete
+                key: 'AIzaSyDQBBCtTFs_pu7bJamKGWgEVaCf5KC_7LA',
+                language: 'en', // language of the results
+                // types: '(cities)', // default: 'geocode'
+              }}
 
-            nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-            GoogleReverseGeocodingQuery={{
-              // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-            }}
-            GooglePlacesSearchQuery={{
-              // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-              rankby: 'distance',
-              types: 'food',
-            }}
-            filterReverseGeocodingByTypes={[
-              'locality',
-              'administrative_area_level_3',
-            ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-            predefinedPlaces={[homePlace, workPlace]}
-            debounce={200}
-          />
-        </SafeAreaView>
+              nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+              GoogleReverseGeocodingQuery={{
+                // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+              }}
+              GooglePlacesSearchQuery={{
+                // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                rankby: 'distance',
+                types: 'food',
+              }}
+              filterReverseGeocodingByTypes={[
+                'locality',
+                'administrative_area_level_3',
+              ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+              predefinedPlaces={[homePlace, workPlace]}
+              debounce={200}
+            />
+          </SafeAreaView>
       </Modal>
       )
     }
@@ -165,10 +170,9 @@ class ShoppingRequest extends React.Component<Props, IState> {
     processOrderPlacement = () => {
       const {pickUp , dropOff ,items} = this.state
       if (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items)){
-
       }
       else{
-        const {context : {profile ,setOrder,currentUser,generateOrderId}} = this.props
+        const {context : {setOrder,currentUser,generateOrderId}} = this.props
         const {phoneNumber, displayName} = currentUser
         const orderId = generateOrderId(phoneNumber)
 
@@ -178,25 +182,74 @@ class ShoppingRequest extends React.Component<Props, IState> {
             driver : {},
             pickUpAddress : pickUp,
             dropOffAddress : dropOff,
-            items ,
+            items,
             customer : { phoneNumber , displayName },
             total : 0,
             status : "pending"
         }
-
         setOrder(newOrder)
         this.props.navigation.navigate("Payment")
+      } 
+    }
 
-      }
-      
+    newItemPrompt = () => {
+      this.setState({showPrompt : true})
+    }
+
+    removeItem = (index : number) => {
+      const {items} = this.state
+      let itemsCopy = [...items]
+      delete items[index]
+      itemsCopy = itemsCopy.filter((i)=> i)
+      this.setState({items : itemsCopy})
+    }
+
+    renderAddItemPrompt = () => {
+      const {showPrompt , items} = this.state
+        return (
+          <AddItemPrompt 
+            onClose={()=>{
+              this.setState({showPrompt : false})
+            }}
+            addItem={(item)=>{
+              this.setState({items : [...items, item]})
+              this.setState({showPrompt : false})
+            }}
+            showPrompt={showPrompt} 
+          />
+        )
+    }
+
+    renderListEmpty = () =>{
+
+      return(
+        <View 
+          style={{
+            width : "100%",
+            height : 180,
+            alignItems : "center",
+            justifyContent : "center"
+          }}
+        >
+
+            <BagIcon />
+
+            <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
+             {"Add items to your shopping list and\nlet's get you what you need."}
+            </Text>
+        </View>
+
+      )
     }
 
     render(){
 
         const {pickUp , dropOff ,items} = this.state
-        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items) )
+        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items))
+
         return [
           this.renderPlacesModal(),
+          this.renderAddItemPrompt(),
           <Loader visible={false} /> ,          
           <BackScreen
             {...this.props}
@@ -212,12 +265,11 @@ class ShoppingRequest extends React.Component<Props, IState> {
               <Text style={styles.pickUpHeading} >
                   {"Shop & Drop off"}
               </Text>
-              <Text style={{fontSize : 12, fontWeight : "400", color : "rgba(0,0,0,0.5)",alignSelf : "flex-start" }} >
+              <Text style={styles.subHead} >
                   {"We will buy the items you need and drop off wherever you want!"}
               </Text>
 
               <View style={{ paddingVertical : 24}} >
-                {/* {this.renderAddressSelector("Pick-up Address","pickUp")} */}
                 {this.renderAddressSelector("Delivery Address","dropOff")}
                 <Text style={styles.subtitles} >
                   {"Store Details"}
@@ -240,29 +292,29 @@ class ShoppingRequest extends React.Component<Props, IState> {
                       multiline  
                      style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "top"}} />        
                 </View>
-                <Text style={styles.subtitles} >
-                  {"Shopping List"}
-                </Text>
+                <Text style={styles.subtitles} >{"Shopping List"}</Text>
                 <FlatList 
-                    data={[1,1,1,1,1,1,]}
+                    data={[]}
                     contentContainerStyle={{
                       flex : 1,width : "100%"
                     }}
+                    ListEmptyComponent={this.renderListEmpty()}
                     style={{flex : 1, width : "100%"}}
                     renderItem={({item})=>(
                       <ShoppingListItem  name={item} />
                     )}
                 />
 
-                <Btn 
-                    disabled={dislabled}
-                      onPress={()=>{ 
+                <Btn onPress={()=> this.newItemPrompt()} style={styles.addItemBtn}>
+                      <AntDesign name="plus" style={{fontWeight : "bold"}} size={22} color="white" />
+                </Btn>
+
+                <Btn disabled={dislabled}
+                    onPress={()=>{ 
                           this.processOrderPlacement()
-                      }} 
-                      style={{width : "100%", height : 42 , opacity : dislabled ? 0.6 : 1,  borderRadius : 4, marginTop : 12,
-                      backgroundColor : "#F57301",alignItems : "center", justifyContent : "center" 
-                      }}>
-                    <Text style={{fontSize :  13 ,color : "#fff" , fontWeight : "600"}}>
+                    }} 
+                      style={[styles.continueBtn, {opacity : dislabled ? 0.6 : 1}]}>
+                    <Text style={styles.continueBtnText}>
                       Continue
                     </Text>
                 </Btn>
@@ -281,14 +333,53 @@ const styles = StyleSheet.create({
     activeTextStyle:{
         color : 'red'
     },
+    itemInput : { 
+      fontSize :  12, height: 56,
+      flex : 1, textAlignVertical : "center"
+    },
+    closeIcon : {
+      width : 50 ,height : 50,
+      borderRadius : 25 , position: "absolute" ,
+      top: 4,right: 4,alignItems : "center",justifyContent : "center"
+    },
+    placesModalHeader: { 
+      height : 64, width : "100%",
+      alignItems: "center",flexDirection:"row",
+      justifyContent : "space-between",
+      paddingHorizontal : 16 
+    },
+    addItemWrapper : {
+      width : "90%",paddingHorizontal :  24,
+      height : 260, borderRadius : 4,
+      backgroundColor : "white"
+    },
+    continueBtn : {
+      width : "100%", height : 42 , borderRadius : 4, marginTop : 12,
+    backgroundColor : "#F57301",alignItems : "center", justifyContent : "center" 
+    },
+    continueBtnText : {
+      fontSize :  13 ,color : "#fff" , 
+      fontWeight : "600"
+    },
     backBtnStyle:{
       alignSelf : "flex-start",
       width : 30,height: 30
+    },
+    subHead : {
+      fontSize : 12, fontWeight : "400", 
+      color : "rgba(0,0,0,0.5)",
+      alignSelf : "flex-start" 
     },
     subtitles :{
       fontSize : 12, fontWeight : "700",
       color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", 
       marginBottom : 8 
+    },
+    addItemBtn : {
+      height :42,width : 42,alignSelf : "center",marginVertical : 4,
+      borderRadius: 21, backgroundColor : Colors.primaryOrange, 
+      justifyContent : "center",
+      alignItems : "center",...shadow
     },
     pickUpHeading: {
       fontSize : 22, fontWeight : "700",
