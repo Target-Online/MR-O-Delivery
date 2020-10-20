@@ -13,6 +13,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ShoppingListItem from './ShoppingListItem'
 
 const shadow =  {
     shadowColor: '#000000',
@@ -25,34 +26,6 @@ const shadow =  {
   }
 
 interface IProps { title?: string;} 
-interface IOrderItem {
-  name : string;
-  description?:string 
-}
-
-export interface IVehicle {
-  registration : string ; 
-  brand : string;
-  model : string;
-}
-
-interface IUser {
-  name : string;
-  vehicel : IVehicle;
-  location ?: any;
-  status : "busy" | "vacant" | "offline"
-}
-
-export interface IOrder {
-  orderId : string;
-  customer : any;
-  pickUpAddress: any;
-  dropOffAddress :  any;
-  driver?: IUser;
-  orderType : "Pick-Up" | "Shopping";
-  status: string;
-  items : any[]
-}
 
 type Props = IProps & StackScreenProps<{navigation : any}> &  IContextProps;
 
@@ -60,26 +33,28 @@ interface IState {
   isModalVisible: boolean;
   authType: string;
   showPlaces : boolean;
+  items : any[];
   orderType : "Pick-Up" | "Shopping";
   addressKey : string;
 }
 
-class PickUp extends React.Component<Props, IState> {
+class ShoppingRequest extends React.Component<Props, IState> {
     state = {
       isModalVisible : false,
       authType: "signIn",
       pickUp : "",
       dropOff : "",
-      orderType : "Pick-Up",
-      item : {
-        name : "",
-        description : ""
-      },
+      orderType : "Shopping",
+      items : [],
       addressKey: "",
       showPlaces: false
     }
 
     componentDidMount(){
+
+      let testCount = [1,1,1,1,1,1,1]
+      let items = testCount.map((index)=>({name : `item${index}`, description : "none"}))
+      this.setState({items})
     }
 
     closeModal = () =>{
@@ -111,7 +86,6 @@ class PickUp extends React.Component<Props, IState> {
             placeholder="Search"
 
             onFail={(error)=>{
-
 
             }}
             minLength={2} // minimum length of text to search
@@ -157,68 +131,6 @@ class PickUp extends React.Component<Props, IState> {
       this.setState({showPlaces :  true , addressKey : key})
     }
   
-    renderAddress(){
-
-      const {isModalVisible , authType} = this.state
-      return(
-        <Modal 
-          animated
-          key="mod"
-          animationType="slide"
-          visible={isModalVisible}
-          onRequestClose={()=> this.closeModal()}
-        >
-          <View style={{width : "100%",flex :1}}>
-            <View style={{width : "100%" , alignItems : "flex-end",paddingVertical: 36,paddingHorizontal  :24, backgroundColor : "#fff", ...shadow}}>
-              <View style={{width: "100%",justifyContent : "space-between", alignSelf : "center",alignItems : "center", flexDirection : "row"}}>
-                <Btn style={styles.backBtnStyle} onPress={()=> this.closeModal()}>
-                  <Icon name="arrow-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
-                </Btn>
-                <View style={{alignItems : "center"}}>
-                  <LocationIcon />
-                  <Text style={{fontSize : 16, fontWeight : "600"}}>Set addresses</Text>
-                </View>
-                <Btn style={styles.backBtnStyle} onPress={()=> this.closeModal()} />
-              </View>
-
-              <View style={{ flexDirection : "row", height : 100,justifyContent:"space-between", marginTop : 16}}>
-                <View style={{width:  20,marginRight : 8,justifyContent:"space-between",paddingVertical:10 ,alignItems: "flex-start"}}>
-                  <View style={{width:8,height:8,borderRadius:4,backgroundColor :"#000" }} />
-                  <View style={{width:1,height:44,marginLeft : 3.5,borderRadius:4,backgroundColor :"rgba(0,0,0,0.5)" }} />
-                  <View style={{width:8,height:8,backgroundColor :"#000" }} />
-                </View>
-                <View style={{flex:1,justifyContent  :"space-between",backgroundColor : "#fff" }}> 
-                    <View style={[styles.textAreaStyles,styles.addressInputWrapper]} >
-                          <TextInput placeholder="Pick Up Address"   style={styles.addressInput} />  
-                          <Icon name="ios-close-circle-outline"  size={22} />
-                    </View>
-                    <View style={[styles.textAreaStyles,styles.addressInputWrapper]} >
-                          <TextInput placeholder="Delivery Address"  style={styles.addressInput} />   
-                          <Icon name="ios-close-circle-outline"  size={22} />
-                    </View>
-                </View>
-
-              </View>
-            </View>
-            <FlatList
-                contentContainerStyle={{paddingHorizontal : 24}}
-                data={[1,1,1,1,1,1,1,1,1]}
-                renderItem={({item, index})=>(
-                  <View style={styles.addressResultsItem}>
-                    <LocationIcon fill={"rgba(0,0,0,0.4)"} />
-                    <View>
-                      <Text style={{fontSize : 14,marginLeft : 8, color : "rgba(0,0,0,0.9)"}} >{'address'+index}</Text>
-                      <Text style={{fontSize : 12,marginLeft : 8, color : "rgba(0,0,0,0.5)"}} >{'city'}</Text>
-                    </View>
-                  </View>
-                )}        
-            />
-           
-          </View>
-        </Modal>
-      )
-    }
-
     openModal(authType : string){
         this.setState({authType, isModalVisible : true})
     }
@@ -251,9 +163,8 @@ class PickUp extends React.Component<Props, IState> {
     }
 
     processOrderPlacement = () => {
-      const {pickUp , dropOff ,item : {name , description},item, orderType} = this.state
-      if (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item)){
-
+      const {pickUp , dropOff ,items} = this.state
+      if (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items)){
 
       }
       else{
@@ -263,19 +174,16 @@ class PickUp extends React.Component<Props, IState> {
 
         const newOrder : IOrder = {
             orderId,
-            // orderType ,
+            orderType : "Shopping" ,
             driver : {},
             pickUpAddress : pickUp,
             dropOffAddress : dropOff,
-            items : [{
-              name,
-              description
-            }],
-            customer : {phoneNumber,displayName},
-            total : 1250,
+            items ,
+            customer : { phoneNumber , displayName },
+            total : 0,
             status : "pending"
-            
         }
+
         setOrder(newOrder)
         this.props.navigation.navigate("Payment")
 
@@ -285,11 +193,8 @@ class PickUp extends React.Component<Props, IState> {
 
     render(){
 
-        const {pickUp , dropOff ,item : {name , description},item, orderType} = this.state
-        const {context : {profile , order,setOrder,currentUser,generateOrderId}} = this.props
-        const {phoneNumber} = currentUser
-        const orderId = generateOrderId(phoneNumber)
-        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item) || !name || !description)
+        const {pickUp , dropOff ,items} = this.state
+        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items) )
         return [
           this.renderPlacesModal(),
           <Loader visible={false} /> ,          
@@ -305,40 +210,50 @@ class PickUp extends React.Component<Props, IState> {
               </View>
             
               <Text style={styles.pickUpHeading} >
-                  {"Pick up & Drop off"}
+                  {"Shop & Drop off"}
               </Text>
               <Text style={{fontSize : 12, fontWeight : "400", color : "rgba(0,0,0,0.5)",alignSelf : "flex-start" }} >
-                  {"We will pick up documents, goods, electronics,groceries and whatever you need and drop off wherever you want!"}
+                  {"We will buy the items you need and drop off wherever you want!"}
               </Text>
 
               <View style={{ paddingVertical : 24}} >
-                {this.renderAddressSelector("Pick-up Address","pickUp")}
-                {this.renderAddressSelector("Drop-off Address","dropOff")}
-                <Text style={{fontSize : 12, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
-                  {"Parcel Details"}
+                {/* {this.renderAddressSelector("Pick-up Address","pickUp")} */}
+                {this.renderAddressSelector("Delivery Address","dropOff")}
+                <Text style={styles.subtitles} >
+                  {"Store Details"}
                 </Text>
-                <View style={[styles.textAreaStyles,{height : 42,marginVertical : 8,paddingVertical: 2}]} >              
+                <View style={[styles.textAreaStyles,{height : 42,paddingVertical :2}]} >              
                     <TextInput 
-                      value={name}
+                      value={"Store name"}
                       onChangeText={(text)=> { 
-                        const item  = {name : text, description}
-                        this.setState({item })
                        }}
-                      placeholder={"Item Name"} 
+                      placeholder={"Store Name"} 
                       style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "center"}}
                     />        
                 </View>
                 <View style={styles.textAreaStyles} >              
                     <TextInput 
-                      value={description}
-                      placeholder={"Item description"}  
+                      value={"Store instructions"}
+                      placeholder={"Store instructions"}  
                       onChangeText={(text)=> { 
-                        const item  = {name, description : text}
-                        this.setState({item})
                        }}
                       multiline  
                      style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "top"}} />        
                 </View>
+                <Text style={styles.subtitles} >
+                  {"Shopping List"}
+                </Text>
+                <FlatList 
+                    data={[1,1,1,1,1,1,]}
+                    contentContainerStyle={{
+                      flex : 1,width : "100%"
+                    }}
+                    style={{flex : 1, width : "100%"}}
+                    renderItem={({item})=>(
+                      <ShoppingListItem  name={item} />
+                    )}
+                />
+
                 <Btn 
                     disabled={dislabled}
                       onPress={()=>{ 
@@ -359,9 +274,8 @@ class PickUp extends React.Component<Props, IState> {
 
 };
 
-const randomNum =  Math.floor(Math.random() * Math.floor(100));
 
-export default withAppContext(PickUp)
+export default withAppContext(ShoppingRequest)
 
 const styles = StyleSheet.create({
     activeTextStyle:{
@@ -370,6 +284,11 @@ const styles = StyleSheet.create({
     backBtnStyle:{
       alignSelf : "flex-start",
       width : 30,height: 30
+    },
+    subtitles :{
+      fontSize : 12, fontWeight : "700",
+      color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", 
+      marginBottom : 8 
     },
     pickUpHeading: {
       fontSize : 22, fontWeight : "700",
@@ -393,11 +312,11 @@ const styles = StyleSheet.create({
       textAlignVertical : "center"
     },
     textAreaStyles:{
-      flex : 1, height : 243, 
+      flex : 1, height : 103, 
       borderRadius : 8,paddingVertical: 16,
       flexDirection : "row",backgroundColor : "rgba(0,0,0,0.035)",
       alignItems:"center" ,borderWidth : 2, borderColor: "#f9f9f9", 
-      paddingHorizontal : 16 
+      paddingHorizontal : 16 , marginVertical : 8
     },
     container: {
       flex : 1 ,
@@ -415,15 +334,16 @@ const styles = StyleSheet.create({
       flexDirection : "row", paddingHorizontal : 24 
     },
     tabStyle : { 
-      backgroundColor : 'white'}
-  
-  })
+      backgroundColor : 'white'
+    }
+  }
+)
 
-  const homePlace = {
+const homePlace = {
     description: 'Home',
     geometry: { location: { lat: 48.8152937, lng: 2.4597668 } },
-  };
-  const workPlace = {
+};
+const workPlace = {
     description: 'Work',
     geometry: { location: { lat: 48.8496818, lng: 2.2940881 } },
-  };
+};

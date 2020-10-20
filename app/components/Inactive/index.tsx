@@ -35,7 +35,7 @@ const Inactive  : React.SFC<IProps>  = (props) => {
                 <Animatable.View duration={300} easing="ease-in" animation="fadeIn" style={styles.dialogContainer} >
                     <OfflineIcon />
                     <Text numberOfLines={6} style={[styles.btnText,{textAlign :"center",marginVertical :24}]} >
-                        {"You profile is inactive.\nPlease contact the admin regarding the matter."}
+                        {"Your profile is inactive.\nPlease contact the admin regarding the matter."}
                     </Text>           
                 </Animatable.View>
             </View>

@@ -63,7 +63,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const storeUser = (user) => {
-            console.log("here")
             if (user) {
                 var dbUser = users.data.find((u: any) => u.id == user.phoneNumber)
                 dbUser ? setCurrentUser(dbUser) : setCurrentUser(user);            
@@ -96,7 +95,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         const reloadData = () =>{
             setLoadingUser(true)
             api.getCollection("users", setUsers, () =>{ 
-                console.log(" we have updated" ) 
+   
             })
             api.getCollection("orders", setOrders)
 
@@ -104,7 +103,6 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         useEffect(() => {
-            console.log("running effect")
             initAudio()
             initSound()
             setLoadingUser(true)
@@ -113,10 +111,8 @@ const AppContextProvider : React.SFC = ({children}) => {
             ref.on('value', function(snapshot) {
                 // Do whatev
                 const  user = firebase.auth().currentUser
-                console.log({user})
                 setUsers({ type: "setData", data: O2A(snapshot) })
                 storeUser(user)
-                console.log("user here ")
             });
 
             registerForPushNotificationsAsync().then(token => {
@@ -133,7 +129,7 @@ const AppContextProvider : React.SFC = ({children}) => {
                         expoToken : token})
                     }
                 }).catch(e =>{
-                    console.log({e})
+                    // console.log({e})
                 })
                 setTimeout(()=> setLoadingUser(false) , 3000)           
             })
@@ -192,7 +188,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             .then((snapshot: any) => {  
                     setOrder(snapshot.val())             
                 }).catch((err: any)=>{                  
-                    console.log(" failed to update")
+
             });
         }
 
@@ -202,7 +198,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             .update({...update}).then((snapshot: any) => {  
                           
             }).catch((err: any)=>{                  
-                console.log(" failed to update")
+                // console.log(" failed to update")
             })
         }
 
@@ -211,7 +207,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             .set({...updatedDriverState})
             .then((snapshot: any) => {              
             }).catch((err: any)=>{          
-                    console.log(" failed to update")
+                    // console.log(" failed to update")
             });
         }
       

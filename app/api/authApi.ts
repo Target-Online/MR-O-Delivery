@@ -38,7 +38,7 @@ export const signInWithCredential = async (verificationId: string, verificationC
     // navigation.navigate('Home')
   } catch (err) {
     onError(err.message);
-    console.log("Sign In Erro", err.message)
+
   }
 }
 

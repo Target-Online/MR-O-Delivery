@@ -18,7 +18,6 @@ const OTPScreen = (props: any) => {
   const phoneNumber = props.route.params.phoneNumber
   const [verificationCode, setVerificationCode] = useState<string>("")
 
-  console.log({phoneNumber})
   const numberConfirmed = (id : string) => {
     setVerificationId(id)
   }

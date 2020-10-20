@@ -1,3 +1,5 @@
+import { IAlertProps } from "components/AlertModal";
+
 export interface IVehicle {
     registration : string ; 
     brand : string;
@@ -19,7 +21,12 @@ export interface IUser {
     profilePicUrl: string;
     vehicleRegistration: string;
 }
-
+export interface IVehicle {
+    registration : string ; 
+    brand : string;
+    model : string;
+  }
+  
 export interface IAddressComponent { 
     name : string;
     shortName : string;
@@ -41,7 +48,7 @@ export interface IAddress {
 
 export interface IOrder {
     orderId : "Pick-Up" | "Shopping";
-    customer : any;
+    customer : IUser;
     status : "pending" | "confirmed" | "collected" | "delivered"
     driver?: IUser;
     dropOffAddress : IAddress ;
@@ -80,19 +87,3 @@ export interface IAppContext{
         setOrderNumber : (id : string) => void;
 }
 
-export type IUser = {
-    email?: string;
-    phoneNumber?: number;
-    firstname?: string;
-    lastname?: string;
-    isDriver?:boolean;
-    isActive?:boolean;
-    isVacant?:boolean;
-    displayName?:boolean;
-    profilePicURL?: string;
-    createdAt: any;
-    id: string;
-    object_key: string
-    profilePicUrl: string;
-    vehicleRegistration: string;
-}

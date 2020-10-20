@@ -93,7 +93,7 @@ const Home: any = (props: Props) => {
         }
         setLoading(false)
     }).catch((err)=>{
-      console.log("Order fetch failed ", err)
+
       setLoading(false)
     })
   }
@@ -113,15 +113,7 @@ const Home: any = (props: Props) => {
             </Text>
             <View style={styles.orderOpts} >
               <Btn
-                onPress={() => {
-                    setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
-                    buttons : [{
-                      label : "Ok",
-                      onPress : ()=> setShowAlert(false)
-                    }]})
-                    setShowAlert(true)
-                  }
-                }
+                onPress={() => props.navigation.navigate("ShoppingRequest")}
                 style={{ width: width*0.4, height: 200 }}
               >
                 <View style={styles.btnStyle}  >

@@ -12,8 +12,6 @@ const db = firebase.database()
 
 export const getCollection = async (ref: any, dispatch: any, callBack?: any) =>{
 
-  console.log("fired get collection")
-
   return db.ref(ref).on(
     "value",
     (data: any) => {

@@ -29,13 +29,8 @@ const NoConnection  : React.SFC<IProps>  = (props) => {
     const checkNetwork = async () => {
             
         const netState = await Network.getNetworkStateAsync();
-        // {
-        //   type: NetworkStateType.CELLULAR,
-        //   isConnected: true,
-        //   isInternetReachable: true,
-        // }
         const {isConnected} = netState
-        console.log("==",{isConnected})
+
         if(!isConnected){ setShow(true) }
         else{
             setShow(false)

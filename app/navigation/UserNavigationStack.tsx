@@ -4,6 +4,7 @@ import Contact from '../screens/user/Contact'
 import Home from '../screens/user/Home'
 import Profile from '../screens/user/Profile'
 import PickUp from '../screens/user/PickUp'
+import ShoppingRequest from '../screens/user/ShoppingRequest'
 import OrderProgress from '../screens/user/OrderProgress'
 import About from '../screens/user/About'
 import { BottomMenu } from '../components'
@@ -22,6 +23,7 @@ function HomeStack() {
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="PickUpRequest" component={PickUp} />
+      <Stack.Screen name="ShoppingRequest" component={ShoppingRequest} />
     </Stack.Navigator>
   );
 }

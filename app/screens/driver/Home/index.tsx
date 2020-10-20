@@ -92,7 +92,6 @@ class Home extends React.Component<IProps, IState> {
         .ref(`/users/${phoneNumber}`)
         .on('value', (snapshot: { val: () => any; key: any; }) => {
 
-          console.log("driver changes", snapshot.val())
           const driver = snapshot.val()
           if(driver){
             const {phoneNumber , status, isOnline, isVacant , isActive}  = driver

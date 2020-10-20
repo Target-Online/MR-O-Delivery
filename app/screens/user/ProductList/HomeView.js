@@ -47,7 +47,7 @@ class HomeView extends Component {
     renderFoodItems = () => {
 
       const addItemClicked = (item) => {
-          console.log("ddding item")
+
           this.setState({selectedItem : item,isAddProdVisible : true })
       }
       return(
