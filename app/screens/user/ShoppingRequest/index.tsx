@@ -41,6 +41,8 @@ interface IState {
   items : any[];
   orderType : "Pick-Up" | "Shopping";
   addressKey : string;
+  storeName : string;
+  instructions : string;
 }
 
 class ShoppingRequest extends React.Component<Props, IState> {
@@ -53,13 +55,15 @@ class ShoppingRequest extends React.Component<Props, IState> {
       items : [],
       addressKey: "",
       showPrompt : false,
-      showPlaces: false
+      showPlaces: false,
+      storeName : "",
+      instructions : ""
     }
 
     componentDidMount(){
-      let testCount = [1,1,1,1,1,1,1]
-      let items = testCount.map((index)=>({name : `item${index}`, description : "none"}))
-      this.setState({items})
+      // let testCount = [1,1,1,1,1,1,1]
+      // let items = testCount.map((index)=>({name : `item${index}`, description : "none"}))
+      // this.setState({items})
     }
 
     closeModal = () =>{
@@ -197,9 +201,11 @@ class ShoppingRequest extends React.Component<Props, IState> {
     }
 
     removeItem = (index : number) => {
+
+      console.log("remove item", index)
       const {items} = this.state
       let itemsCopy = [...items]
-      delete items[index]
+      delete itemsCopy[index]
       itemsCopy = itemsCopy.filter((i)=> i)
       this.setState({items : itemsCopy})
     }
@@ -224,16 +230,12 @@ class ShoppingRequest extends React.Component<Props, IState> {
 
       return(
         <View 
-          style={{
-            width : "100%",
-            height : 180,
-            alignItems : "center",
-            justifyContent : "center"
+          style={{ 
+            width : "100%", height : 180,
+            alignItems : "center",justifyContent : "center"
           }}
         >
-
             <BagIcon />
-
             <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
              {"Add items to your shopping list and\nlet's get you what you need."}
             </Text>
@@ -244,7 +246,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
 
     render(){
 
-        const {pickUp , dropOff ,items} = this.state
+        const {pickUp , dropOff ,items , storeName, instructions} = this.state
         const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items))
 
         return [
@@ -275,33 +277,36 @@ class ShoppingRequest extends React.Component<Props, IState> {
                   {"Store Details"}
                 </Text>
                 <View style={[styles.textAreaStyles,{height : 42,paddingVertical :2}]} >              
-                    <TextInput 
-                      value={"Store name"}
-                      onChangeText={(text)=> { 
-                       }}
-                      placeholder={"Store Name"} 
-                      style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "center"}}
-                    />        
+                  <TextInput 
+                    value={storeName}
+                    onChangeText={(storeName)=> { 
+                      this.setState({storeName})
+                    }}
+                    placeholder={"Store Name"} 
+                    style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "center"}}
+                  />        
                 </View>
                 <View style={styles.textAreaStyles} >              
                     <TextInput 
-                      value={"Store instructions"}
+                      value={instructions}
                       placeholder={"Store instructions"}  
-                      onChangeText={(text)=> { 
+                      onChangeText={(instructions)=> { 
+                        this.setState({instructions})
                        }}
                       multiline  
-                     style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "top"}} />        
+                      style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "top"}} 
+                    />        
                 </View>
                 <Text style={styles.subtitles} >{"Shopping List"}</Text>
                 <FlatList 
-                    data={[]}
+                    data={items}
                     contentContainerStyle={{
                       flex : 1,width : "100%"
                     }}
                     ListEmptyComponent={this.renderListEmpty()}
                     style={{flex : 1, width : "100%"}}
-                    renderItem={({item})=>(
-                      <ShoppingListItem  name={item} />
+                    renderItem={({item,index})=>(
+                      <ShoppingListItem onDelete={()=>{ this.removeItem(index) }}  item={item} />
                     )}
                 />
 
