@@ -16,8 +16,8 @@ import DriverConfirmIcon from '../../../assets/icons/DriverConfirmIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
-import { cond } from 'lodash';
 import Inactive from  '../../../components/Inactive'
+import ConfirmItems from '../OrderProgress/ConfirmItems';
 
 const shadow =  {
     shadowColor: '#000000',
@@ -36,7 +36,7 @@ interface IState {
   isOnline?: boolean;
   isVacant?: boolean;
   isActive?: boolean;
-  newState : "pending"| "confirmed" | "collected" | "delivered" ; 
+  newState : "pending"| "shopping" | "confirmed" | "collected" | "delivered" ; 
   order?: IOrder;
   status?: "offline" | "vacant" | "busy";
   orderId?: string;
@@ -56,7 +56,7 @@ class Home extends React.Component<IProps, IState> {
         isOnline : false,
         isVacant : false,
         status,
-        newState : "pending",
+        newState : "shopping",
         order : null
       }
     }
@@ -91,14 +91,12 @@ class Home extends React.Component<IProps, IState> {
       this.onDriverUpdated = database()
         .ref(`/users/${phoneNumber}`)
         .on('value', (snapshot: { val: () => any; key: any; }) => {
-
           const driver = snapshot.val()
           if(driver){
-            const {phoneNumber , status, isOnline, isVacant , isActive}  = driver
+            const {isOnline, isVacant , isActive}  = driver
             this.setState({isOnline , isVacant , isActive})
           }         
       })
-
     }
 
     setMyOrder = (theOrder : IOrder) => {
@@ -121,7 +119,7 @@ class Home extends React.Component<IProps, IState> {
       this.setState({isModalVisible : false})
     }
 
-    changeOrderProgress = (newState : "pending" | "collected" | "confirmed" | "delivered") => { 
+    changeOrderProgress = (newState : "pending" | "shopping" | "shopping" | "collected" | "confirmed" | "delivered") => { 
       const { orderId } = this.state
       const { context : {updateOrderStatus, order } } = this.props
       const nowNow = moment(new Date()).toString()
@@ -245,8 +243,10 @@ class Home extends React.Component<IProps, IState> {
 
     renderOrderInProgress = () =>{
 
-      const {newState, order : {pickUpAddress, dropOffAddress}} = this.state
+      const {newState, } = this.state
+      const {order : {pickUpAddress, dropOffAddress , orderType ,  customer }} = this.props.context
       const orderCollected = newState === "collected"
+      const isGroceries =  orderType === "Shopping"
 
       return(
         <View style={styles.modalInnerContainer}>
@@ -254,7 +254,8 @@ class Home extends React.Component<IProps, IState> {
            {this.renderCustomerCard()}
            {this.renderParcelDetails()}
           <Text style={{alignSelf : "center" , marginVertical : 4}} >{
-            !orderCollected ? "On route to collect the parcel" : "Dropping off the parcel "} 
+            !orderCollected ? (isGroceries ? `Head to the store and purchase ${customer.displayName}'s items` : "On route to collect the parcel") :
+             "Dropping off the parcel "} 
           </Text>
           <View style={styles.newReqInnerContainer}>        
               <View style={[styles.routePath,{height : 42} ]}>
@@ -264,7 +265,7 @@ class Home extends React.Component<IProps, IState> {
               </View>
               <View style={[styles.addressesWrapper,{height : 42}]}>                
                   <View style={styles.textAreaStyles} >
-                      <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} > {orderCollected? "Drop-Off" : "Pick-Up"}</Text>
+                      <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} > {orderCollected? "Drop-Off" : isGroceries ? "Store Address" : "Pick-Up"}</Text>
                       <Text numberOfLines={2} style={styles.addressInput} >
                         {orderCollected ? dropOffAddress.description : pickUpAddress.description }
                       </Text>   
@@ -278,10 +279,20 @@ class Home extends React.Component<IProps, IState> {
               style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
                 <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
               </Btn>
-              <Btn onPress={()=>{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}} 
+              <Btn onPress={()=>{ 
+
+                if (isGroceries){
+                    //trigger shopping list view
+                    this.changeOrderProgress("shopping")  
+                    this.setState({isModalVisible : false})
+                }
+                else{
+                  this.changeOrderProgress(orderCollected ? "delivered" : "collected")}
+                }
+              } 
                 style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
                 <Text  style={styles.acceptDeclineText} >
-                  {orderCollected ? "Confirm Delivery" : "Confirm Collection"}
+                  {orderCollected ? "Confirm Delivery" : isGroceries ? "View Shopping List" : "Confirm Collection"}
                 </Text>
               </Btn>
             </View>
@@ -301,10 +312,14 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
+    renderOrderItemsConfirmation = () => {
+      return <ConfirmItems />
+    }
     renderDeliveredOrder = () =>{
 
       const {order : {total , paymentMethod , distance}} = this.state
       const {context : {updateDriverStatus}} = this.props
+
 
       return(
         <View style={styles.modalInnerContainer}>
@@ -342,7 +357,6 @@ class Home extends React.Component<IProps, IState> {
     }
 
     renderInactiveModal = () =>{
-
         const { isActive } = this.state
 
         return(
@@ -352,8 +366,7 @@ class Home extends React.Component<IProps, IState> {
 
     renderNewOrderModal = () => {
 
-      const {isModalVisible , newState} = this.state
-
+      const {isModalVisible , newState,} = this.state
       return(
         <Modal 
           animated
@@ -373,7 +386,7 @@ class Home extends React.Component<IProps, IState> {
     }
   
     toggleOnline = (isOnline : boolean) => {
-      const {context : {updateDriverStatus , setCurrentUser, users , storeUser, currentUser : {phoneNumber} }} = this.props
+      const {context : {updateDriverStatus , currentUser : {phoneNumber} }} = this.props
 
       updateDriverStatus({isOnline})
       if (isOnline){
@@ -383,41 +396,48 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-      const {context : {currentUser :{ displayName, profilePicURL}}} = this.props
-      const {isOnline} = this.state
+      const {context : {currentUser :{ displayName, profilePicURL}, sendRequest}} = this.props
+      const {isOnline , newState} = this.state
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
- 
+      const randomNum =  Math.floor(Math.random() * Math.floor(1000))
+
+
+      if (newState === "shopping"){
+        return this.renderOrderItemsConfirmation()
+      }
       return [
           this.renderNewOrderModal(), 
           this.renderInactiveModal(),     
             <View key="main" style={styles.container} >
             <StatusBar barStyle="dark-content" />    
             <ImageBackground source={images.homeBg} style={{width : "100%", height : "100%"}}>
-              <View style={{width : "100%",justifyContent:"flex-end" ,alignItems : "flex-start",height: "35%",paddingHorizontal : 24,paddingBottom : 32}}>
+              <View style={styles.topHeaderWrapper}>
                 <View style={{position: "absolute", bottom : 24,right:12}}>
                   <DeliveryGuyIcon />
                 </View>
                 <Btn onPress={()=> {  }} >
-                  <View style={{width : 40,height: 40, borderRadius : 20,backgroundColor : "grey", borderWidth : 0.75, borderColor : "#fff",marginBottom : 12}}>                 
-                    <RnImg style={{borderRadius : 20 , height : 40, width:  40}} resizeMode="cover" source={imgSrc} />
+                  <View style={styles.imgWrapper}>                 
+                    <RnImg style={styles.displayPic} resizeMode="cover" source={imgSrc} />
                   </View>
                 </Btn>
-                <Text style={{fontSize : 16, fontWeight : "400", color : "#fff",alignSelf : "flex-start" }} >
+                <Text style={styles.welcomeText} >
                   Welcome Back,               
                 </Text>
-                <Text style={{fontSize : 20, fontWeight : "700", color : "#fff",alignSelf : "flex-start" }} >
+                <Text style={styles.displayName} >
                   {displayName}
                 </Text>
                 </View>
             </ImageBackground>
           
             <View style={styles.bottom} >              
-                  <View style={{flexDirection : "row", justifyContent: "flex-end",width : "100%" , alignItems : "center" ,paddingHorizontal : 24 ,position: "absolute",top :24}} >
-                    <Text style={{fontSize : 16, fontWeight : "bold",marginRight : 16 }} >
+                  <View style={styles.switchWrapper} >
+                    <Text style={styles.switchLabel} >
                      {isOnline ? "Online" : "Offline"}
                     </Text>
                     <View style={{marginHorizontal: 8}} />
-                    <Switch onValueChange={()=> this.toggleOnline(isOnline ? false : true)} value={isOnline} style={{width : 24,  }} />
+                    <Switch onValueChange={()=> this.toggleOnline(isOnline ? false : true)} 
+                        value={isOnline} style={{width : 24}} 
+                    />
                   </View>
                   <View style={{width : "100%",height : 78,alignItems : "center"}}> 
                     {isOnline ? <OnlineIcon /> : <OfflineIcon />}
@@ -426,16 +446,14 @@ class Home extends React.Component<IProps, IState> {
                       "You're offline and won't receive any requests"}
                     </Text>
                   </View>
-                  {/* <Btn
-                    style={{width : 120,height:46 , justifyContent : "center" , alignItems : "center", backgroundColor : Colors.primaryOrange , borderRadius :3}}
+                  <Btn
+                    style={styles.addMockOrder}
                     onPress={ async () => {
                       sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{})
-                      // await notify()
-                      await sendPushNotification()                     
                     }}    
                   >
-                      <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                  </Btn> */}
+                    <Text style={{color : "#fff"}} > Add Mock Order</Text>
+                  </Btn>
               </View>           
             </View>    
       ]
@@ -450,10 +468,48 @@ const styles = StyleSheet.create({
     activeTextStyle:{
         color : 'red'
     },
+    switchWrapper : {
+      flexDirection : "row", justifyContent: "flex-end",
+      width : "100%" , alignItems : "center",
+      paddingHorizontal : 24 ,position: "absolute",
+      top :24
+    },
+    displayName : {
+      fontSize : 20, fontWeight : "700", 
+      color : "#fff",alignSelf : "flex-start" 
+    },
+    topHeaderWrapper : {
+      width : "100%",justifyContent:"flex-end",
+      alignItems : "flex-start",height: "35%",
+      paddingHorizontal : 24,paddingBottom : 32
+    },
+    displayPic : {
+      borderRadius : 20 , height : 40,
+      width:  40
+    },
+    imgWrapper : {
+      width : 40,height: 40, 
+      borderRadius : 20,backgroundColor : "grey", 
+      borderWidth : 0.75, borderColor : "#fff",marginBottom : 12
+    },
+    switchLabel : {
+      fontSize : 16, fontWeight : "bold",
+      marginRight : 16 
+    },
+    welcomeText : {
+      fontSize : 16, fontWeight : "400",
+      color : "#fff",alignSelf : "flex-start" 
+    },
     routeSummaryRow :{ 
       height: 122,flexDirection : "row", 
       alignItems : "center", justifyContent :"flex-start",
       paddingVertical : 8 
+    },
+    addMockOrder : {
+      width : 120,height:46 ,
+      justifyContent : "center" , alignItems : "center",
+      backgroundColor : Colors.primaryOrange , 
+      borderRadius :3
     },
     newReqInnerContainer : { 
       height: 70, flexDirection : "row", 

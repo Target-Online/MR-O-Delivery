@@ -46,7 +46,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [expoPushToken, setExpoPushToken] = useState('');
         const [currentUser, setCurrentUser] = useState();
         const [loadingUser, setLoadingUser] = useState(true);
-        const [order, setOrder] = useState({});
+        const [order, setOrder] = useState(mockOrder);
         const [usersArr, setUsersArr] = useState([]); //  useReducer(rootReducer.setStateReducer, initalState);
         const [users, setUsers] =  useReducer(rootReducer.setStateReducer, initalState);
         const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
@@ -369,18 +369,22 @@ const randomNum = () =>  Math.floor(Math.random() * Math.floor(100));
 export const mockOrder =  {
     "customer" : {
       "email" : "menc9@coo9.com",
-      "displayName" : "Customer Name",
+      "displayName" : "Baldridge",
       "lastname" : "TEst Last",
       "profilePicURL" : ""
     },
     "driver" : {
-        "displayName" : "Mnotho",
+        "displayName" : "Robiii",
         "expoToken" : "ExponentPushToken[vzKJbwE1inzvm5qSwtsTa7]",
-        "id" : "+27611801505",
+        "id" : "+27849128210",
         "isActive" : true,
         "isDriver" : true,
-        "phoneNumber" : "+27611801505",
+        "isVacant" : true,
+        "isOffline" : true,
+        "phoneNumber" : "+27849128210",
         "status" : "vacant",
+        "profilePicURL" : "https://firebasestorage.googleapis.com/v0/b/mrodelivery-dev.appspot.com/o/Development%2Fimages%2F%2B27849128210?alt=media&token=b503ce86-2d6a-43a8-a39d-05f4a42e4e35",
+        "profilePicUrl" : "https://firebasestorage.googleapis.com/v0/b/mrodelivery-dev.appspot.com/o/Development%2Fimages%2F%2B27849128210?alt=media&token=b503ce86-2d6a-43a8-a39d-05f4a42e4e35",
         "vehicleRegistration" : "Mr-O-Test"
     },
     "dropOffAddress" : {
@@ -418,12 +422,18 @@ export const mockOrder =  {
       },
       "website" : "http://www.dc.gov/"
     },
-    "items" : [ {
-      "description" : "We’re",
-      "name" : "Something here"
-    } ],
+    "items" : [ 
+        {
+        "description" : "We’re",
+        "name" : "Something here"
+        },
+        {
+            "description" : "We’re",
+            "name" : "Something here"
+        },
+    ],
     "orderId" : "testID681",
-    "orderType" : "Pick-Up",
+    "orderType" : "Shopping",
     "pickUpAddress" : {
       "description" : "Dubai - United Arab Emirates, hvvyiyuduydduyttctycycuycycctycyucuycyu",
       "addressComponents" : [ {

@@ -12,6 +12,8 @@ import Loader from '../../../components/loader'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import { getDistance, getPreciseDistance } from 'geolib';
 import { GeolibInputCoordinates } from 'geolib/es/types'
+import RouteSummary from '../../../components/RouteSummary'
+import { showNoDriversAlert } from  '../../../utils/orderModules'
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}>
@@ -122,7 +124,6 @@ class Payment extends Component<IProps> {
 
         if(this.props.context){
             const {context : {sendRequest , order,setOrder, users}} = this.props
-
             const {paymentMethod} = this.state
             const {dropOffAddress , pickUpAddress , items, total}  = order
             this.setState({loaderVisible : true})
@@ -146,7 +147,7 @@ class Payment extends Component<IProps> {
             
             else{
                 setTimeout(()=>{ this.setState({loaderVisible : false})},1000) 
-                setTimeout(()=>{ this.showNoDriversAlert() },1000) 
+                setTimeout(()=>{ showNoDriversAlert(this.props.context) },1000) 
             }
         }
     }
@@ -156,12 +157,12 @@ class Payment extends Component<IProps> {
     )
 
     render () {
-      const { paymentMethod } = this.state
-      const paymentMethods = [ {label : "Cash",icon : <CashIcon /> }]
-      const {context : {profile , order,setOrder}} = this.props
-      const {dropOffAddress , pickUpAddress , items, total}  = order
-      const {name , description } = items[0]
-  
+        const { paymentMethod } = this.state
+        const paymentMethods = [ {label : "Cash",icon : <CashIcon /> }]
+        const {context : {profile , order,setOrder}} = this.props
+        const {dropOffAddress , pickUpAddress , items, orderType, total}  = order
+        const {name , description } = items[0]
+        const isGroceries = orderType === "Shopping"
       return ( 
         <BackScreen
             title="Payment"
@@ -275,49 +276,5 @@ interface IAddressParams {
     pickUpAddress : IAddress,
     item? : string;
     total?: string;
-}
-export const RouteSummary = (props : IAddressParams) => {
-
-    const {item,dropOffAddress,pickUpAddress,total } = props
-    return (
-
-        <View style={styles.orderSummary} >
-           {item && <View style={{height : 40, flexDirection : "row",}}>
-                <ParcelIcon /> 
-                <View style={{marginLeft : 16, }}>
-                    <Text numberOfLines={2} >
-                    <Text style={{fontSize : 14, fontWeight : "bold"}}>
-                        {`Delivering : `}
-                    </Text>
-                        {item}
-                    </Text>
-                </View>
-            </View>}
-            <View style={{height : 80, flexDirection : "row"}}>
-                <View style={{width:  20,marginRight : 8,justifyContent:"space-between",paddingVertical:10 ,alignItems: "flex-start"}}>
-                    <View style={{width:8,height:8,borderRadius:4,backgroundColor :"#000" }} />
-                    <View style={{width:1,height:24,marginLeft : 3.5,borderRadius:4,backgroundColor :"rgba(0,0,0,0.5)" }} />
-                    <View style={{width:8,height:8,backgroundColor :"#000" }} />
-                </View>
-
-                <View style={{flex:1, height: 80,justifyContent  :"space-between",backgroundColor : "#fff" }}> 
-                    <View style={styles.textAreaStyles} >
-                        <Text numberOfLines={2} style={styles.addressInput} >
-                            {pickUpAddress.description}
-                        </Text>    
-                    </View>
-                    <View style={styles.textAreaStyles} >
-                        <Text numberOfLines={2} style={styles.addressInput} >
-                        {dropOffAddress.description}
-                        </Text>   
-                    </View>
-                </View>
-            </View>
-            {total && <View style={{height : 40,justifyContent:"space-between",flexDirection : "row",alignItems : "flex-end"}}>
-                <Text>Total</Text>
-                <Text>{`N${total}`}</Text>
-            </View>}
-
-        </View>
-    )
+    isGroceries?: boolean;
 }

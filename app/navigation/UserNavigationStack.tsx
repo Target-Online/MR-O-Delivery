@@ -6,6 +6,7 @@ import Profile from '../screens/user/Profile'
 import PickUp from '../screens/user/PickUp'
 import ShoppingRequest from '../screens/user/ShoppingRequest'
 import OrderProgress from '../screens/user/OrderProgress'
+import ShoppingProgress from '../screens/user/OrderProgress/ShoppingProgress'
 import About from '../screens/user/About'
 import { BottomMenu } from '../components'
 import OrderHistory from '../screens/user/OrderScreen/History'
@@ -18,9 +19,10 @@ const Tab = createBottomTabNavigator();
 
 function HomeStack() {
   return (
-    <Stack.Navigator  initialRouteName="Home" mode="card" headerMode={"none"}>
+    <Stack.Navigator  initialRouteName="ShoppingProgress" mode="card" headerMode={"none"}>
       <Stack.Screen  name="Home" component={Home}  />
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
+      <Stack.Screen name="ShoppingProgress" component={ShoppingProgress} />  
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="PickUpRequest" component={PickUp} />
       <Stack.Screen name="ShoppingRequest" component={ShoppingRequest} />

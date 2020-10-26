@@ -15,6 +15,8 @@ export interface IUser {
     id: string;
     isActive ?: boolean ;
     isDriver ?: boolean;
+    isOnline ?: boolean ;
+    isVacant ?: boolean;
     object_key: string;
     phoneNumber: string;
     profilePicURL: string;

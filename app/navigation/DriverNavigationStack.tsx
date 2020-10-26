@@ -5,6 +5,7 @@ import Home from '../screens/driver/Home'
 import Profile from '../screens/user/Profile'
 import PickUp from '../screens/user/PickUp'
 import OrderProgress from '../screens/user/OrderProgress'
+import ShoppingProgress from '../screens/driver/OrderProgress/ConfirmItems'
 import { BottomMenu } from '../components'
 import OrderHistory from '../screens/user/OrderScreen/History'
 import OrderDetails from '../screens/user/OrderScreen/Details'
@@ -22,6 +23,7 @@ function HomeStack() {
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="PickUpRequest" component={PickUp} />
+      <Stack.Screen name="ConfirmItems" component={ShoppingProgress} />
     </Stack.Navigator>
   )
 }

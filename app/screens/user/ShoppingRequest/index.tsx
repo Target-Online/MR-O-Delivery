@@ -14,10 +14,13 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import ShoppingListItem from './ShoppingListItem'
 import { Colors } from '../../../constants'
-import { IOrder } from 'types'
+import { IOrder, IUser } from 'types'
 import AddItemPrompt from './AddItemComponent'
+import { getPreciseDistance } from 'geolib';
+import { GeolibInputCoordinates } from 'geolib/es/types'
+import { getOrderTotal, showNoDriversAlert } from  '../../../utils/orderModules'
+import ShoppingListItem from '../../../components/ShoppingListItem'
 
 const shadow =  {
     shadowColor: '#000000',
@@ -35,7 +38,6 @@ type Props = IProps & StackScreenProps<{navigation : any}> &  IContextProps;
 
 interface IState {
   isModalVisible: boolean;
-  authType: string;
   showPlaces : boolean;
   showPrompt : boolean;
   items : any[];
@@ -43,31 +45,24 @@ interface IState {
   addressKey : string;
   storeName : string;
   instructions : string;
+  loaderVisible : boolean;
 }
 
 class ShoppingRequest extends React.Component<Props, IState> {
     state = {
       isModalVisible : false,
-      authType: "signIn",
-      pickUp : "",
       dropOff : "",
       orderType : "Shopping",
-      items : [],
+      items : [
+        {name : "Test item 1", description : "description"},
+        {name : "Test item 2", description : "description"}
+      ],
       addressKey: "",
       showPrompt : false,
       showPlaces: false,
       storeName : "",
-      instructions : ""
-    }
-
-    componentDidMount(){
-      // let testCount = [1,1,1,1,1,1,1]
-      // let items = testCount.map((index)=>({name : `item${index}`, description : "none"}))
-      // this.setState({items})
-    }
-
-    closeModal = () =>{
-      this.setState({isModalVisible : false})
+      instructions : "",
+      loaderVisible : false
     }
 
     renderPlacesModal(){
@@ -144,6 +139,12 @@ class ShoppingRequest extends React.Component<Props, IState> {
         this.setState({authType, isModalVisible : true})
     }
 
+    renderLoader(){
+      const {loaderVisible} = this.state
+      return(
+          <Loader visible={loaderVisible === true} button={{text : "Cancel" , onPress :()=>{}}} text={"Requesting a driver"} />)
+    }
+
     renderAddressSelector = (addressVariant:string , key : string ) =>{
 
       const address = this.state[key].address || this.state[key].description
@@ -172,8 +173,8 @@ class ShoppingRequest extends React.Component<Props, IState> {
     }
 
     processOrderPlacement = () => {
-      const {pickUp , dropOff ,items} = this.state
-      if (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items)){
+      const { dropOff ,items} = this.state
+      if (_.isEmpty(dropOff) || _.isEmpty(items)){
       }
       else{
         const {context : {setOrder,currentUser,generateOrderId}} = this.props
@@ -184,7 +185,6 @@ class ShoppingRequest extends React.Component<Props, IState> {
             orderId,
             orderType : "Shopping" ,
             driver : {},
-            pickUpAddress : pickUp,
             dropOffAddress : dropOff,
             items,
             customer : { phoneNumber , displayName },
@@ -196,13 +196,52 @@ class ShoppingRequest extends React.Component<Props, IState> {
       } 
     }
 
+    convertLocation = (location : {lat: string, lng:string}) => (
+      { latitude : location.lat, longitude : location.lng}
+    )
+
+    getTotalDistance = (pickUp: GeolibInputCoordinates, dropOff: GeolibInputCoordinates) =>{
+        var dis = getPreciseDistance(pickUp,dropOff)+ 300 //distance off by 200 metres
+        return (dis)/1000
+    }
+
+    processRequest = () => {
+
+      if(this.props.context){
+          const {context : {sendRequest , order,setOrder, users}} = this.props
+          this.setState({loaderVisible : true})
+          const freeDrivers = users.data.filter((user: IUser) =>  user.isDriver && user.isActive && user.isOnline && user.isVacant )
+          const distance = 1500
+          // const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location),
+          // this.convertLocation(dropOffAddress.geometry.location))
+          const orderTotal = getOrderTotal(1500)
+
+          if (freeDrivers[0]){
+              let myOrder  = {...order, total : orderTotal,distance,paymentMethod : "cash" }
+              const {orderId} = myOrder
+              myOrder.driver = freeDrivers[0]
+              setOrder(myOrder)
+              sendRequest(orderId, myOrder, ()=>{
+                  setTimeout(()=> {
+                      this.setState({loaderVisible : false})
+                      this.props.navigation.navigate('ShoppingProgress')
+                  },2000)
+              }, ()=>{})
+          }
+          
+          else{
+              setTimeout(()=>{ this.setState({loaderVisible : false})},1000) 
+              setTimeout(()=>{ showNoDriversAlert(this.props.context) },1000) 
+          }
+      }
+    }
+
+
     newItemPrompt = () => {
       this.setState({showPrompt : true})
     }
 
     removeItem = (index : number) => {
-
-      console.log("remove item", index)
       const {items} = this.state
       let itemsCopy = [...items]
       delete itemsCopy[index]
@@ -214,40 +253,34 @@ class ShoppingRequest extends React.Component<Props, IState> {
       const {showPrompt , items} = this.state
         return (
           <AddItemPrompt 
-            onClose={()=>{
-              this.setState({showPrompt : false})
-            }}
+            onClose={()=>{ this.setState({showPrompt : false}) }}
             addItem={(item)=>{
               this.setState({items : [...items, item]})
               this.setState({showPrompt : false})
             }}
             showPrompt={showPrompt} 
-          />
-        )
+          />)
     }
 
     renderListEmpty = () =>{
-
       return(
         <View 
-          style={{ 
-            width : "100%", height : 180,
+          style={{ width : "100%", height : 180,
             alignItems : "center",justifyContent : "center"
           }}
         >
-            <BagIcon />
-            <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
-             {"Add items to your shopping list and\nlet's get you what you need."}
-            </Text>
+          <BagIcon />
+          <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
+            {"Add items to your shopping list and\nlet's get you what you need."}
+          </Text>
         </View>
-
-      )
+        )
     }
 
     render(){
 
-        const {pickUp , dropOff ,items , storeName, instructions} = this.state
-        const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(items))
+        const { dropOff ,items , storeName, instructions} = this.state
+        const dislabled = ( _.isEmpty(dropOff) || _.isEmpty(items))
 
         return [
           this.renderPlacesModal(),

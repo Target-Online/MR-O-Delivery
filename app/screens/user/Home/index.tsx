@@ -113,7 +113,7 @@ const Home: any = (props: Props) => {
             </Text>
             <View style={styles.orderOpts} >
               <Btn
-                onPress={() => props.navigation.navigate("ShoppingRequest")}
+                onPress={() =>  props.navigation.navigate("ShoppingRequest")}
                 style={{ width: width*0.4, height: 200 }}
               >
                 <View style={styles.btnStyle}  >

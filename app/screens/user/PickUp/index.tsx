@@ -111,8 +111,6 @@ class PickUp extends React.Component<Props, IState> {
             placeholder="Search"
 
             onFail={(error)=>{
-
-
             }}
             minLength={2} // minimum length of text to search
             autoFocus={false}
@@ -124,14 +122,10 @@ class PickUp extends React.Component<Props, IState> {
               this.setState({[addressKey] :  {...data , ...details}})
               this.setState({showPlaces:false})
             }}
-
             query={{
-              // available options: https://developers.google.com/places/web-service/autocomplete
               key: 'AIzaSyDQBBCtTFs_pu7bJamKGWgEVaCf5KC_7LA',
               language: 'en', // language of the results
-              // types: '(cities)', // default: 'geocode'
             }}
-
             nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
             GoogleReverseGeocodingQuery={{
               // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
