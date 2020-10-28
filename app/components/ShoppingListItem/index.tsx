@@ -1,26 +1,48 @@
 import { EvilIcons } from '@expo/vector-icons';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput,FlatList } from 'react-native'
 import _ from 'lodash'
 import { Colors } from '../../constants'
 import { Ionicons } from '@expo/vector-icons'
+import {IContextProps, withAppContext } from '../../AppContext';
 
 interface IProps {
-    item : {name : string, description : string , price? : string};
+    item : {name : string, description : string , price? : string , isOutOfStock ?: boolean};
     onDelete : () => void ;
+    onPriceEnter?: (price : string) => void;
+    markOutOfStock?: () => void;
     driverVariant?: boolean ;
 }
+type Props = IProps & IContextProps
+const ShoppingListItem = ({item , onDelete , driverVariant , context,markOutOfStock, onPriceEnter} : Props) => {
 
-const ShoppingListItem = ({item , onDelete , driverVariant} : IProps) => {
+    const {name , description, price, isOutOfStock } = item
+    const {setAlertData , setShowAlert} = context
+    const [priceInput,setPrice] = useState<string>("")
 
-    const {name , description, price , } = item
+    useEffect(()=>{
+        price && setPrice(price)
+    },[item])
+
+    const outOfStockAlert = (item : string) => {
+        setAlertData({       
+            text: `${item} out of stock ? ` ,
+            buttons : [ {label : "Yes",
+                onPress : ()=>{
+                    markOutOfStock && markOutOfStock()
+                }},
+            {label : "No",onPress : ()=>{}}],title : "Item not found",})
+        setShowAlert(true)   
+    }
+
     return(
         <View style={[styles.wrapper , driverVariant && styles.longerCard]} >
             <View>
                 <Text style={{ fontSize : 13 }} >{name}</Text>
                 <View style={{flexDirection : "row"}} >
                     <Text style={{color : Colors.overlayDark60 , fontSize : 11}} >{description}</Text>
-                    {price && <Text style={styles.priceText} >{`N${price}`}</Text>}
+                    {price && !isOutOfStock && <Text style={styles.priceText} >{`N${price}`}</Text>}
+                    {isOutOfStock && <Text style={styles.priceText} >{`Out Of Stock`}</Text>}
                 </View>
             </View>
             {!driverVariant ?
@@ -30,20 +52,26 @@ const ShoppingListItem = ({item , onDelete , driverVariant} : IProps) => {
                     <EvilIcons name="trash" size={24} color="black" />
                 </Btn> :
 
-                <View style={{flexDirection : "row" , flex: 1 , alignItems : "flex-end", paddingHorizontal : 0}}>
+                <View style={styles.bottomPriceContainer}>
                     <View style={styles.textInput}>
                             <TextInput 
                                 onChangeText={(text)=>{
+                                    setPrice(text)
                                 }}
+                                value={priceInput}
                                 placeholder="Price"
                             />
-                            <Btn style={styles.priceConfirm}>
+                            <Btn 
+                                onPress={()=>{ 
+                                    onPriceEnter && onPriceEnter(priceInput)
+                                }}  
+                                style={styles.priceConfirm}>
                             <Ionicons name="md-arrow-round-forward" size={20} color="white" />  
                             </Btn>
                     </View>      
 
-                    <Btn style={styles.outOfStock}>
-                            <Text style={styles.outOfStockText} > Out Of Stock </Text>
+                    <Btn onPress={()=> { outOfStockAlert(name)}} style={[styles.outOfStock, isOutOfStock && {backgroundColor : Colors.primaryOrange}]}>
+                            <Text style={[styles.outOfStockText, isOutOfStock && {color : "white"}]} > Out Of Stock </Text>
                     </Btn>        
                 </View>
             }
@@ -51,7 +79,7 @@ const ShoppingListItem = ({item , onDelete , driverVariant} : IProps) => {
     )
 }
 
-export default ShoppingListItem
+export default withAppContext(ShoppingListItem)
   
 const styles = StyleSheet.create({
     wrapper:{
@@ -60,6 +88,10 @@ const styles = StyleSheet.create({
         borderColor :Colors.overlayDark20,
         borderWidth : 1,borderRadius : 4, flexDirection : "row", 
         justifyContent : "space-between", paddingHorizontal : 16
+    },
+    bottomPriceContainer : {
+        flexDirection : "row" , flex: 1 ,
+        alignItems : "flex-end", paddingHorizontal : 0
     },
     priceText : {
         color : Colors.primaryOrange , fontSize : 11 ,

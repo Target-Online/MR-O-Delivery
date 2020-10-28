@@ -46,6 +46,7 @@ class Home extends React.Component<IProps, IState> {
 
     onChildAdded: (a: import("firebase").RNFirebase.database.DataSnapshot | null, b?: string | undefined) => import("firebase").RNFirebase.database.QuerySuccessCallback;
   onDriverUpdated: any;
+  onOrderUpdated: any;
 
     constructor(props: any){
       super(props)
@@ -71,7 +72,7 @@ class Home extends React.Component<IProps, IState> {
 
     componentWillMount = async () => {
 
-      const {context : {currentUser :{phoneNumber , isActive, isOnline, isVacant} , playSound , sendPushNotification}} = this.props
+      const {context : {currentUser :{phoneNumber , isActive, isOnline, isVacant} , playSound , setOrder}} = this.props
 
       this.setState({isOnline , isVacant , isActive})
       this.onChildAdded = database()
@@ -79,12 +80,22 @@ class Home extends React.Component<IProps, IState> {
         .on('child_added', async (snapshot: { val: () => any; key: any; }) => {
           const order = snapshot.val()
           const orderId = snapshot.key
-          const {status , driver} = order
+          const {status , driver } = order
           
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
             this.setState({newState : "pending"})
             playSound()
             this.recordNewOrderOfFocus(order, orderId)
+            
+            //listen to order updates
+            this.onOrderUpdated = database()
+            .ref(`/orders/${orderId}`)
+            .on('value', (snapshot: { val: () => any; key: any; }) => {
+              const order = snapshot.val()
+              if(order){
+                setOrder(order)
+              }         
+            })
           }    
       })        
 
@@ -97,6 +108,8 @@ class Home extends React.Component<IProps, IState> {
             this.setState({isOnline , isVacant , isActive})
           }         
       })
+
+
     }
 
     setMyOrder = (theOrder : IOrder) => {
@@ -104,15 +117,11 @@ class Home extends React.Component<IProps, IState> {
       setOrder(theOrder)
     }
 
-    componentWillUpdate(_nextProps: any, nextState: { open: boolean; }) {
-
-      const {context : { currentUser }} = this.props
-
-    }
-
     componentWillUnmount = () => {
+      const {context : {currentUser :{phoneNumber } , order :{orderId} , setOrder}} = this.props
       database().ref('/orders').off('child_added', this.onChildAdded )
-      database().ref('/orders').off('value', this.onDriverUpdated )   
+      database().ref(`/users'${phoneNumber}`).off('value', this.onDriverUpdated )  
+      database().ref(`/orders'${orderId}`).off('value', this.onOrderUpdated)    
     }
 
     closeModal = () =>{

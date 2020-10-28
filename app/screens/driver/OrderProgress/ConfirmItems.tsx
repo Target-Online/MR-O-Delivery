@@ -69,7 +69,6 @@ class ConfirmItems extends Component<IProps> {
     removeItem = (index: number) => {
         const {context : {sendRequest ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
-
     }
 
     removeItem = (index : number) => {
@@ -84,7 +83,7 @@ class ConfirmItems extends Component<IProps> {
         updateOrderStatus(orderId, newOrderObject)  
     }
 
-    updatePrice = (index : number, price : number ) =>{
+    updatePrice = (index : number, price : any ) =>{
         const {context : {updateOrderStatus ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
         const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
         let itemsCopy = [...items]
@@ -94,13 +93,38 @@ class ConfirmItems extends Component<IProps> {
         updateOrderStatus(orderId, newOrderObject)
     }
 
+    markOutOfStock = (index : number ) =>{
+        const {context : {updateOrderStatus ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
+        const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
+        let itemsCopy = [...items]
+        itemsCopy[index] = { ...itemsCopy[index] , outOfStock : true }
+        const newOrderObject = {...order, items : itemsCopy}
+        setOrder(newOrderObject)
+        updateOrderStatus(orderId, newOrderObject)
+    }
+    
+    badgeText = () => {
+        const {context : {order}} = this.props
+        const {dropOffAddress , pickUpAddress , items,customer, orderConfirmed, driver, orderId}  = order
+        const allPriced = items && items.reduce((prev,next)=> { return prev.price !== null &&  next.price !== null  },true)
+        console.log({allPriced})
+        const displayText = allPriced ? !orderConfirmed ? `Please wait for ${customer.displayName}'s to confirm the prices and the items.`:
+        `You may proceed and buy the items in ${customer.displayName}'s list. When done, press contiue` : 
+        `Please confirm the store prices for items in ${customer.displayName}'s list.`
+
+        return displayText
+    }
+
     render () {
 
         const {context : {order, setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
+        const {dropOffAddress , pickUpAddress , items,customer, orderConfirmed, driver, orderId}  = order
         const { displayName , vehicleRegistration , phoneNumber , profilePicUrl}  = driver || {} 
         const driverPicURL = profilePicUrl ? {uri : profilePicUrl} : images.headShot
-    
+        console.log({items})
+        const ready  = items.reduce((prev,next)=> {  return prev.price !== null &&  next.price !== null },true) && orderConfirmed
+ 
+
         return ( 
             <BackScreen 
                 // scroll
@@ -108,11 +132,11 @@ class ConfirmItems extends Component<IProps> {
                 navigation={this.props.navigation}          
             >
                 <View style={{flex : 1 , }}>
-                   <UserCard isUser  user={driver} />
+                   <UserCard isUser  user={customer} />
                    <View style={styles.nbCard}>
 
                         <InfoIcon fill={Colors.primaryOrange} />
-                        <Text style={styles.nbText} > {`Please confirm the store prices for items in ${customer.displayName}'s lists`} </Text>
+                        <Text style={styles.nbText} > {this.badgeText()} </Text>
 
                     </View>
                     <View style={{height: 30,marginTop : 16, paddingHorizontal : 24, width : "100%", justifyContent : "center" }}>
@@ -128,7 +152,12 @@ class ConfirmItems extends Component<IProps> {
                         // ListEmptyComponent={this.renderListEmpty()}
                         style={{flex : 1, width : "100%" }}
                         renderItem={({item,index})=>(
-                            <ShoppingListItem driverVariant onDelete={()=>{ this.removeItem(index) }}  item={item} />
+                            <ShoppingListItem 
+                                driverVariant 
+                                markOutOfStock={()=> this.markOutOfStock(index)}
+                                onPriceEnter={(price : string)=> this.updatePrice(index,price)} 
+                                onDelete={()=>{ this.removeItem(index) }}  item={item} 
+                            />
                         )}
                     />
                     <View style={styles.orderSummary}>
@@ -153,9 +182,9 @@ class ConfirmItems extends Component<IProps> {
                         </View>
                     </View>
 
-                    <Btn style={styles.continueBtn}>
+                    <Btn disabled={!ready} style={[styles.continueBtn, !ready && {opacity : 0.5}]}>
                         <Text style={{fontSize : 16 , fontWeight : "bold", color : "white"}}>
-                            Confirm Prices
+                            Continue
                         </Text>
                     </Btn>
                 
