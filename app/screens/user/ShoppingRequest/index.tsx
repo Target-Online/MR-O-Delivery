@@ -8,7 +8,7 @@ import BagIcon from '../../../assets/icons/BagIcon'
 import { AntDesign } from '@expo/vector-icons';
 import Loader from '../../../components/loader'
 import BackScreen from '../../../layouts/BackScreen'
-import { IContextProps, withAppContext } from '../../../AppContext'
+import { IContextProps, mockOrder, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +21,7 @@ import { getPreciseDistance } from 'geolib';
 import { GeolibInputCoordinates } from 'geolib/es/types'
 import { getOrderTotal, showNoDriversAlert } from  '../../../utils/orderModules'
 import ShoppingListItem from '../../../components/ShoppingListItem'
+import { database } from 'firebase'
 
 const shadow =  {
     shadowColor: '#000000',
@@ -51,7 +52,8 @@ interface IState {
 class ShoppingRequest extends React.Component<Props, IState> {
     state = {
       isModalVisible : false,
-      dropOff : "",
+      dropOff : mockOrder.dropOffAddress,
+      pickUp : mockOrder.pickUpAddress,
       orderType : "Shopping",
       items : [
         {name : "Test item 1", description : "description"},
@@ -60,10 +62,11 @@ class ShoppingRequest extends React.Component<Props, IState> {
       addressKey: "",
       showPrompt : false,
       showPlaces: false,
-      storeName : "",
-      instructions : "",
+      storeName : "Store Name",
+      instructions : "Store Instructions",
       loaderVisible : false
     }
+  onOrderUpdated: any
 
     renderPlacesModal(){
       const {addressKey} = this.state
@@ -192,7 +195,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
             status : "pending"
         }
         setOrder(newOrder)
-        this.props.navigation.navigate("Payment")
+        // this.props.navigation.navigate("Payment")
       } 
     }
 
@@ -209,23 +212,44 @@ class ShoppingRequest extends React.Component<Props, IState> {
 
       if(this.props.context){
           const {context : {sendRequest , order,setOrder, users}} = this.props
+          const {pickUp, dropOff} = this.state
           this.setState({loaderVisible : true})
           const freeDrivers = users.data.filter((user: IUser) =>  user.isDriver && user.isActive && user.isOnline && user.isVacant )
-          const distance = 1500
-          // const distance = this.getTotalDistance(this.convertLocation(pickUpAddress.geometry.location),
-          // this.convertLocation(dropOffAddress.geometry.location))
-          const orderTotal = getOrderTotal(1500)
+          const distance = this.getTotalDistance(this.convertLocation(pickUp.geometry.location),
+          this.convertLocation(dropOff.geometry.location))
+          const orderTotal = getOrderTotal(distance)
 
           if (freeDrivers[0]){
-              let myOrder  = {...order, total : orderTotal,distance,paymentMethod : "cash" }
+              let myOrder  = {
+                ...order, 
+                pickUpAddress : pickUp,
+                dropOffAddress :  dropOff,
+                total : orderTotal,
+                distance,
+                paymentMethod : "cash" 
+              }
               const {orderId} = myOrder
               myOrder.driver = freeDrivers[0]
               setOrder(myOrder)
               sendRequest(orderId, myOrder, ()=>{
-                  setTimeout(()=> {
-                      this.setState({loaderVisible : false})
-                      this.props.navigation.navigate('ShoppingProgress')
-                  },2000)
+
+                this.onOrderUpdated = database()
+                .ref(`/orders/${orderId}`)
+                .on('value', (snapshot: { val: () => any; key: any; }) => {
+                  const order = snapshot.val()
+                  if(order){
+                    console.log({status : order.status})
+                    if (order.status === "confirmed"){
+                        setTimeout(()=> {
+                          this.setState({loaderVisible : false})
+                          this.props.navigation.navigate('ShoppingProgress')
+                        },2000)
+                    }
+                    console.log({driver : order.driver})
+
+                  }         
+                })
+
               }, ()=>{})
           }
           
@@ -262,30 +286,30 @@ class ShoppingRequest extends React.Component<Props, IState> {
           />)
     }
 
-    renderListEmpty = () =>{
+    renderListEmpty = () => {
       return(
-        <View 
-          style={{ width : "100%", height : 180,
-            alignItems : "center",justifyContent : "center"
-          }}
-        >
-          <BagIcon />
-          <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
-            {"Add items to your shopping list and\nlet's get you what you need."}
-          </Text>
-        </View>
+          <View 
+            style={{ width : "100%", height : 180,
+              alignItems : "center",justifyContent : "center"
+            }}
+          >
+            <BagIcon />
+            <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
+              {"Add items to your shopping list and\nlet's get you what you need."}
+            </Text>
+          </View>
         )
     }
 
     render(){
 
-        const { dropOff ,items , storeName, instructions} = this.state
+        const { dropOff ,items , storeName, instructions ,loaderVisible} = this.state
         const dislabled = ( _.isEmpty(dropOff) || _.isEmpty(items))
 
         return [
           this.renderPlacesModal(),
           this.renderAddItemPrompt(),
-          <Loader visible={false} /> ,          
+          <Loader text={"Requesting a driver."} visible={loaderVisible} />,          
           <BackScreen
             {...this.props}
             title="Request Delivery"
@@ -305,6 +329,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
               </Text>
 
               <View style={{ paddingVertical : 24}} >
+                {this.renderAddressSelector("Store Address","pickUp")}
                 {this.renderAddressSelector("Delivery Address","dropOff")}
                 <Text style={styles.subtitles} >
                   {"Store Details"}
@@ -342,14 +367,13 @@ class ShoppingRequest extends React.Component<Props, IState> {
                       <ShoppingListItem onDelete={()=>{ this.removeItem(index) }}  item={item} />
                     )}
                 />
-
                 <Btn onPress={()=> this.newItemPrompt()} style={styles.addItemBtn}>
                       <AntDesign name="plus" style={{fontWeight : "bold"}} size={22} color="white" />
                 </Btn>
 
                 <Btn disabled={dislabled}
                     onPress={()=>{ 
-                          this.processOrderPlacement()
+                          this.processRequest()
                     }} 
                       style={[styles.continueBtn, {opacity : dislabled ? 0.6 : 1}]}>
                     <Text style={styles.continueBtnText}>

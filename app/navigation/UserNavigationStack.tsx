@@ -19,7 +19,7 @@ const Tab = createBottomTabNavigator();
 
 function HomeStack() {
   return (
-    <Stack.Navigator  initialRouteName="ShoppingProgress" mode="card" headerMode={"none"}>
+    <Stack.Navigator  initialRouteName="ShoppingRequest" mode="card" headerMode={"none"}>
       <Stack.Screen  name="Home" component={Home}  />
       <Stack.Screen name="OrderProgress" component={OrderProgress} />
       <Stack.Screen name="ShoppingProgress" component={ShoppingProgress} />  

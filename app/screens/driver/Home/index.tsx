@@ -57,7 +57,7 @@ class Home extends React.Component<IProps, IState> {
         isOnline : false,
         isVacant : false,
         status,
-        newState : "shopping",
+        newState : "pending",
         order : null
       }
     }
@@ -322,7 +322,9 @@ class Home extends React.Component<IProps, IState> {
     }
 
     renderOrderItemsConfirmation = () => {
-      return <ConfirmItems />
+      return <ConfirmItems onConfirmed={()=>{
+        this.changeOrderProgress("collected")}
+      } />
     }
     renderDeliveredOrder = () =>{
 
