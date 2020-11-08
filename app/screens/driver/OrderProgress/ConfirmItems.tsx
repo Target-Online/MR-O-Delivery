@@ -78,7 +78,8 @@ class ConfirmItems extends Component<IProps> {
 
         const {context : {order },onConfirmed} = this.props
         const { items,customer, orderConfirmed, distance  }  = order
-        const ready  = items.reduce((prev,next)=> { return prev  &&  next.price },true) && orderConfirmed
+        const inStockItems = items.filter(item => !item.outOfStock)
+        const ready  = inStockItems.reduce((prev,next)=> { return prev  &&  next.price },true) && orderConfirmed
         const allPriced = items && items.reduce((prev,next)=> { return prev &&  next.price },true)
         const itemsCost  = items.reduce((prev,next)=> { return Number(prev) + Number(next.price) }, 0) 
         const deliveryCost =  getOrderTotal(distance)

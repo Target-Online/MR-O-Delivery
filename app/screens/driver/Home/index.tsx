@@ -291,13 +291,14 @@ class Home extends React.Component<IProps, IState> {
                 <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
               </Btn>
               <Btn onPress={()=>{ 
-
                 if (isGroceries){
-                    this.changeOrderProgress("shopping")  
-                    this.setState({isModalVisible : false})
+                    if (newState == "collected"){ this.changeOrderProgress("delivered")  }
+                    else{
+                      this.changeOrderProgress("shopping")  
+                      this.setState({isModalVisible : false})
+                    }
                 }
-                else{
-                  this.changeOrderProgress(orderCollected ? "delivered" : "collected")}
+                else{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}
                 }
               } 
                 style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
@@ -329,6 +330,8 @@ class Home extends React.Component<IProps, IState> {
           this.setState({isModalVisible : true}) }} 
         />)
     }
+
+
     renderDeliveredOrder = () =>{
 
       const {order : {total , paymentMethod , distance , customer}} = this.state

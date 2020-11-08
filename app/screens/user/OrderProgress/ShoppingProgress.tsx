@@ -52,9 +52,9 @@ class ShoppingProgress extends Component<IProps> {
         updateOrderStatus(orderId, newOrderObject)  
     }
 
-    confirmOrder = (total : number) =>{
+    confirmOrderTotal = (total : number) =>{
         const {context : {updateOrderStatus, order}} = this.props
-        updateOrderStatus(order.orderId, {...order, orderConfirmed : true , total})
+        updateOrderStatus(order.orderId, {...order, total})
         this.props.navigation.navigate("Payment")
     }
 
@@ -64,7 +64,8 @@ class ShoppingProgress extends Component<IProps> {
         const { items, driver,distance }  = order
         const { displayName }  = driver || {} 
         const itemsCost  = items.reduce((prev,next)=> { return Number(prev) + Number(next.price) }, 0) || 0
-        const allPriced = items && items.reduce((prev,next)=> { return prev &&  next.price },true)
+
+        const allPriced = items && items.reduce((prev,next)=> { return prev &&  (next.price || next.outOfStock) },true)
         const deliveryCost =  getOrderTotal(distance)
         return ( 
             <BackScreen 
@@ -116,7 +117,7 @@ class ShoppingProgress extends Component<IProps> {
                         </View>
                     </View>}
 
-                    <Btn onPress={()=> this.confirmOrder(itemsCost+deliveryCost)} style={styles.continueBtn}>
+                    <Btn disabled={!allPriced} onPress={()=> this.confirmOrderTotal(itemsCost+deliveryCost)} style={styles.continueBtn}>
                         <Text style={{fontSize : 16 , fontWeight : "bold", color : "white"}}>
                             Continue
                         </Text>

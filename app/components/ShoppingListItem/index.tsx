@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons'
 import {IContextProps, withAppContext } from '../../AppContext';
 
 interface IProps {
-    item : {name : string, description : string , price? : string , isOutOfStock ?: boolean};
+    item : {name : string, description : string , price? : string , outOfStock ?: boolean};
     onDelete : () => void ;
     onPriceEnter?: (price : string) => void;
     markOutOfStock?: () => void;

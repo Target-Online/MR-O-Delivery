@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useState, Component, useEffect, useReducer, useRef } from "react";
-import { TextInput,Image, View, Modal, Text, StyleProp, ViewStyle, StyleSheet, Dimensions } from 'react-native';
+import { TextInput,Image, View, Modal, Text, TouchableHighlight as Btn, ViewStyle, StyleSheet, Dimensions } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import * as Animatable from "react-native-animatable"
 import { Colors } from '../../constants';
@@ -28,17 +28,23 @@ type IProps = IAlertProps & IContextProps
 const RatingModal  : React.SFC<IProps>  = (props) => {
 
         const [rating,setRating] = useState<number>(0)
-        const {userInRating : {userRating, phoneNumber, displayName},updateUserProfile, setRatingsVisible, ratingsVisible} = props.context
-        const ratingCompleted = (rating : number) => {
-            console.log({rating})
-            setRating(rating)
-        }
+        const [comment , setComment ] = useState<string>("")
+        const { userInRating : {userRating, isDriver, comments, phoneNumber, displayName},
+            updateUserProfile,updateOrderStatus, setRatingsVisible,currentUser,
+            ratingsVisible , order} = props.context
+
+        const ratingCompleted = (rating : number) => { setRating(rating)}
 
         const submitRating = () =>{
             const newRating = userRating ? (userRating+rating)/2 : rating
-            const updatedUser = {...userRating,  userRating : newRating}
-            console.log({rating , userRating})
+            const latestComment = { 
+                author : currentUser,
+                comment
+            }
+            const newComments = comments ? [...comments, latestComment] : [latestComment]
+            const updatedUser = {...userRating,  userRating : newRating , comments : newComments}
             updateUserProfile(phoneNumber, updatedUser)
+            isDriver && updateOrderStatus(order.orderId , {...order, rated : true}) //set rated to true if I'm rating a driver
             setRatingsVisible(false)
         }
 
@@ -49,8 +55,14 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
             >
                 <View style={styles.wrapper}>
                     <View overflow="hidden" style={[styles.dialogContainer, {height : 162,marginBottom : 4,padding : 0, justifyContent  :"flex-start"}]}>
-                        <View style={{backgroundColor : "#000", height : 42,width : "100%" , flexDirection : "row",alignItems : "center",paddingHorizontal : 8 }}>
-                            <AntDesign name="close" size={18} color="#fff" />
+                        <View style={styles.topBlackBar}>
+                            <Btn  
+                                onPress={()=>{
+                                    setRatingsVisible(false)
+                                }}
+                                style={styles.closeIcon}>
+                                <AntDesign name="close" size={20} color="#fff" />
+                            </Btn>
                             <Text style={{color : "#fff",marginLeft : 8}}>Rating</Text>
                         </View>
                         <View style={styles.userDetails}>
@@ -65,14 +77,19 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
                             reviews={["Bad", "Meh", "OK", "Good",  "Very Good", "Excellent"]}
                             defaultRating={3}
                             ratingCount={5}
-                            imageSize={30}
+                            imageSize={1}
+                            reviewColor={Colors.primaryOrange}
+                            reviewSize={20}
+                            starStyle={{width : 30, height : 30}}
+                            selectedColor={Colors.primaryOrange}
                             onFinishRating={ratingCompleted}
                         />
                         <TextInput
                             placeholder={"Leave a comment..."}
                             style={styles.commentInput}
+                            value={comment}
+                            onChangeText={(text) => setComment(text)}
                         />
-
                         <TouchableHighlight style={styles.continueBtn} onPress={()=> submitRating() } >
                             <Text style={{color : "#fff"}}> Submit </Text>
                         </TouchableHighlight>
@@ -92,6 +109,11 @@ const styles = StyleSheet.create({
         color : Colors.overlayDark60,
         fontSize : 13
     },
+    topBlackBar : {
+        backgroundColor : "#000", height : 42,
+        width : "100%" , flexDirection : "row",
+        alignItems : "center",paddingHorizontal : 8 
+    },
     commentInput : { 
         borderBottomColor : Colors.overlayDark50,
         alignSelf : "center",borderBottomWidth : 1,
@@ -109,9 +131,8 @@ const styles = StyleSheet.create({
         justifyContent : "space-around"
     },
     closeIcon : {
-        width : 50 ,height : 50,
-        borderRadius : 25 , position: "absolute" ,
-        top: 4,right: 4,alignItems : "center",justifyContent : "center"
+        width : 30, height : 30,
+        justifyContent : "center"
     },
     btnsWrapper: {
         width : "100%", position  : "absolute",

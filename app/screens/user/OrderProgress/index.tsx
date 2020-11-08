@@ -53,8 +53,8 @@ class Payment extends Component<IProps> {
             const order = snapshot.val()
             if(order){ 
                 setOrder(order) 
-                const {status , driver} = order
-                if (status == "delivered"){
+                const {status , driver , rated} = order
+                if (status == "delivered" && !rated){
                     setUserInRating(driver)
                     setRatingsVisible(true)
                 }
@@ -89,7 +89,7 @@ class Payment extends Component<IProps> {
             <BackScreen 
                 title={"Track Your Order"}
                 onBackPress={()=> {
-                    this.props.navigation.navigate("Home")
+                    this.props.navigation.navigate("Home")  
                 }}
                 navigation={this.props.navigation}          
             >

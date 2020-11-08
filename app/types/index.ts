@@ -52,6 +52,7 @@ export interface IAddress {
 export interface IOrder {
     orderId : string;
     storeName?: string;
+    rated?:boolean;
     storeInstructions?: string;
     customer : IUser;
     status : "pending" | "confirmed" | "shopping" | "collected" | "delivered";

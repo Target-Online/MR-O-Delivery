@@ -152,9 +152,12 @@ class Payment extends Component<IProps> {
         }
     }
 
-    convertLocation = (location : {lat: string, lng:string}) => (
-        { latitude : location.lat, longitude : location.lng}
-    )
+    convertLocation = (location : {lat: string, lng:string}) => ({ latitude : location.lat, longitude : location.lng})
+
+    confirmOrder = () =>{
+        const {context : {updateOrderStatus, order}} = this.props
+        updateOrderStatus(order.orderId, {...order, orderConfirmed : true})
+    }
 
     render () {
         const { paymentMethod } = this.state
@@ -184,6 +187,7 @@ class Payment extends Component<IProps> {
 
                 <Btn 
                 onPress={()=>{
+                    this.confirmOrder()
                     shopping ? this.props.navigation.navigate('OrderProgress') :
                     this.processRequest()
                  }} 
