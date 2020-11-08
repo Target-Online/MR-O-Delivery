@@ -19,10 +19,7 @@ const shadow =  {
 interface IProps { 
     visible: boolean;
     text : string;
-    button: {
-      text : string;
-      onPress : () => void;
-    }
+    onCancel : () => void;
 }
 
 type Props = IProps;
@@ -34,8 +31,7 @@ interface IState {
 class Loader extends React.Component<Props, IState> {
   
     render(){
-
-      const { visible,text } = this.props
+      const { visible,text, onCancel } = this.props
 
       return(
         <Modal 
@@ -50,30 +46,36 @@ class Loader extends React.Component<Props, IState> {
                 <View style={{position : "absolute", top : 230,alignSelf : "center"}}>
                     <PhoneIcon />
                 </View>
-
-                <View style={{width : "100%" ,position:"absolute", bottom : 48 ,height : 180,justifyContent : "space-between", 
-                    alignItems : "center", }}>
+                <View style={styles.bottomContainer}>
                   <Text>{text}</Text>
-                  {/* <Btn style={{width : 160 , height : 36, borderColor : '#F57301', borderRadius : 3,
-                    justifyContent : "center", alignItems: "center" , borderWidth : 1, alignSelf: "center" }}>
+                  <Btn onPress={()=> onCancel && onCancel()} style={styles.cancelBtn}>
                     <Text style={{fontSize : 12, color : '#F57301'}} > 
                       Cancel 
                     </Text>
- 
-                  </Btn> */}
-
+                  </Btn>
                 </View>
           </View>
-        </Modal>
-      )
+        </Modal>)
     }
-};
+}
 
 export default Loader
 
 const styles = StyleSheet.create({
     activeTextStyle:{
         color : 'red'
+    },
+    cancelBtn : {
+      width : 160 , height : 36, 
+      borderColor : '#F57301', borderRadius : 3,
+      justifyContent : "center", alignItems: "center" ,
+      borderWidth : 1, alignSelf: "center" 
+    },
+    bottomContainer : {
+      width : "100%" ,position:"absolute",
+      bottom : 48 ,height : 180,
+      justifyContent : "space-between", 
+      alignItems : "center"
     },
     backBtnStyle:{
       alignSelf : "flex-start",

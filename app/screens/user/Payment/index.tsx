@@ -14,11 +14,13 @@ import { getDistance, getPreciseDistance } from 'geolib';
 import { GeolibInputCoordinates } from 'geolib/es/types'
 import RouteSummary from '../../../components/RouteSummary'
 import { showNoDriversAlert } from  '../../../utils/orderModules'
+import { database } from 'firebase'
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}>
 
 class Payment extends Component<IProps> {
+    onOrderUpdated: any
     constructor (props: any) {
       super(props)
     }
@@ -138,11 +140,21 @@ class Payment extends Component<IProps> {
                 myOrder.driver = freeDrivers[0]
                 setOrder(myOrder)
                 sendRequest(orderId, myOrder, ()=>{
-                    setTimeout(()=> {
-                        this.setState({loaderVisible : false})
-                        this.props.navigation.navigate('OrderProgress')
-                    },2000)
-                }, ()=>{})
+
+                    this.onOrderUpdated = database()
+                    .ref(`/orders/${orderId}`)
+                    .on('value', (snapshot: { val: () => any; key: any; }) => {
+                      const order = snapshot.val()
+                      if(order){
+                        if (order.status === "confirmed"){
+                            setTimeout(()=> {
+                              this.setState({loaderVisible : false})
+                              this.props.navigation.navigate('OrderProgress')
+                            },2000)
+                        }    
+                      }         
+                })}, ()=>{})
+
             }
             
             else{

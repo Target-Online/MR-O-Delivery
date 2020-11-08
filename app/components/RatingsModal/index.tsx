@@ -37,10 +37,7 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
 
         const submitRating = () =>{
             const newRating = userRating ? (userRating+rating)/2 : rating
-            const latestComment = { 
-                author : currentUser,
-                comment
-            }
+            const latestComment = { author : currentUser, comment }
             const newComments = comments ? [...comments, latestComment] : [latestComment]
             const updatedUser = {...userRating,  userRating : newRating , comments : newComments}
             updateUserProfile(phoneNumber, updatedUser)
