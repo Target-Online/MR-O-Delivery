@@ -54,11 +54,17 @@ class Payment extends Component<IProps> {
         )
     }
 
+    handleCancel = () => {
+        const {context : {updateOrderStatus, order}} = this.props
+        updateOrderStatus(order.orderId, {...order, status : "cancelled"})
+    }
+
     renderLoader(){
         const {loaderVisible} = this.state
         return(
-            <Loader visible={loaderVisible === true} button={{text : "Cancel" , onPress :()=>{}}} text={"Requesting a driver"} />
-    )}
+            <Loader visible={loaderVisible === true}  onCancel={()=> this.handleCancel()} text={"Requesting a driver"} />
+        )
+    }
 
     renderCardOption(){
         const  cards = [1,1,1]
@@ -118,7 +124,8 @@ class Payment extends Component<IProps> {
         setAlertData({
             text: "Looks like all our drivers are busy at the moment",
             buttons : [  {label : "Try Again",onPress : () => { }} , {label : "Cancel",onPress : ()=>{}} ],
-            title : "Oops",})
+            title : "Oops"
+        })
         setShowAlert(true)
     }
   
@@ -174,43 +181,42 @@ class Payment extends Component<IProps> {
     render () {
         const { paymentMethod } = this.state
         const paymentMethods = [ {label : "Cash",icon : <CashIcon /> }]
-        const {context : {profile , order,setOrder}} = this.props
+        const {context : {order}} = this.props
         const {dropOffAddress , pickUpAddress , items, orderType, total}  = order
-        const {name , description } = items[0]
+        const {name } = items[0]
         const shopping = orderType === "Shopping"
-      return ( 
-        <BackScreen
-            title="Payment"
-            scroll={false}
-            navigation={this.props.navigation}
-            onBackPress={()=> { this.props.navigation.goBack() }}
-        >
-            {this.renderLoader()}
-            <View style={{alignItems : "center" }}>
-                <View style={{width : "100%", height:  120,backgroundColor: "#F57301",opacity : 0.8, position : "absolute", top : 0}} />           
-                <RouteSummary item={name}  pickUpAddress={pickUpAddress} dropOffAddress={dropOffAddress} />
-            </View>
-            <ScrollView style={{flex : 1,paddingBottom : 40}} contentContainerStyle={{alignItems : "center" ,marginBottom : 40}} >
-                <View style={{ flexDirection : "row", padding : 24,marginTop : 4,  justifyContent: 'center', alignItems : 'center',width : '100%', height : 90 }}>
-                    {paymentMethods.map((opt, index)=> this.renderPayTypeOption(opt))}
+        return ( 
+            <BackScreen
+                title="Payment"
+                scroll={false}
+                navigation={this.props.navigation}
+                onBackPress={()=> { this.props.navigation.goBack() }}
+            >
+                {this.renderLoader()}
+                <View style={{alignItems : "center" }}>
+                    <View style={{width : "100%", height:  120,backgroundColor: "#F57301",opacity : 0.8, position : "absolute", top : 0}} />           
+                    <RouteSummary item={name}  pickUpAddress={pickUpAddress} dropOffAddress={dropOffAddress} />
                 </View>
-
-                {paymentMethod === "Card" ? this.renderCardOption() : this.renderCashOption()}
-
-                <Btn 
-                onPress={()=>{
-                    this.confirmOrder()
-                    shopping ? this.props.navigation.navigate('OrderProgress') :
-                    this.processRequest()
-                 }} 
-                style={styles.proceedBtn} >
-                <Text style={{fontSize :  13 ,color : "#fff" , fontWeight : "800"}}>
-                    Proceed
-                </Text>
-            </Btn>
-            </ScrollView>
-        </BackScreen> 
-      )
+                <ScrollView style={{flex : 1,paddingBottom : 40}} contentContainerStyle={{alignItems : "center" ,marginBottom : 40}} >
+                    <View style={{ flexDirection : "row", padding : 24,marginTop : 4,  justifyContent: 'center', alignItems : 'center',width : '100%', height : 90 }}>
+                        {paymentMethods.map((opt, index)=> this.renderPayTypeOption(opt))}
+                    </View>
+                    {paymentMethod === "Card" ? this.renderCardOption() : this.renderCashOption()}
+                    <Btn 
+                        onPress={()=>{
+                            this.confirmOrder()
+                            shopping ? this.props.navigation.navigate('OrderProgress') :
+                            this.processRequest()
+                        }} 
+                        style={styles.proceedBtn} 
+                    >
+                    <Text style={{fontSize :  13 ,color : "#fff" , fontWeight : "800"}}>
+                        Proceed
+                    </Text>
+                </Btn>
+                </ScrollView>
+            </BackScreen> 
+        )
     }
 }
 

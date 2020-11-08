@@ -95,6 +95,9 @@ class Home extends React.Component<IProps, IState> {
             .on('value', (snapshot: { val: () => any; key: any; }) => {
               const order = snapshot.val()
               if(order){
+                 if (order.status == "cancelled"){
+                   this.setState({ isModalVisible : false, newState : "pending", order : null})
+                 }
                 setOrder(order)
               }         
             })

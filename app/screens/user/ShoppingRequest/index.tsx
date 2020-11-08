@@ -158,8 +158,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
         <Text style={{fontSize : 12, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
           {addressVariant}
         </Text>
-        <View style={{width : "100%", height : 43, borderRadius : 8, flexDirection : "row",backgroundColor : "rgba(0,0,0,0.035)",
-              alignItems:"center" ,borderWidth : 2, borderColor: "#f9f9f9", paddingHorizontal : 16 }} >
+        <View style={styles.addressSelector} >
 
           <Btn onPress={()=>{
               this.openSearchModal(key)
@@ -175,33 +174,12 @@ class ShoppingRequest extends React.Component<Props, IState> {
       ]
     }
 
-    processOrderPlacement = () => {
-      const { dropOff ,items} = this.state
-      if (_.isEmpty(dropOff) || _.isEmpty(items)){
-      }
-      else{
-        const {context : {setOrder,currentUser,generateOrderId}} = this.props
-        const {phoneNumber, displayName} = currentUser
-        const orderId = generateOrderId(phoneNumber)
-
-        const newOrder : IOrder = {
-            orderId,
-            orderType : "Shopping" ,
-            driver : {},
-            dropOffAddress : dropOff,
-            items,
-            customer : { phoneNumber , displayName },
-            total : 0,
-            status : "pending"
-        }
-        setOrder(newOrder)
-        // this.props.navigation.navigate("Payment")
-      } 
+    handleCancel = () => {
+      const {context : {updateOrderStatus, order}} = this.props
+      updateOrderStatus(order.orderId, {...order, status : "cancelled"})
     }
 
-    convertLocation = (location : {lat: string, lng:string}) => (
-      { latitude : location.lat, longitude : location.lng}
-    )
+    convertLocation = (location : {lat: string, lng:string}) => ({ latitude : location.lat, longitude : location.lng})
 
     getTotalDistance = (pickUp: GeolibInputCoordinates, dropOff: GeolibInputCoordinates) =>{
         var dis = getPreciseDistance(pickUp,dropOff)+ 300 //distance off by 200 metres
@@ -238,7 +216,6 @@ class ShoppingRequest extends React.Component<Props, IState> {
               myOrder.driver = freeDrivers[0]
               setOrder(myOrder)
               sendRequest(orderId, myOrder, ()=>{
-
                 this.onOrderUpdated = database()
                 .ref(`/orders/${orderId}`)
                 .on('value', (snapshot: { val: () => any; key: any; }) => {
@@ -250,12 +227,9 @@ class ShoppingRequest extends React.Component<Props, IState> {
                           this.props.navigation.navigate('ShoppingProgress')
                         },2000)
                     }
-                    console.log({driver : order.driver})
-
                   }         
                 })
-
-              }, ()=>{})
+              },()=>{})
           }
           
           else{
@@ -264,7 +238,6 @@ class ShoppingRequest extends React.Component<Props, IState> {
           }
       }
     }
-
 
     newItemPrompt = () => {
       this.setState({showPrompt : true})
@@ -314,7 +287,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
         return [
           this.renderPlacesModal(),
           this.renderAddItemPrompt(),
-          <Loader text={"Requesting a driver."} visible={loaderVisible} />,          
+          <Loader text={"Requesting a driver."} onCancel={()=> this.handleCancel()} visible={loaderVisible} />,          
           <BackScreen
             {...this.props}
             title="Request Delivery"
@@ -403,6 +376,13 @@ const styles = StyleSheet.create({
     itemInput : { 
       fontSize :  12, height: 56,
       flex : 1, textAlignVertical : "center"
+    },
+    addressSelector : {
+      width : "100%", height : 43,
+      borderRadius : 8, flexDirection : "row",
+      backgroundColor : "rgba(0,0,0,0.035)",
+      alignItems:"center" ,borderWidth : 2, 
+      borderColor: "#f9f9f9", paddingHorizontal : 16
     },
     closeIcon : {
       width : 50 ,height : 50,
