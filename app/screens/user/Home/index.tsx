@@ -121,7 +121,7 @@ const Home: any = (props: Props) => {
                   <OrderIcon fill={"#F57301"} />
                   </View>
                   <Text style={styles.requestType}>
-                    Order Bike
+                    Shopping 
                   </Text>
                   <Text style={styles.serviceDescriptionText} >
                     Send a bike to a local shop to buy and return your goods.
@@ -138,7 +138,7 @@ const Home: any = (props: Props) => {
                   </View>
 
                   <Text style={styles.requestType}>
-                    Pick-up
+                    Order Bike
                     </Text>
                     <Text style={styles.serviceDescriptionText} >
                       Send a bike to go collect and deliver a package to your location.

@@ -9,6 +9,7 @@ import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
 import { withAppContext, IAppContext, IOrder, mockOrder } from '../../../AppContext';
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
+import BagIcon from '../../../assets/icons/BagIcon'
 import OnlineIcon from '../../../assets/icons/OnlineIcon'
 import OfflineIcon from '../../../assets/icons/OfflineIcon'
 import LocationIcon from '../../../assets/icons/LocationIcon';
@@ -45,8 +46,8 @@ interface IState {
 class Home extends React.Component<IProps, IState> {
 
     onChildAdded: (a: import("firebase").RNFirebase.database.DataSnapshot | null, b?: string | undefined) => import("firebase").RNFirebase.database.QuerySuccessCallback;
-  onDriverUpdated: any;
-  onOrderUpdated: any;
+    onDriverUpdated: any;
+    onOrderUpdated: any;
 
     constructor(props: any){
       super(props)
@@ -62,12 +63,10 @@ class Home extends React.Component<IProps, IState> {
       }
     }
 
-    recordNewOrderOfFocus = (newOrder : IOrder , orderId : string) => {
-      
+    recordNewOrderOfFocus = (newOrder : IOrder , orderId : string) => {     
       const {context : {order}} = this.props
       this.setMyOrder(newOrder)
       this.setState({isModalVisible : true, order: newOrder, orderId })
-
     }
 
     componentWillMount = async () => {
@@ -81,8 +80,11 @@ class Home extends React.Component<IProps, IState> {
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver } = order
+
+          console.log({status})
           
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
+
             this.setState({newState : "pending"})
             playSound()
             this.recordNewOrderOfFocus(order, orderId)
@@ -166,22 +168,23 @@ class Home extends React.Component<IProps, IState> {
 
     renderParcelDetails = () => {
 
-      const {order} = this.state
-      const {name, description} = order.items[0]
+      const {order , order :{ orderType , storeName}} = this.state
+      const {name, description ,} = order.items[0]
+      const isShopping = orderType === "Shopping"
 
       return(
         <View style={{flexDirection : "row", height: 56, width : "100%",alignItems : "center"}}>
-          <ParcelIcon width={30} height={30} />
+          {isShopping ? <BagIcon width={30} height={30} /> : <ParcelIcon width={30} height={30} />}
           <View style={{marginLeft : 8}}>
-            <Text style={{fontSize : 12,}}>{name}</Text>
-            <Text numberOfLines={1} style={{fontSize : 11, color : "grey"}} >{description}</Text>
+            <Text style={{fontSize : 12,}}>{isShopping? "Shopping from :" :  name}</Text>
+            <Text numberOfLines={1} style={{fontSize : 11, color : "grey"}} >{isShopping? storeName :  description}</Text>
           </View>
         </View>
       )
     }
 
     _handlePressDirections = (target: { geometry: { location: any; }; postalCode: any; city: any; }, addressLabel : string) => {
-      let { geometry : {location}, postalCode, city } = target;
+      let { geometry : {location} } = target;
       const {lat,lng} = location
       const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
       const latLng = `${lat},${lng}`;
@@ -196,8 +199,8 @@ class Home extends React.Component<IProps, IState> {
       const {context : {updateDriverStatus}} = this.props
 
       if(order){
-        const {pickUpAddress, dropOffAddress} = order || { pickUpAddress : {}, dropOffAddress : {} }
-
+        const {pickUpAddress, dropOffAddress , orderType} = order || { pickUpAddress : {}, dropOffAddress : {} }
+        const isShopping = orderType === "Shopping"
         return(
           <View style={styles.modalInnerContainer}>
             <View style={styles.newReqContainer}>
@@ -246,7 +249,6 @@ class Home extends React.Component<IProps, IState> {
           </View>
         )
       }
-
       return null
     }
 
@@ -282,7 +284,7 @@ class Home extends React.Component<IProps, IState> {
               </View>
             </View>
 
-            <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 100,alignItems : "center" } ]}>
+            <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 130,alignItems : "center" } ]}>
               <Btn
                 onPress={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress , orderCollected ? "Delivery Address" : "Collection Address")}
               style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
@@ -291,7 +293,6 @@ class Home extends React.Component<IProps, IState> {
               <Btn onPress={()=>{ 
 
                 if (isGroceries){
-                    //trigger shopping list view
                     this.changeOrderProgress("shopping")  
                     this.setState({isModalVisible : false})
                 }
@@ -322,15 +323,16 @@ class Home extends React.Component<IProps, IState> {
     }
 
     renderOrderItemsConfirmation = () => {
-      return <ConfirmItems onConfirmed={()=>{
-        this.changeOrderProgress("collected")}
-      } />
+      return (
+        <ConfirmItems onConfirmed={()=>{
+          this.changeOrderProgress("collected")
+          this.setState({isModalVisible : true}) }} 
+        />)
     }
     renderDeliveredOrder = () =>{
 
-      const {order : {total , paymentMethod , distance}} = this.state
-      const {context : {updateDriverStatus}} = this.props
-
+      const {order : {total , paymentMethod , distance , customer}} = this.state
+      const {context : {currentUser :{ displayName, profilePicURL}, updateDriverStatus, sendRequest,setRatingsVisible, setUserInRating}} = this.props
 
       return(
         <View style={styles.modalInnerContainer}>
@@ -356,6 +358,9 @@ class Home extends React.Component<IProps, IState> {
               <Btn onPress={()=>{
                   updateDriverStatus({isVacant : true})
                   this.setState({isModalVisible : false})
+
+                  setUserInRating(customer)
+                  setRatingsVisible(true)
                 }} 
                 style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange ,width : 192}]} >
                 <Text  style={styles.acceptDeclineText} > Done </Text>
@@ -369,7 +374,6 @@ class Home extends React.Component<IProps, IState> {
 
     renderInactiveModal = () =>{
         const { isActive } = this.state
-
         return(
           <Inactive isActive={isActive} />
         )
@@ -407,10 +411,14 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-      const {context : {currentUser :{ displayName, profilePicURL}, sendRequest}} = this.props
+      const {context : {currentUser :{ displayName, profilePicURL}, sendRequest,setRatingsVisible, setUserInRating}} = this.props
       const {isOnline , newState} = this.state
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
       const randomNum =  Math.floor(Math.random() * Math.floor(1000))
+      const testUser = {
+        phoneNumber : "+27662359664",
+        displayName : "Mnotho test user"
+      }
 
 
       if (newState === "shopping"){
@@ -460,7 +468,9 @@ class Home extends React.Component<IProps, IState> {
                   <Btn
                     style={styles.addMockOrder}
                     onPress={ async () => {
-                      sendRequest(`some${randomNum}order${randomNum}`, mockOrder,()=>{},()=>{})
+                      setUserInRating(testUser)
+                      setRatingsVisible(true)
+                
                     }}    
                   >
                     <Text style={{color : "#fff"}} > Add Mock Order</Text>
@@ -567,7 +577,7 @@ const styles = StyleSheet.create({
       justifyContent : "center" 
     },
     newReqContainer : {
-      width : "100%" , minHeight : 380, maxHeight : 500,
+      width : "100%" , minHeight : 400, maxHeight : 560,
       borderRadius : 3, backgroundColor : "#fff",
       paddingTop: 12, paddingHorizontal : 24
     },

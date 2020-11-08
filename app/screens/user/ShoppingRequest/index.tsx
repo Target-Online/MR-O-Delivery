@@ -211,24 +211,30 @@ class ShoppingRequest extends React.Component<Props, IState> {
     processRequest = () => {
 
       if(this.props.context){
-          const {context : {sendRequest , order,setOrder, users}} = this.props
-          const {pickUp, dropOff} = this.state
+          const {context : {sendRequest , order,setOrder,generateOrderId, currentUser : {phoneNumber,displayName} , users}} = this.props
+          const {pickUp, dropOff , items , storeName, instructions} = this.state
           this.setState({loaderVisible : true})
           const freeDrivers = users.data.filter((user: IUser) =>  user.isDriver && user.isActive && user.isOnline && user.isVacant )
-          const distance = this.getTotalDistance(this.convertLocation(pickUp.geometry.location),
-          this.convertLocation(dropOff.geometry.location))
+          const distance = this.getTotalDistance(this.convertLocation(pickUp.geometry.location),this.convertLocation(dropOff.geometry.location))
           const orderTotal = getOrderTotal(distance)
+          const orderId = generateOrderId(phoneNumber)
 
           if (freeDrivers[0]){
               let myOrder  = {
                 ...order, 
+                storeName,
+                storeInstructions : instructions,
+                orderId,
+                orderType : "Shopping",
                 pickUpAddress : pickUp,
                 dropOffAddress :  dropOff,
                 total : orderTotal,
                 distance,
+                customer : {displayName , phoneNumber},
+                items,
+                status : "pending",
                 paymentMethod : "cash" 
               }
-              const {orderId} = myOrder
               myOrder.driver = freeDrivers[0]
               setOrder(myOrder)
               sendRequest(orderId, myOrder, ()=>{
@@ -238,7 +244,6 @@ class ShoppingRequest extends React.Component<Props, IState> {
                 .on('value', (snapshot: { val: () => any; key: any; }) => {
                   const order = snapshot.val()
                   if(order){
-                    console.log({status : order.status})
                     if (order.status === "confirmed"){
                         setTimeout(()=> {
                           this.setState({loaderVisible : false})

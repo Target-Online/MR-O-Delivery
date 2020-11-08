@@ -8,42 +8,15 @@ import InfoIcon from '../../../assets/icons/InfoIcon'
 import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
-import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
+import { getOrderTotal, showNoDriversAlert } from  '../../../utils/orderModules'
 import UserCard from '../../../components/UserCard'
 import ShoppingListItem from '../../../components/ShoppingListItem'
 import { Colors } from '../../../constants'
 const  { height , width } = Dimensions.get('window')
 
-const labels = ["Confirmation", "Parcel Collection" ,"On Route","Delivered"]
-
-const customStyles = {
-  stepIndicatorSize: 25,
-  currentStepIndicatorSize:30,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#fe7013',
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: '#fe7013',
-  stepStrokeUnFinishedColor: '#aaaaaa',
-  separatorFinishedColor: '#fe7013',
-  separatorUnFinishedColor: '#aaaaaa',
-  stepIndicatorFinishedColor: '#fe7013',
-  stepIndicatorUnFinishedColor: '#ffffff',
-  stepIndicatorCurrentColor: '#ffffff',
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: '#fe7013',
-  stepIndicatorLabelFinishedColor: '#ffffff',
-  stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-  labelColor: '#999999',
-  labelSize: 13,
-  currentStepLabelColor: '#fe7013'
-}
-
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
-const orderProgress = [ "pending", "confirmed" , "collected" , "delivered"]
 
 class ShoppingProgress extends Component<IProps> {
     constructor (props) {
@@ -51,33 +24,48 @@ class ShoppingProgress extends Component<IProps> {
     }
 
     componentDidMount(){
-        const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
+        const {context : {order,setOrder}} = this.props
         const {orderId} = order
         var ref = firebase.database().ref(`orders/${orderId}`);
         ref.on('value', function(snapshot) {
-            // Do whatever
             if(snapshot.val()){
                 const order = snapshot.val()
                 setOrder(order)
             }
-        });
-
+        })
     }
 
+    removeItem = (index : number) => {
+        const {context : {setAlertData, setShowAlert}} = this.props
+        setAlertData({ text: "Remove this item from your list ?" ,buttons : [ {label : "Yes",onPress : ()=>{ this.deleteItem(index) }}, {label : "No",onPress : ()=>{}} ],title : "Remove",})
+        setShowAlert(true)
+    }
 
-    removeItem = (index: number) => {
+    deleteItem = (index : number) =>{
+        const {context : {updateOrderStatus, order,setOrder}} = this.props
+        const {items, orderId}  = order
+        let itemsCopy = [...items]
+        delete itemsCopy[index]
+        itemsCopy = itemsCopy.filter((i)=> i)
+        const newOrderObject = {...order, items : itemsCopy}
+        setOrder(newOrderObject)
+        updateOrderStatus(orderId, newOrderObject)  
+    }
 
+    confirmOrder = (total : number) =>{
+        const {context : {updateOrderStatus, order}} = this.props
+        updateOrderStatus(order.orderId, {...order, orderConfirmed : true , total})
+        this.props.navigation.navigate("Payment")
     }
 
     render () {
 
-        const {context : {sendRequest ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
-        const { displayName , vehicleRegistration , phoneNumber , profilePicUrl}  = driver || {} 
-        const driverPicURL = profilePicUrl ? {uri : profilePicUrl} : images.headShot
-
-        console.log({items})
+        const {context : { order }} = this.props
+        const { items, driver,distance }  = order
+        const { displayName }  = driver || {} 
+        const itemsCost  = items.reduce((prev,next)=> { return Number(prev) + Number(next.price) }, 0) || 0
+        const allPriced = items && items.reduce((prev,next)=> { return prev &&  next.price },true)
+        const deliveryCost =  getOrderTotal(distance)
         return ( 
             <BackScreen 
                 // scroll
@@ -89,7 +77,9 @@ class ShoppingProgress extends Component<IProps> {
                    <View style={styles.nbCard}>
 
                         <InfoIcon fill={Colors.primaryOrange} />
-                        <Text style={styles.nbText} > {`We have to wait for ${displayName} to confirm the prices and stock availability`} </Text>
+                        <Text style={styles.nbText} > { allPriced  ? `${displayName} has confirmed the prices and stock availability. Press continue to confirm your order.` :
+                        `We have to wait for ${displayName} to confirm the prices and stock availability`
+                        } </Text>
 
                     </View>
                     <View style={{height: 30,marginTop : 16, paddingHorizontal : 24, width : "100%", justifyContent : "center" }}>
@@ -108,29 +98,25 @@ class ShoppingProgress extends Component<IProps> {
                             <ShoppingListItem onDelete={()=>{ this.removeItem(index) }}  item={item} />
                         )}
                     />
-                    <View style={styles.orderSummary}>
-                        <Text style={styles.summaryHead}> {`${customer.displayName}'s Order Summary`} </Text>
+                    {itemsCost > 0 && <View style={styles.orderSummary}>
+                        <Text style={styles.summaryHead}> {`Your Order Summary`} </Text>
                         <View style={styles.summaryRow}>
                             <Text style={styles.slipSubHead} >Items Cost</Text>
-                            <Text style={styles.slipAmount}>N 10000</Text>
+                        <Text style={styles.slipAmount}>{`N ${itemsCost}`}</Text>
                         </View>
 
                         <View style={styles.summaryRow}>
                             <Text style={styles.slipSubHead} >Delivery Fee  </Text>
-                            <Text style={styles.slipAmount}>N 7000</Text>
+                            <Text style={styles.slipAmount}>{`N ${deliveryCost}`}</Text>
                         </View>
 
-                        <View style={styles.summaryRow}>
-                            <Text style={styles.slipSubHead} >Items Cost</Text>
-                            <Text style={styles.slipAmount}>N 10000</Text>
-                        </View>
                         <View style={styles.summaryRow}>
                             <Text style={styles.summaryHead} >Order Total </Text>
-                            <Text style={[styles.summaryHead ,styles.slipAmount]}>N 7000</Text>
+                            <Text style={[styles.summaryHead ,styles.slipAmount]}>{`N ${itemsCost+deliveryCost}`}</Text>
                         </View>
-                    </View>
+                    </View>}
 
-                    <Btn style={styles.continueBtn}>
+                    <Btn onPress={()=> this.confirmOrder(itemsCost+deliveryCost)} style={styles.continueBtn}>
                         <Text style={{fontSize : 16 , fontWeight : "bold", color : "white"}}>
                             Continue
                         </Text>

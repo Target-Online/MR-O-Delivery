@@ -10,9 +10,8 @@ import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
+import UserCard from '../../../components/UserCard'
 const  { height } = Dimensions.get('window')
-
-const labels = ["Confirmation", "Parcel Collection" ,"On Route","Delivered"]
 
 const customStyles = {
   stepIndicatorSize: 25,
@@ -40,7 +39,6 @@ const customStyles = {
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}> ;
-const orderProgress = [ "pending", "confirmed" , "collected" , "delivered"]
 
 class Payment extends Component<IProps> {
     constructor (props) {
@@ -48,30 +46,47 @@ class Payment extends Component<IProps> {
     }
 
     componentDidMount(){
-        const {context : {sendRequest , order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,status,  driver, total}  = order
+        const {context : {order,setOrder , updateDriverStatus, sendRequest,setRatingsVisible, setUserInRating }} = this.props
         const {orderId} = order
         var ref = firebase.database().ref(`orders/${orderId}`);
         ref.on('value', function(snapshot) {
-            // Do whatever
-            if(snapshot.val()){
-                const order = snapshot.val()
-                setOrder(order)
+            const order = snapshot.val()
+            if(order){ 
+                setOrder(order) 
+                const {status , driver} = order
+                if (status == "delivered"){
+                    setUserInRating(driver)
+                    setRatingsVisible(true)
+                }
+            
             }
-        });
-
+        })
     }
+
+    getStepText = (orderStatus : any ) => {
+        const {context : {order : {driver : {displayName}} }} = this.props
+        const progressCopy  = {                              
+            "delivered" : "Your parcel has been delivered.",
+            "collected" : "Your parcel has been collected and trhe driver is on route to drop it off.",
+            "confirmed" : "A driver has accepted your order and is  going to collect your parcel.",
+            "pending" : "Waiting for drivers confirmation of your request.",
+            "shopping": `${displayName} is getting your items.`     
+        }
+        return progressCopy[orderStatus]
+    }
+
     render () {
 
-        const {context : {sendRequest ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,status,  driver, orderId}  = order
-        const { displayName , vehicleRegistration , phoneNumber , profilePicUrl}  = driver || {} 
-        const driverPicURL = profilePicUrl ? {uri : profilePicUrl} : images.headShot
+        const {context : {  order }} = this.props
+        const {dropOffAddress , pickUpAddress , orderType,status,  driver, orderId}  = order
+        const isGroceries = orderType === "Shopping"
+        const orderProgress = isGroceries ? ["pending", "confirmed", "shopping", "collected", "delivered"] : [ "pending", "confirmed" , "collected" , "delivered"]
+        const labels = isGroceries ? ["Confirmation", "Shopping", "Items Collection" ,"On Route","Delivered"] : ["Confirmation", "Parcel Collection" ,"On Route","Delivered"]
         let currentStep = orderProgress.indexOf(status) 
         if (currentStep < 0) currentStep = 0
+
         return ( 
             <BackScreen 
-                // scroll
                 title={"Track Your Order"}
                 onBackPress={()=> {
                     this.props.navigation.navigate("Home")
@@ -80,7 +95,7 @@ class Payment extends Component<IProps> {
             >
                 <View style={{flex : 1 , }}>
                 <View style={{alignItems : "center", backgroundColor : "white"}}>
-                    <View style={{width : "100%", minHeight:  340, maxHeight: 400, flex : 1, paddingVertical : 24}} >
+                    <View style={styles.top} >
 
                         <View style={{height :  20 ,alignItems : "center"}}>
                             <Text style={styles.orderTrackHead}> Order Tracking Number : </Text>
@@ -91,46 +106,19 @@ class Payment extends Component<IProps> {
                                 customStyles={customStyles}
                                 currentPosition={currentStep}
                                 labels={labels}
-                                stepCount={4}
+                                stepCount={isGroceries ? 5 : 4}
                             />
                              <View style={{ alignItems: 'center',paddingTop : 42 }}>
                                     {(currentStep > 2 ) ? <ParcelDelivered /> : <ParcelIcon width={80} height={80} /> }                                
-                                    {(currentStep === 3) && <Text style={styles.deliveryStep} >Your parcel has been delivered</Text>}
-                                    {(currentStep === 2) && <Text style={styles.deliveryStep} >Your parcel has been collected and trhe driver is on route to drop it off</Text>}
-                                    {(currentStep === 1) && <Text style={styles.deliveryStep} >A driver has accepted your order and is  going to collect your parcel</Text>}
-                                    {(currentStep < 1) && <Text style={styles.deliveryStep} >Waiting for drivers confirmation of your request</Text>}
+                                    <Text style={styles.deliveryStep} >{this.getStepText(status)}</Text>
                             </View>                        
                         </View>
                     </View>
                 </View>
 
                 <View style={{width : "100%", height : height - 340 ,backgroundColor : "#F57301",alignItems : "center" , flex : 1}}>
-                    <View style={{width : "100%" ,backgroundColor :"#000",height: 100, flexDirection : "row",alignItems : "center",paddingHorizontal : 24 }}>
-                        <Image source={driverPicURL} style={{width: 46, height : 46, borderRadius : 23}} />
-                        <View style={{height : "100%", justifyContent : "center",padding : 16 }}>
-                            <Text style={styles.driverName} >{displayName}</Text>
-                            <Text style={styles.driverName} >Vehicle Name</Text>
-                            <Text style={styles.driverName} >{vehicleRegistration}</Text>                            
-                        </View>
-                        <View style={{position : "absolute",right : 0 ,width : 120, marginRight: 16, flexDirection : "row",flex : 1, justifyContent : "space-between" }}>
-                            <Btn  
-                                onPress={() => {
-                                    setAlertData({text : "Feature Coming Soon " , title: "Coming Soon..." , 
-                                    buttons : [{label : "Ok", onPress : ()=> setShowAlert(false)}]})
-                                    setShowAlert(true)
-                                    }
-                                }
-                             style={styles.contactBtn}>
-                                <ChatIcon />
-                            </Btn>
-                            <Btn onPress={()=>{
-                                Linking.openURL(`tel:${phoneNumber}`)
-                            }} 
-                            style={styles.contactBtn}>
-                                <CallIcon />
-                            </Btn>
-                        </View>
-                    </View>
+                    <UserCard user={driver} />
+
                     <View style={{height: 150, padding : 16,width : "100%", justifyContent : "center" }}>
                         <View style={{height : 60, flexDirection : "row" , justifyContent :"center" }}>
                             <View style={{width:  20,marginRight : 8,justifyContent:"space-between",paddingVertical:10 ,alignItems: "flex-start"}}>
@@ -141,7 +129,7 @@ class Payment extends Component<IProps> {
 
                             <View style={{flex:1, height: 70,justifyContent  :"space-between" }}> 
                                 <View style={styles.textAreaStyles} >
-                                    <Text   style={styles.addressInput} >
+                                    <Text style={styles.addressInput} >
                                         {pickUpAddress.description}
                                     </Text>                                                          
                                 </View>
@@ -178,6 +166,11 @@ const styles = StyleSheet.create({
     driverName:{
         color : '#fff',
         fontSize : 10,
+    },
+    top : {
+        width : "100%", minHeight:  340,
+        maxHeight: 400, flex : 1,
+        paddingVertical : 24
     },
     orderTrackHead : {
         fontSize : 16,

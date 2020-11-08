@@ -1,15 +1,12 @@
 import React, { Component } from 'react'
 // import PropTypes from 'prop-types';
-import { Dimensions, TouchableOpacity, View } from 'react-native'
-import * as Animatable from 'react-native-animatable'
-import { withAppContext, IAppContext, IOrder, mockOrder } from '../../AppContext';
-import Images from '../../assets/images'
+import { TouchableOpacity, View } from 'react-native'
+import { withAppContext, IAppContext } from '../../AppContext';
 import Icons from '../../assets/icons'
 import { Text } from '..'
 import { Colors, Fonts, Metrics }from '../../constants'
 import { iPhoneLarge } from '../../utils/screenSize'
 import styles from './BottomMenuStyle'
-import { useNavigationState, StackActions } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack/lib/typescript/src/types';
 import _ from 'lodash';
 const activeFont =  iPhoneLarge ? Fonts.captionBold : Fonts.tinyBold

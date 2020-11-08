@@ -3,7 +3,7 @@ import Svg, { G,Polygon ,Path, SvgProps } from 'react-native-svg';
 
 const OnlineIcon = (
   (props, ref) => (
-  	<Svg height="60" viewBox="0 0 64 64" width="60" xmlns="http://www.w3.org/2000/svg">
+  	<Svg height="80" viewBox="0 0 64 64" width="80" xmlns="http://www.w3.org/2000/svg">
 	  	<G id="Online_Shopping-Shopping-Smartphone-Shopping_Bag-Commerce" data-name="Online Shopping-Shopping-Smartphone-Shopping Bag-Commerce">
 		  <Path d="m42 9v36a6 6 0 0 1 -6 6h-20a6.013 6.013 0 0 1 -5.2-3v-.01a5.939 5.939 0 0 1 -.8-2.99v-36a6 6 0 0 1 6-6h20a6 6 0 0 1 5.98 5.55c.01.15.02.3.02.45z" fill="#5aaae7"/>
 		  <Path d="m42 11.25v27.49a14.919 14.919 0 0 1 -4.35-2.88l-7.03 1.31 3.64-6.16a15 15 0 0 1 7.74-19.76z" fill="#3d9ae2"/>

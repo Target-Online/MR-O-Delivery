@@ -58,7 +58,9 @@ const AddItemPrompt = (props : IProps) => {
             
             <Btn 
                 onPress={()=>{ 
-                    addItem && addItem({name,description})         
+                    addItem && addItem({name,description})    
+                    setName('')  
+                    setDescription('')  
                 }}
                 style={styles.continueBtn}>
                   <Text style={styles.continueBtnText}> Add Item </Text>

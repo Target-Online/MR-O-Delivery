@@ -162,7 +162,7 @@ class Payment extends Component<IProps> {
         const {context : {profile , order,setOrder}} = this.props
         const {dropOffAddress , pickUpAddress , items, orderType, total}  = order
         const {name , description } = items[0]
-        const isGroceries = orderType === "Shopping"
+        const shopping = orderType === "Shopping"
       return ( 
         <BackScreen
             title="Payment"
@@ -184,6 +184,7 @@ class Payment extends Component<IProps> {
 
                 <Btn 
                 onPress={()=>{
+                    shopping ? this.props.navigation.navigate('OrderProgress') :
                     this.processRequest()
                  }} 
                 style={styles.proceedBtn} >

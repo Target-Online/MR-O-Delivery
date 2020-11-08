@@ -39,24 +39,24 @@ const initalState = {
 
 const AppContextProvider : React.SFC = ({children}) => {
 
-        const [user, setUser] = useState(null);
-        const [profile, setProfile] = useState<any>({});
+        const [user, setUser] = useState(null)
+        const [profile, setProfile] = useState<any>({})
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
-        const [expoPushToken, setExpoPushToken] = useState('');
-        const [currentUser, setCurrentUser] = useState();
-        const [loadingUser, setLoadingUser] = useState(true);
-        const [order, setOrder] = useState(mockOrder);
-        const [usersArr, setUsersArr] = useState([]); //  useReducer(rootReducer.setStateReducer, initalState);
-        const [users, setUsers] =  useReducer(rootReducer.setStateReducer, initalState);
-        const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState);
-        const [drivers, setDrivers] = useState<IUser[]>([]);
-        const notificationListener = useRef();
-        const responseListener = useRef();
-        const [verificationId, setVerificationId] = useState<string>("");
-        const soundObject = new Audio.Sound();
+        const [expoPushToken, setExpoPushToken] = useState('')
+        const [currentUser, setCurrentUser] = useState()
+        const [loadingUser, setLoadingUser] = useState(true)
+        const [order, setOrder] = useState({})
+        const [userInRating, setUserInRating] = useState({})
+        const [ratingsVisible, setRatingsVisible] = useState<boolean>(false)
+        const [users, setUsers] =  useReducer(rootReducer.setStateReducer, initalState)
+        const [orders, setOrders] = useReducer(rootReducer.setStateReducer, initalState)
+        const [drivers, setDrivers] = useState<IUser[]>([])
+        const notificationListener = useRef()
+        const responseListener = useRef()
+        const [verificationId, setVerificationId] = useState<string>("")
         const [orderNumber, setOrderNumber] = useState('')
-
+        const soundObject = new Audio.Sound();
         const generateOrderId = (userId : string) => {
             const Id = randomNum() + userId 
             return Id
@@ -72,8 +72,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         async function initSound() {
             try {
                 await soundObject.loadAsync(require('./assets/audio/notif_tone.mp3')); 
-              } catch (error) { // An error occurred!
-            }
+              } catch (error) { }
         }
 
         const playSound = async () => {
@@ -94,11 +93,8 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const reloadData = () =>{
             setLoadingUser(true)
-            api.getCollection("users", setUsers, () =>{ 
-   
-            })
+            api.getCollection("users", setUsers, () =>{ })
             api.getCollection("orders", setOrders)
-
             setLoadingUser(false)
         }
 
@@ -109,7 +105,6 @@ const AppContextProvider : React.SFC = ({children}) => {
             reloadData()
             var ref = firebase.database().ref("users");
             ref.on('value', function(snapshot) {
-                // Do whatev
                 const  user = firebase.auth().currentUser
                 setUsers({ type: "setData", data: O2A(snapshot) })
                 storeUser(user)
@@ -134,7 +129,6 @@ const AppContextProvider : React.SFC = ({children}) => {
                 setTimeout(()=> setLoadingUser(false) , 3000)           
             })
             
-
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 //setNotification(notification);
             });
@@ -245,13 +239,13 @@ const AppContextProvider : React.SFC = ({children}) => {
                 finalStatus = status;
                 }
                 if (finalStatus !== 'granted') {
-                alert('Failed to get push token for push notification!');
+                // alert('Failed to get push token for push notification!');
                 return;
                 }
                 token = (await Notifications.getExpoPushTokenAsync()).data;
                 
             } else {
-                alert('Must use physical device for Push Notifications');
+                // alert('Must use physical device for Push Notifications');
             }
             if (Platform.OS === 'android') {
                 Notifications.setNotificationChannelAsync('default', {
@@ -264,37 +258,16 @@ const AppContextProvider : React.SFC = ({children}) => {
             return token
         }
 
-        const updateUserProfile = ( params: {profile : IUser, silentUpdate?: boolean, 
-            newUser?: boolean ,onSuccess : () => void , onFailure : () => void }) => {
-            const {profile , silentUpdate, newUser,onSuccess,onFailure } = params
-            const {phoneNumber} = profile
-            if(newUser){
-                const newRef = firebase.database().ref(`users/`).child(phoneNumber)
-                newRef.set({...profile}).then(()=>{
-                    setProfile(profile)
-                    onSuccess && onSuccess()
-                }).catch(()=>{
-                    onFailure && onFailure()
-                })    
-            }
-            else{
-                firebase.database().ref(`users/${phoneNumber}`).update(profile).then((ref: any)=>{
-
-                }).catch((err: any) => {
-                })
-            }
-
-            if(!silentUpdate){
-                setAlertData({ text: "Your details have been updated" ,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Success",})
-                setShowAlert(true)
-            }
+        const updateUserProfile = ( id : string, updatedUser :  IUser ) => {
+    
+            firebase.database().ref(`users/${id}`).update(updatedUser).then((ref: any)=>{
+            }).catch((err: any) => {})
         }
 
         const register = (values: { email: string; password: string, firstname : string, lastname : string } ) => {
 
             firebase.auth().createUserWithEmailAndPassword(values.email,values.password).then((res: any) =>{ 
-                const {firstname , lastname, email} = values
-                updateUserProfile({firstname , lastname, email,profilePicURL : "" },true,true)
+                const {firstname , lastname, email} = values    
             }
             ).catch((err: { userInfo: { NSLocalizedDescription: any; }; }) =>{
                 setAlertData({ text: err.userInfo.NSLocalizedDescription ,buttons : [ {label : "Ok",onPress : ()=>{}} ],title : "Registration Failed",})
@@ -332,13 +305,15 @@ const AppContextProvider : React.SFC = ({children}) => {
             <AppContext.Provider
                 value={{ 
                     user, showAlert, setShowAlert,updateOrderStatus,driverCheck,
+                    ratingsVisible, setRatingsVisible,
                     alertBoxData, setAlertData, setUser,sendRequest,orderNumber,
                     login, register, logout,isUserDriver,reloadData,setOrderNumber,
                     isDev : true,order,setOrder,drivers,getAllDrivers,generateOrderId,
                     resetPassword, updateUserProfile,profile,setProfile,updateDriverStatus,
                     currentUser, setCurrentUser , loadingUser,users, setUsers,
                     orders, setOrders, toggleDriverAvailability, sendPushNotification,
-                    verificationId, setVerificationId, playSound, storeUser
+                    verificationId, setVerificationId, playSound, storeUser,
+                    userInRating, setUserInRating
                 }}
             >
                 {children}
@@ -650,6 +625,8 @@ export const mockOrder =  {
         "utc_offset" : -420,
         "vicinity" : "Yucaipa"
     },
+    storeName : "Shoprite",
+    storeInstructions : "bla bla bla",
     "status" : "pending",
     "paymentMethod" : "cash",
     "distance" : "22",

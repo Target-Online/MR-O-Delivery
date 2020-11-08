@@ -1,45 +1,16 @@
 import React, { Component} from 'react'
 import { View, Text , TouchableOpacity as Btn, Image, StyleSheet , Linking, Dimensions, FlatList} from 'react-native'
-import ParcelIcon from '../../../assets/icons/ParcelIcon'
-import ParcelDelivered from '../../../assets/icons/ParcelDelivered'
-import images from '../../../assets/images'
-import ChatIcon from '../../../assets/icons/ChatIcon'
 import InfoIcon from '../../../assets/icons/InfoIcon'
 import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
-import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
 import UserCard from '../../../components/UserCard'
 import ShoppingListItem from '../../../components/ShoppingListItem'
 import { Colors } from '../../../constants'
-const  { height , width } = Dimensions.get('window')
+import { getOrderTotal } from '../../../utils/orderModules'
+const  { width } = Dimensions.get('window')
 
-const labels = ["Confirmation", "Parcel Collection" ,"On Route","Delivered"]
-
-const customStyles = {
-  stepIndicatorSize: 25,
-  currentStepIndicatorSize:30,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#fe7013',
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: '#fe7013',
-  stepStrokeUnFinishedColor: '#aaaaaa',
-  separatorFinishedColor: '#fe7013',
-  separatorUnFinishedColor: '#aaaaaa',
-  stepIndicatorFinishedColor: '#fe7013',
-  stepIndicatorUnFinishedColor: '#ffffff',
-  stepIndicatorCurrentColor: '#ffffff',
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: '#fe7013',
-  stepIndicatorLabelFinishedColor: '#ffffff',
-  stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-  labelColor: '#999999',
-  labelSize: 13,
-  currentStepLabelColor: '#fe7013'
-}
 
 type IProps = IContextProps & { onConfirmed : () => void; } & StackScreenProps<{navigation : any}> ;
 const orderProgress = [ "pending", "confirmed" , "collected" , "delivered"]
@@ -63,36 +34,28 @@ class ConfirmItems extends Component<IProps> {
     }
 
 
-    removeItem = (index: number) => {
-        const {context : {sendRequest ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
-    }
-
     removeItem = (index : number) => {
-
-        const {context : {updateOrderStatus ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
+        const {context : {updateOrderStatus , order }} = this.props
+        const {items, orderId}  = order
         let itemsCopy = [...items]
         delete itemsCopy[index]
         itemsCopy = itemsCopy.filter((i)=> i)
         const newOrderObject = {...order, items : itemsCopy}
-        setOrder(newOrderObject)
         updateOrderStatus(orderId, newOrderObject)  
     }
 
-    updatePrice = (index : number, price : any ) =>{
-        const {context : {updateOrderStatus ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
+    updatePrice = (index : number, price : any ) => {
+        const {context : {updateOrderStatus , order }} = this.props
+        const { items, orderId}  = order
         let itemsCopy = [...items]
         itemsCopy[index] = { ...itemsCopy[index] , price }
         const newOrderObject = {...order, items : itemsCopy}
-        setOrder(newOrderObject)
         updateOrderStatus(orderId, newOrderObject)
     }
 
-    markOutOfStock = (index : number ) =>{
-        const {context : {updateOrderStatus ,setAlertData,setShowAlert, order,setOrder, drivers, getAllDrivers}} = this.props
-        const {dropOffAddress , pickUpAddress , items,customer,  driver, orderId}  = order
+    markOutOfStock = (index : number ) => { 
+        const {context : {updateOrderStatus , order,setOrder }} = this.props
+        const { items, orderId}  = order
         let itemsCopy = [...items]
         itemsCopy[index] = { ...itemsCopy[index] , outOfStock : true }
         const newOrderObject = {...order, items : itemsCopy}
@@ -113,15 +76,12 @@ class ConfirmItems extends Component<IProps> {
 
     render () {
 
-        const {context : {order, setOrder, drivers, getAllDrivers},onConfirmed} = this.props
-        const {dropOffAddress , pickUpAddress , items,customer, orderConfirmed, driver, orderId}  = order
-        const { displayName , vehicleRegistration , phoneNumber , profilePicUrl}  = driver || {} 
-        const driverPicURL = profilePicUrl ? {uri : profilePicUrl} : images.headShot
-        console.log({prices : items.map(i=>i.price)})
-        const ready  = items.reduce((prev,next)=> { return prev  &&  next.price !== null },true) && orderConfirmed
+        const {context : {order },onConfirmed} = this.props
+        const { items,customer, orderConfirmed, distance  }  = order
+        const ready  = items.reduce((prev,next)=> { return prev  &&  next.price },true) && orderConfirmed
+        const allPriced = items && items.reduce((prev,next)=> { return prev &&  next.price },true)
         const itemsCost  = items.reduce((prev,next)=> { return Number(prev) + Number(next.price) }, 0) 
-        const deliveryCost =  1000
- 
+        const deliveryCost =  getOrderTotal(distance)
 
         return ( 
             <BackScreen 
@@ -134,12 +94,10 @@ class ConfirmItems extends Component<IProps> {
                    <View style={styles.nbCard}>
                         <InfoIcon fill={Colors.primaryOrange} />
                         <Text style={styles.nbText} > {this.badgeText()} </Text>
-
                     </View>
                     <View style={{height: 30,marginTop : 16, paddingHorizontal : 24, width : "100%", justifyContent : "center" }}>
                         <Text style={{fontSize : 18, fontWeight : "bold"}}>{`${customer.displayName}'s Shopping List`}</Text>
                     </View>
-
                     <FlatList 
                         data={items}
                         contentContainerStyle={{
@@ -157,7 +115,7 @@ class ConfirmItems extends Component<IProps> {
                             />
                         )}
                     />
-                    <View style={styles.orderSummary}>
+                    {allPriced && <View style={styles.orderSummary}>
                         <Text style={styles.summaryHead}> {`${customer.displayName}'s Order Summary`} </Text>
                         <View style={styles.summaryRow}>
                             <Text style={styles.slipSubHead} >Items Cost</Text>
@@ -173,7 +131,7 @@ class ConfirmItems extends Component<IProps> {
                             <Text style={styles.summaryHead} >Order Total </Text>
                             <Text style={[styles.summaryHead ,styles.slipAmount]}>{`N ${itemsCost+deliveryCost}`}</Text>
                         </View>
-                    </View>
+                    </View>}
 
                     <Btn  
                         onPress={()=>{

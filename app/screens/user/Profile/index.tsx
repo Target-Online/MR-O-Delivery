@@ -22,15 +22,9 @@ class Logout extends Component<Props> {
       fontSize : 20,
       modalVisible : false,
       showSplash : true,
-      selectedRange : 'MONTH',
       favCommodities : this.props.favourites || []
     }
     componentDidMount (){
-    }
-
-    checkFav = (name) =>{
-      const { favCommodities } = this.state
-      return favCommodities && favCommodities.includes(name)
     }
 
 
@@ -44,7 +38,7 @@ class Logout extends Component<Props> {
         
               <Btn
                   onPress={()=> {
-                    // this.openModal("DriversignIn")
+
                   }}
                   >
                     <View
@@ -62,7 +56,6 @@ class Logout extends Component<Props> {
     )}
 
     renderMenuOpt = (option) => {
-      const { focusedEntry, favCommodities } = this.state
       const {context} = this.props
       const {logout ,setAlertData,setShowAlert,profile : {firstname}} = context
       const { displayName,icon,onPress } = option
@@ -78,16 +71,14 @@ class Logout extends Component<Props> {
           onPress : ()=> setShowAlert(false)
         },
           ]})
-
         setShowAlert(true)
       }
 
       return(
       <Btn 
+        key={displayName}
         onPress={()=> {
-          if (displayName==="Logout"){
-            return signOut()
-          }
+          if (displayName==="Logout"){ return signOut()}
           onPress() 
         }} 
       >
@@ -98,14 +89,13 @@ class Logout extends Component<Props> {
                {displayName}
               </Text>
             </View> 
-
             <Icon style={{height : 12,marginTop: 2, width : 12, fontSize : 12 }} type={"FontAwesome"} name="chevron-right" ></Icon>
           </View>
       </Btn>)
     }
     
     render () {
-      const {logout ,setAlertData,setShowAlert,profile : {firstname}} = this.props.context
+      const {setAlertData,setShowAlert,profile : {firstname}} = this.props.context
       const menuList = [
         {
           displayName : "My Profile",

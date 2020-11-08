@@ -16,7 +16,8 @@ interface IProps {
 type Props = IProps & IContextProps
 const ShoppingListItem = ({item , onDelete , driverVariant , context,markOutOfStock, onPriceEnter} : Props) => {
 
-    const {name , description, price, isOutOfStock } = item
+    console.log({item})
+    const {name , description, price, outOfStock } = item
     const {setAlertData , setShowAlert} = context
     const [priceInput,setPrice] = useState<string>("")
 
@@ -41,8 +42,8 @@ const ShoppingListItem = ({item , onDelete , driverVariant , context,markOutOfSt
                 <Text style={{ fontSize : 13 }} >{name}</Text>
                 <View style={{flexDirection : "row"}} >
                     <Text style={{color : Colors.overlayDark60 , fontSize : 11}} >{description}</Text>
-                    {price && !isOutOfStock && <Text style={styles.priceText} >{`N${price}`}</Text>}
-                    {isOutOfStock && <Text style={styles.priceText} >{`Out Of Stock`}</Text>}
+                    {price && !outOfStock && <Text style={styles.priceText} >{`N${price}`}</Text>}
+                    {outOfStock && <Text style={styles.priceText} >{`Out Of Stock`}</Text>}
                 </View>
             </View>
             {!driverVariant ?
@@ -53,7 +54,7 @@ const ShoppingListItem = ({item , onDelete , driverVariant , context,markOutOfSt
                 </Btn> :
 
                 <View style={styles.bottomPriceContainer}>
-                    <View style={styles.textInput}>
+                    {!outOfStock && <View style={styles.textInput}>
                             <TextInput 
                                 onChangeText={(text)=>{
                                     setPrice(text)
@@ -68,10 +69,11 @@ const ShoppingListItem = ({item , onDelete , driverVariant , context,markOutOfSt
                                 style={styles.priceConfirm}>
                             <Ionicons name="md-arrow-round-forward" size={20} color="white" />  
                             </Btn>
-                    </View>      
+                        </View> 
+                    }     
 
-                    <Btn onPress={()=> { outOfStockAlert(name)}} style={[styles.outOfStock, isOutOfStock && {backgroundColor : Colors.primaryOrange}]}>
-                            <Text style={[styles.outOfStockText, isOutOfStock && {color : "white"}]} > Out Of Stock </Text>
+                    <Btn onPress={()=> { outOfStockAlert(name)}} style={[styles.outOfStock, outOfStock && styles.outOfStockBtn]}>
+                            <Text style={[styles.outOfStockText, outOfStock && {color : "white"}]} > Out Of Stock </Text>
                     </Btn>        
                 </View>
             }
@@ -96,6 +98,10 @@ const styles = StyleSheet.create({
     priceText : {
         color : Colors.primaryOrange , fontSize : 11 ,
         marginLeft : 8 
+    },
+    outOfStockBtn : {
+        backgroundColor : Colors.primaryOrange ,
+        marginLeft : 0
     },
     longerCard : { 
         height : 124 , flexDirection : "column",

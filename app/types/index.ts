@@ -4,64 +4,69 @@ export interface IVehicle {
     registration : string ; 
     brand : string;
     model : string;
-  }
+}
 
 export interface IUser {
     vehicel : IVehicle;
-    status : "busy" | "vacant" | "offline"
     address: string;
     createdAt: any;
     displayName: string;
-    id: string;
-    isActive ?: boolean ;
+    id?: string;
+    isActive ?: boolean;
     isDriver ?: boolean;
-    isOnline ?: boolean ;
+    isOnline ?: boolean;
     isVacant ?: boolean;
     object_key: string;
     phoneNumber: string;
-    profilePicURL: string;
-    profilePicUrl: string;
+    profilePicURL?: string;
+    profilePicUrl?: string;
+    userRating?: number;
     vehicleRegistration: string;
 }
+
 export interface IVehicle {
-    registration : string ; 
+    registration : string; 
     brand : string;
     model : string;
-  }
-  
+}
+
 export interface IAddressComponent { 
     name : string;
     shortName : string;
-    types : any[]
+    types : any[];
 }
 
 export interface IAddress {
     address: string;
     description: string;
-    addressComponents: IAddressComponent[]
-    location: {longitude: number, latitude: number}
+    addressComponents: IAddressComponent[];
+    geometry : { location: {longitude: number, latitude: number}};
     name: string;
     placeID: string ;
     priceLevel: number;
-    types: string[]
-    viewport: {latitudeNE: number, longitudeSW: number, latitudeSW: number, longitudeNE: number}
-    website: string
+    types: string[];
+    viewport: {latitudeNE: number, longitudeSW: number, latitudeSW: number, longitudeNE: number};
+    website: string;
 }
 
 export interface IOrder {
     orderId : string;
+    storeName?: string;
+    storeInstructions?: string;
     customer : IUser;
-    status : "pending" | "confirmed" | "collected" | "delivered"
+    status : "pending" | "confirmed" | "shopping" | "collected" | "delivered";
     driver?: IUser;
-    dropOffAddress : IAddress ;
+    dropOffAddress : IAddress;
     pickUpAddress : IAddress;
     orderType : "Pick-Up" | "Shopping";
     items : any[];
+    orderConfirmed?:boolean;
+    distance:number;
     total : number;
 }
 
 export type IContextProps = {
-    context : IAppContext
+    context : IAppContext;
 }
 
 export interface IAppContext{
@@ -86,6 +91,11 @@ export interface IAppContext{
         getAllDrivers: () => void;
         resetPassword : (email : string) => void;
         orderNumber : string; 
+        ratingsVisible : boolean; 
+        userInRating ?: IUser; 
+        setUserInRating : (user : IUser) => void;
+        setRatingsVisible : (newState : boolean) => void;
         setOrderNumber : (id : string) => void;
+        updateOrderStatus : (id : string, order : IOrder) => void;
 }
 

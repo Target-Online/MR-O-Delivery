@@ -6,8 +6,8 @@ import AlertModal from './components/AlertModal'
 import Store from './Store'
 import { Bubbles, DoubleBounce, Bars, Pulse } from 'react-native-loader';
 import NoConnection from './components/NoConnection'
-
-// ...
+import RatingsModal from './components/RatingsModal'
+import  Colors  from './constants/colors'
 
 type IProps = IContextProps
 
@@ -18,7 +18,7 @@ class App extends React.Component<IProps>{
     loading : false
   }
 
-  async componentDidMount(){
+  componentDidMount(){
     const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context
     this.setState({loading : true})
     this.setState({loading : false})
@@ -26,26 +26,22 @@ class App extends React.Component<IProps>{
 
   renderInitialLoading = () => {
     <View style={{flex : 1}} >
-      <Bubbles size={10} color="#FFF" />
-      <Bars size={10} color="#FDAAFF" />
-      <Pulse size={10} color="#52AB42" />
-      <DoubleBounce size={10} color="#1CAFF6" />
-    </View>
+      <ActivityIndicator size="large" color={Colors.primaryOrange} />
+     </View>
   }
 
   render(){
     const { loading } = this.state 
-    const {user,setUser,login ,profile, isUserDriver, setAlertData, alertBoxData, setShowAlert,showAlert }  = this.props.context
     
     return(
       <View style={{flex : 1}}>
         <AlertModal/>
+        <RatingsModal />
         <NoConnection />
         {loading ? this.renderInitialLoading() : <Navigator />}
       </View>
     )
   }
-
 }
 
 const AppComp : React.SFC = () => {
