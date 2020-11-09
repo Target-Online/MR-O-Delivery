@@ -37,9 +37,11 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
 
         const submitRating = () =>{
             const newRating = userRating ? (userRating+rating)/2 : rating
-            const latestComment = { author : currentUser, comment }
+            const author ={ phoneNumber : currentUser.phoneNumber, displayName : currentUser.displayName}
+            const latestComment = { author, comment }
             const newComments = comments ? [...comments, latestComment] : [latestComment]
             const updatedUser = {...userRating,  userRating : newRating , comments : newComments}
+            console.log({phoneNumber})
             updateUserProfile(phoneNumber, updatedUser)
             isDriver && updateOrderStatus(order.orderId , {...order, rated : true}) //set rated to true if I'm rating a driver
             setRatingsVisible(false)

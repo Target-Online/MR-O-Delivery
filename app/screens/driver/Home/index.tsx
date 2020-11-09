@@ -7,7 +7,7 @@ import { Switch } from 'native-base'
 import images from '../../../assets/images'
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
-import { withAppContext, IAppContext, IOrder, mockOrder } from '../../../AppContext';
+import { withAppContext, IAppContext, IOrder, mockOrder, testDriver } from '../../../AppContext';
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import BagIcon from '../../../assets/icons/BagIcon'
 import OnlineIcon from '../../../assets/icons/OnlineIcon'
@@ -471,16 +471,16 @@ class Home extends React.Component<IProps, IState> {
                       "You're offline and won't receive any requests"}
                     </Text>
                   </View>
-                  <Btn
+                  {/* <Btn
                     style={styles.addMockOrder}
                     onPress={ async () => {
-                      setUserInRating(testUser)
+                      setUserInRating(testDriver)
                       setRatingsVisible(true)
                 
                     }}    
                   >
                     <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                  </Btn>
+                  </Btn> */}
               </View>           
             </View>    
       ]

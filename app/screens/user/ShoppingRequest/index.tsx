@@ -52,8 +52,8 @@ interface IState {
 class ShoppingRequest extends React.Component<Props, IState> {
     state = {
       isModalVisible : false,
-      dropOff : null,
-      pickUp :null,
+      dropOff : {},
+      pickUp :{},
       orderType : "Shopping",
       items : [
         {name : "Test item 1", description : "description"},

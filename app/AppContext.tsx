@@ -632,3 +632,102 @@ export const mockOrder =  {
     "distance" : "22",
     "total" : 1250
   }
+
+
+
+export const testDriver = {
+  "address" : {
+    "address_components" : [ {
+      "long_name" : "Wynberg",
+      "short_name" : "Wynberg",
+      "types" : [ "sublocality_level_2", "sublocality", "political" ]
+    }, {
+      "long_name" : "Cape Town",
+      "short_name" : "Cape Town",
+      "types" : [ "locality", "political" ]
+    }, {
+      "long_name" : "Cape Town",
+      "short_name" : "Cape Town",
+      "types" : [ "administrative_area_level_2", "political" ]
+    }, {
+      "long_name" : "Western Cape",
+      "short_name" : "WC",
+      "types" : [ "administrative_area_level_1", "political" ]
+    }, {
+      "long_name" : "South Africa",
+      "short_name" : "ZA",
+      "types" : [ "country", "political" ]
+    }, {
+      "long_name" : "7824",
+      "short_name" : "7824",
+      "types" : [ "postal_code" ]
+    } ],
+    "adr_address" : "<span class=\"extended-address\">Wynberg</span>, <span class=\"locality\">Cape Town</span>, <span class=\"postal-code\">7824</span>, <span class=\"country-name\">South Africa</span>",
+    "formatted_address" : "Wynberg, Cape Town, 7824, South Africa",
+    "geometry" : {
+      "location" : {
+        "lat" : -34.00844560000001,
+        "lng" : 18.4661816
+      },
+      "viewport" : {
+        "northeast" : {
+          "lat" : -33.99419403188232,
+          "lng" : 18.48231504382779
+        },
+        "southwest" : {
+          "lat" : -34.01556964836146,
+          "lng" : 18.44899585194376
+        }
+      }
+    },
+    "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
+    "name" : "Wynberg",
+    "photos" : [ {
+      "height" : 581,
+      "html_attributions" : [ "<a href=\"https://maps.google.com/maps/contrib/110635838832529047095\">Philip Magner</a>" ],
+      "photo_reference" : "CmRaAAAAVjKSXBqWT6lTA7UgZ2poYwWZ6OlvKpyU4RVX-0-3N-UJ8Jwea0vSW907S5DyD96wSPKAWj2lm-wAaYXpC36e7veDLEiApdjYYNYx57K0DMdljGzWbv7YgWZLpUBGhISREhARTjpbvYHTn9LopfW9imrEGhSV1neuXQDij7rdi2DBaiYkbhsx9g",
+      "width" : 1032
+    }, {
+      "height" : 5984,
+      "html_attributions" : [ "<a href=\"https://maps.google.com/maps/contrib/101470237188456855070\">Kobus Maasdorp</a>" ],
+      "photo_reference" : "CmRaAAAAI0Jz9NngYTvrPmy-fDANaW1C-nx8kpJUjZK4ply0mQ5JqRUUyMneE0LoKUCZPIAKK6A0wSJdnevTpzUckzF8lgCGAHAPQhRcaQQtKNa93BY0bEcXZeL-_o8SSJN3u_12EhBVXDroBxNxoIq_-iLcuyNJGhSnTvGAoakSb92yuJxxnn1k7kpGyQ",
+      "width" : 3376
+    }, {
+      "height" : 5984,
+      "html_attributions" : [ "<a href=\"https://maps.google.com/maps/contrib/101470237188456855070\">Kobus Maasdorp</a>" ],
+      "photo_reference" : "CmRaAAAAQr_pzGlE2DY3cMx-zBBJxC-TD92XoP11nsVB59vSs2Wmz2iGTdYq7c2-tIZDO9b_w8X8I9UxWq97shT7OBC5E9VlS9ShVUpmF1lVf5CW9UiuLMGtkIETtbS2oB4pE6QzEhBw1OvNXI-8f0cNCINGzG5XGhQ4GwUX7meCKhXxCVxMdTzmc-G28A",
+      "width" : 3376
+    }, {
+      "height" : 5984,
+      "html_attributions" : [ "<a href=\"https://maps.google.com/maps/contrib/101470237188456855070\">Kobus Maasdorp</a>" ],
+      "photo_reference" : "CmRaAAAAOmrP4QsFbewiS3QOmeDnPhq8thqG1OXC7x-FWD0P1CBZXYjdIQGz2iC5EFqlj5VdRoKuh6dOeVJDKcIQXKfpv7WGgH6VKEHP_5olaIPjgVcjU_JjPhFI4OwH5M-n7J74EhCZuJIWMfsNHqsGaCNHdxSIGhSD_AEMSgFeg3vbEq1Z2c2kgvmwkg",
+      "width" : 3376
+    }, {
+      "height" : 2679,
+      "html_attributions" : [ "<a href=\"https://maps.google.com/maps/contrib/116969585034657772715\">Bertus Geustyn</a>" ],
+      "photo_reference" : "CmRaAAAAltb8-0eKMHvE4vRQT6GpQxjoMZ3ODSD3vm8-sc9WNyYBC4qajbf9W5quP0fyUvMIZD2K8kmApAKMYP-vzqo3M7lTWoHhzW8iVEoTqO07DKcfgLkeMgE2Uakz1HKHFOsVEhDT6ysQKKTkfpc786Gmd7vUGhQbuTCy0GmFuCjsMyRgh_PUsnJMnA",
+      "width" : 3171
+    }, {
+      "height" : 2679,
+      "html_attributions" : [ "<a href=\"https://maps.google.com/maps/contrib/116969585034657772715\">Bertus Geustyn</a>" ],
+      "photo_reference" : "CmRaAAAAD-Xa9Gl4CeCAoV8sG0VPMwiepC3ezVFIc5iUj2_yAISD807Jcde_1hNR1hY-yko08dkRCIxorkjX6onyCcpF7EnE2F05BxqcP5P5clW8jtbOy9EUmgxpm8l4Z3_Hn_69EhCFGfj8nVwJoMquM0SUD9xYGhR44oUCSB-B1XkHBb4empdKNZnamw",
+      "width" : 3171
+    } ],
+    "place_id" : "ChIJl-StAfBCzB0RD70u8xyYb5Y",
+    "reference" : "ChIJl-StAfBCzB0RD70u8xyYb5Y",
+    "types" : [ "sublocality_level_2", "sublocality", "political" ],
+    "url" : "https://maps.google.com/?q=Wynberg,+Cape+Town,+7824,+South+Africa&ftid=0x1dcc42f001ade497:0x966f981cf32ebd0f",
+    "utc_offset" : 120,
+    "vicinity" : "Wynberg"
+  },
+  "createdAt" : 1604436197781,
+  "displayName" : "Skhumbuzo ",
+  "email" : "Mkhakh003@myuct.qc.za",
+  "expoToken" : "ExponentPushToken[TdIu_0CIKx4c4xH8okfNRk]",
+  "id" : "+27849128213",
+  "isActive" : true,
+  "isOnline" : true,
+  "phoneNumber" : "+27849128213",
+  "providerId" : "phone",
+  "uid" : "+27849128213"
+}

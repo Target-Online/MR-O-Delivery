@@ -66,7 +66,8 @@ class ConfirmItems extends Component<IProps> {
     badgeText = () => {
         const {context : {order}} = this.props
         const {items,customer, orderConfirmed}  = order
-        const allPriced = items && items.reduce((prev,next)=> { return prev.price !== null &&  next.price !== null  },true)
+        const allPriced = items && items.reduce((prev,next)=> { return prev  &&  next.price  },true)
+        console.log({allPriced})
         const displayText = allPriced ? !orderConfirmed ? `Please wait for ${customer.displayName}'s to confirm the prices and the items.`:
         `You may proceed and buy the items in ${customer.displayName}'s list. When done, press contiue` : 
         `Please confirm the store prices for items in ${customer.displayName}'s list.`
