@@ -1,6 +1,6 @@
 import { Body, Button, H1, Header, Left, Right, Text, View } from 'native-base';
 import * as React from 'react';
-import { Image, TouchableOpacity as Btn, TextStyle, SafeAreaView, ScrollView, BackHandler, StyleSheet } from 'react-native';
+import { Image, TouchableOpacity as Btn, TextStyle, SafeAreaView, KeyboardAvoidingView ,ScrollView, BackHandler, StyleSheet } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
 
@@ -96,7 +96,7 @@ class BackScreen extends React.Component<Props, IState> {
     const {title, children,scroll } = this.props
 
     return (
-      <SafeAreaView style={{flex : 1 , backgroundColor : "white"}}>
+      <KeyboardAvoidingView style={{flex : 1 , backgroundColor : "white"}}>
         <View style={styles.topBarStyles}>
                 <Btn style={styles.backBtnStyle} onPress={()=> this.navigateBack()}>
                   <Ionicons name="md-arrow-round-back" color="#000" style={styles.backIcon} size={24} />
@@ -109,7 +109,7 @@ class BackScreen extends React.Component<Props, IState> {
         <ScrollView scrollEnabled={scroll} >
             {children}
         </ScrollView>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   }
 }

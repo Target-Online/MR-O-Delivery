@@ -27,10 +27,7 @@ const ProfileLoad: React.FunctionComponent<FormProps> = (props: any) => {
         <BackScreen
             title="Register Your Name"
             onBackPress={() => {
-                if (onBack) {
-                    return onBack()
-                }
-                navigation.goBack()
+                    setVisible(false)
             }}
         >
             <View style={styles.wrapper}>
