@@ -1,11 +1,8 @@
 import React, { Component} from 'react'
 import { View, Text , TouchableOpacity as Btn, ScrollView, StyleSheet} from 'react-native'
 import VerifiedIcon from '../../../assets/icons/VerfiedIcon'
-import MastercardIcon from '../../../assets/icons/MastercardIcon'
 import CashIcon from '../../../assets/icons/CashIcon'
 import Icon from 'react-native-vector-icons/EvilIcons'
-import EFTIcon from '../../../assets/icons/EFTIcon'
-import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import { withAppContext, IContextProps, IAddress } from '../../../AppContext'
 import BackScreen from '../../../layouts/BackScreen'
 import Loader from '../../../components/loader'
@@ -57,12 +54,13 @@ class Payment extends Component<IProps> {
     handleCancel = () => {
         const {context : {updateOrderStatus, order}} = this.props
         updateOrderStatus(order.orderId, {...order, status : "cancelled"})
+        this.setState({loaderVisible : false})
     }
 
     renderLoader(){
         const {loaderVisible} = this.state
         return(
-            <Loader visible={loaderVisible === true}  onCancel={()=> this.handleCancel()} text={"Requesting a driver"} />
+            <Loader visible={loaderVisible}  onCancel={()=> this.handleCancel()} text={"Requesting a driver"} />
         )
     }
 

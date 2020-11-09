@@ -52,8 +52,8 @@ interface IState {
 class ShoppingRequest extends React.Component<Props, IState> {
     state = {
       isModalVisible : false,
-      dropOff : mockOrder.dropOffAddress,
-      pickUp : mockOrder.pickUpAddress,
+      dropOff : null,
+      pickUp :null,
       orderType : "Shopping",
       items : [
         {name : "Test item 1", description : "description"},
@@ -62,8 +62,8 @@ class ShoppingRequest extends React.Component<Props, IState> {
       addressKey: "",
       showPrompt : false,
       showPlaces: false,
-      storeName : "Store Name",
-      instructions : "Store Instructions",
+      storeName : "",
+      instructions : "",
       loaderVisible : false
     }
   onOrderUpdated: any
@@ -177,6 +177,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
     handleCancel = () => {
       const {context : {updateOrderStatus, order}} = this.props
       updateOrderStatus(order.orderId, {...order, status : "cancelled"})
+      this.setState({loaderVisible : false})
     }
 
     convertLocation = (location : {lat: string, lng:string}) => ({ latitude : location.lat, longitude : location.lng})
