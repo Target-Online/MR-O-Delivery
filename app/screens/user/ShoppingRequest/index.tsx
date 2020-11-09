@@ -55,10 +55,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
       dropOff : {},
       pickUp :{},
       orderType : "Shopping",
-      items : [
-        {name : "Test item 1", description : "description"},
-        {name : "Test item 2", description : "description"}
-      ],
+      items : [],
       addressKey: "",
       showPrompt : false,
       showPlaces: false,
