@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import { View, Text , TouchableOpacity as Btn, Image, StyleSheet , Linking, Dimensions, FlatList} from 'react-native'
+import { View, Text , TouchableOpacity as Btn, Image, StyleSheet , ScrollView, Dimensions, FlatList} from 'react-native'
 import InfoIcon from '../../../assets/icons/InfoIcon'
 import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
@@ -9,7 +9,7 @@ import UserCard from '../../../components/UserCard'
 import ShoppingListItem from '../../../components/ShoppingListItem'
 import { Colors } from '../../../constants'
 import { getOrderTotal } from '../../../utils/orderModules'
-const  { width } = Dimensions.get('window')
+const  { width, height } = Dimensions.get('window')
 
 
 type IProps = IContextProps & { onConfirmed : () => void; } & StackScreenProps<{navigation : any}> ;
@@ -91,7 +91,7 @@ class ConfirmItems extends Component<IProps> {
                 title={"Order Confirmation"}
                 navigation={this.props.navigation}          
             >
-                <View style={{flex : 1}}>
+                <ScrollView style={{ minHeight: height * items.length, flex : 1}}>
                    <UserCard isUser  user={customer} />
                    <View style={styles.nbCard}>
                         <InfoIcon fill={Colors.primaryOrange} />
@@ -145,7 +145,7 @@ class ConfirmItems extends Component<IProps> {
                         </Text>
                     </Btn>
                 
-                </View>
+                </ScrollView>
             </BackScreen>
       )
     }

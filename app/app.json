@@ -39,9 +39,7 @@
         }
       }
     },
-    "packagerOpts": {
-
-    },
-    "description": "Now UI React Native, based on Now UI Design System. Coded by Creative Tim"
+    "packagerOpts": {},
+    "description": "MR O Delivery"
   }
 }
