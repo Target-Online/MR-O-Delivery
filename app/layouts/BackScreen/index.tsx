@@ -1,8 +1,9 @@
 import { Body, Button, H1, Header, Left, Right, Text, View } from 'native-base';
 import * as React from 'react';
-import { Image, TouchableOpacity as Btn, TextStyle, SafeAreaView, KeyboardAvoidingView ,ScrollView, BackHandler, StyleSheet } from 'react-native';
+import { Image, TouchableOpacity as Btn, TextStyle, SafeAreaView ,ScrollView, BackHandler, StyleSheet } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
+import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 
 interface IProps {
   title?: string;
@@ -96,7 +97,7 @@ class BackScreen extends React.Component<Props, IState> {
     const {title, children,scroll } = this.props
 
     return (
-      <KeyboardAvoidingView style={{flex : 1 , backgroundColor : "white"}}>
+      <SafeAreaView style={{flex : 1 , backgroundColor : "white"}}>
         <View style={styles.topBarStyles}>
                 <Btn style={styles.backBtnStyle} onPress={()=> this.navigateBack()}>
                   <Ionicons name="md-arrow-round-back" color="#000" style={styles.backIcon} size={24} />
@@ -106,10 +107,10 @@ class BackScreen extends React.Component<Props, IState> {
                 </View>
                 <Btn style={styles.backBtnStyle} onPress={()=>{}} />
         </View>
-        <ScrollView scrollEnabled={scroll} >
+        <KeyboardAvoidingScrollView scrollEnabled={scroll} >
             {children}
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingScrollView>
+      </SafeAreaView>
     );
   }
 }

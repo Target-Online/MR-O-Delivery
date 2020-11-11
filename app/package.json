@@ -42,6 +42,8 @@
     "react-native-gesture-handler": "~1.6.0",
     "react-native-google-places": "^3.1.2",
     "react-native-google-places-autocomplete": "^1.8.0",
+    "react-native-keyboard-avoiding-scroll-view": "^1.0.1",
+    "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-loader": "^1.3.1",
     "react-native-maps": "0.27.1",
     "react-native-progress-steps": "^1.3.4",

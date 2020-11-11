@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput,FlatList } from 'react-native'
+import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput,FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import TruckIcon from '../../../assets/icons/TruckIcon'
 import PinIcon from '../../../assets/icons/PinIcon'
@@ -64,6 +64,8 @@ class ShoppingRequest extends React.Component<Props, IState> {
       loaderVisible : false
     }
   onOrderUpdated: any
+  storeInstructionsRef: any
+  storeDetsRef: any
 
     renderPlacesModal(){
       const {addressKey} = this.state
@@ -288,6 +290,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
           <Loader text={"Requesting a driver."} onCancel={()=> this.handleCancel()} visible={loaderVisible} />,          
           <BackScreen
             {...this.props}
+            inputRefs={[this.storeDetsRef, this.storeInstructionsRef]}
             title="Request Delivery"
           >
             <View style={{flex : 1, paddingHorizontal : 24}}>
@@ -310,18 +313,29 @@ class ShoppingRequest extends React.Component<Props, IState> {
                 <Text style={styles.subtitles} >
                   {"Store Details"}
                 </Text>
-                <View style={[styles.textAreaStyles,{height : 42,paddingVertical :2}]} >              
+                <KeyboardAvoidingView 
+                  behavior={Platform.OS == "ios" ? "padding" : "height"}
+                  style={[styles.textAreaStyles,{height : 42,paddingVertical :2}]} 
+                > 
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>    
                   <TextInput 
+                    ref={r => { this.storeDetsRef = r }}
                     value={storeName}
                     onChangeText={(storeName)=> { 
                       this.setState({storeName})
                     }}
                     placeholder={"Store Name"} 
                     style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "center"}}
-                  />        
-                </View>
-                <View style={styles.textAreaStyles} >              
+                  />     
+                  </TouchableWithoutFeedback>     
+                </KeyboardAvoidingView>
+                <KeyboardAvoidingView 
+                  behavior={Platform.OS == "ios" ? "padding" : "height"}
+                  style={styles.textAreaStyles} 
+                >              
+                  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <TextInput 
+                      ref={r => { this.storeInstructionsRef = r }}
                       value={instructions}
                       placeholder={"Store instructions"}  
                       onChangeText={(instructions)=> { 
@@ -329,8 +343,10 @@ class ShoppingRequest extends React.Component<Props, IState> {
                        }}
                       multiline  
                       style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "top"}} 
-                    />        
-                </View>
+                    />     
+                  </TouchableWithoutFeedback>   
+                </KeyboardAvoidingView>
+
                 <Text style={styles.subtitles} >{"Shopping List"}</Text>
                 <FlatList 
                     data={items}

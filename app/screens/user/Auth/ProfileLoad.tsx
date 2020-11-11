@@ -33,7 +33,7 @@ const ProfileLoad: React.FunctionComponent<FormProps> = (props: any) => {
             <View style={styles.wrapper}>
                 <Image width={150} height={150} source={images.logo} />
                 <Text style={{ marginBottom: 24 }}> Hi  {currentUser && currentUser.phoneNumber}</Text>
-                <Content>
+
                     <TextInput
                         keyboardType={'text'}
                         onChangeText={(value) => setDisplayName(value)}
@@ -55,7 +55,7 @@ const ProfileLoad: React.FunctionComponent<FormProps> = (props: any) => {
                         style={styles.saveBtn} >
                         <Text style={styles.submitText} >{displayName.length > 0 ? 'Submit' : 'Later...'}</Text>
                     </Btn>
-                </Content>
+
             </View>
         </BackScreen>
     );
