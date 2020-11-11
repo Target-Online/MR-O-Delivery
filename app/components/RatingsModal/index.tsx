@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useState, Component, useEffect, useReducer, useRef } from "react";
-import { TextInput,Image, View, Modal, Text, TouchableHighlight as Btn, ViewStyle, StyleSheet, Dimensions } from 'react-native';
+import { TextInput,Image, View, Modal, Text, TouchableHighlight as Btn, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import * as Animatable from "react-native-animatable"
 import { Colors } from '../../constants';
@@ -10,7 +10,8 @@ import { Rating , AirbnbRating } from 'react-native-ratings';
 import images from '../../assets/images';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { number } from 'prop-types';
-const { width } = Dimensions.get('window')
+
+const { width, height } = Dimensions.get('window')
 interface IBtn {
     label : string;
     onPress : () =>void
@@ -52,7 +53,7 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
                 visible={ratingsVisible}
                 animationType="fade"
             >
-                <View style={styles.wrapper}>
+                <ScrollView contentContainerStyle={styles.wrapper}>
                     <View overflow="hidden" style={[styles.dialogContainer, {height : 162,marginBottom : 4,padding : 0, justifyContent  :"flex-start"}]}>
                         <View style={styles.topBlackBar}>
                             <Btn  
@@ -93,16 +94,18 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
                             <Text style={{color : "#fff"}}> Submit </Text>
                         </TouchableHighlight>
                      </Animatable.View>
-                </View>
+                </ScrollView>
             </Modal>       
     )
 }
 
 const styles = StyleSheet.create({
     wrapper : { 
+        minHeight: height * 1.5,
+        paddingBottom: height / 2,
         backgroundColor : "rgba(33,44,54,0.9)", 
-        flex : 1,alignItems: "center", width : "100%",
-        height : "100%",justifyContent : "center" 
+        flex : 2,alignItems: "center", width : "100%",
+        justifyContent : "center" 
     },
     userText : {
         color : Colors.overlayDark60,
