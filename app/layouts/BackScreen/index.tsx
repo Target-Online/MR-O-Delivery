@@ -107,7 +107,10 @@ class BackScreen extends React.Component<Props, IState> {
                 </View>
                 <Btn style={styles.backBtnStyle} onPress={()=>{}} />
         </View>
-        <KeyboardAvoidingScrollView scrollEnabled={scroll} >
+        <KeyboardAvoidingScrollView 
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={scroll} 
+        >
             {children}
         </KeyboardAvoidingScrollView>
       </SafeAreaView>

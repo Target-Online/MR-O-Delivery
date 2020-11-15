@@ -19,6 +19,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
 import Inactive from  '../../../components/Inactive'
 import ConfirmItems from '../OrderProgress/ConfirmItems';
+import strings from '../../../constants/strings';
 
 const shadow =  {
     shadowColor: '#000000',
@@ -407,8 +408,16 @@ class Home extends React.Component<IProps, IState> {
     }
   
     toggleOnline = (isOnline : boolean) => {
-      const {context : {updateDriverStatus , currentUser : {phoneNumber} }} = this.props
+      const {context : {updateDriverStatus , setShowAlert, setAlertData, currentUser : {phoneNumber} }} = this.props
 
+      if(!isOnline){  //if going offline, confirm change
+         setAlertData({title : "Change Status" , text : strings.confirmStateChange, buttons : [ 
+          {label : "Yes",onPress : ()=>{
+            updateDriverStatus({isOnline})
+          }} , { label :  "No", onPress : ()=>{} } ]})
+          return setShowAlert(true)
+      }
+      
       updateDriverStatus({isOnline})
       if (isOnline){
         updateDriverStatus({isVacant : true})
@@ -471,7 +480,7 @@ class Home extends React.Component<IProps, IState> {
                       "You're offline and won't receive any requests"}
                     </Text>
                   </View>
-                  {/* <Btn
+                  <Btn
                     style={styles.addMockOrder}
                     onPress={ async () => {
                       setUserInRating(testDriver)
@@ -480,7 +489,7 @@ class Home extends React.Component<IProps, IState> {
                     }}    
                   >
                     <Text style={{color : "#fff"}} > Add Mock Order</Text>
-                  </Btn> */}
+                  </Btn>
               </View>           
             </View>    
       ]

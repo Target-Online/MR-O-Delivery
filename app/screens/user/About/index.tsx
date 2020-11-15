@@ -38,6 +38,7 @@ const AboutUs : any = (props: Props) => {
   return (
     <BackScreen
       navigation={props.navigation}
+      title={"About"}
     >
         <ScrollView contentContainerStyle={{alignItems : "center", paddingVertical : 42 , paddingHorizontal : 24 , flex : 1, backgroundColor : "white"}} style={{flex : 1, backgroundColor : "white"}}> 
 

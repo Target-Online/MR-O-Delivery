@@ -1,6 +1,6 @@
 export default {
   // Common
-  common2x: '2X',
+  confirmStateChange: 'You will be taken offline and will not receive requests while offline. Are you sure?',
   commonAdmin: 'ADMIN',
   commonAll: 'ALL',
   commonAmount: 'AMOUNT',

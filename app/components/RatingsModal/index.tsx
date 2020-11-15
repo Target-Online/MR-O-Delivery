@@ -10,6 +10,7 @@ import { Rating , AirbnbRating } from 'react-native-ratings';
 import images from '../../assets/images';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { number } from 'prop-types';
+import firebase from 'firebase';
 
 const { width, height } = Dimensions.get('window')
 interface IBtn {
@@ -28,24 +29,41 @@ type IProps = IAlertProps & IContextProps
 
 const RatingModal  : React.SFC<IProps>  = (props) => {
 
-        const [rating,setRating] = useState<number>(0)
+        const [rating,setRating] = useState<number>(3)
         const [comment , setComment ] = useState<string>("")
-        const { userInRating : {userRating, isDriver, comments, phoneNumber, displayName},
+        const { userInRating : {isDriver, phoneNumber, displayName},
             updateUserProfile,updateOrderStatus, setRatingsVisible,currentUser,
             ratingsVisible , order} = props.context
 
         const ratingCompleted = (rating : number) => { setRating(rating)}
 
+        const getStoredUserRating = async (id: string) => {
+            return firebase.database().ref(`/users/${id}`)
+            .once('value')
+        }
         const submitRating = () =>{
-            const newRating = userRating ? (userRating+rating)/2 : rating
-            const author ={ phoneNumber : currentUser.phoneNumber, displayName : currentUser.displayName}
+
+            const author = { phoneNumber : currentUser.phoneNumber, displayName : currentUser.displayName}
             const latestComment = { author, comment }
-            const newComments = comments ? [...comments, latestComment] : [latestComment]
-            const updatedUser = {...userRating,  userRating : newRating , comments : newComments}
+            getStoredUserRating(phoneNumber).then((snap)=>{
+                const userToRate = snap.val()
+                const { userRating , comments } = userToRate
+                console.log({userRating}, "before ratings")
+
+                const newRating = userRating ? (userRating+rating)/2 : rating
+                const newComments = comments ? [...comments, latestComment] : [latestComment]
+                const updatedUser = {...userRating,  userRating : newRating , comments : newComments}
+                console.log({rating}, "from me")
+                console.log({newRating})
+                updateUserProfile(phoneNumber, updatedUser)
+            }).catch((err)=>{
+                    console.log({err})
+            })
+
             console.log({phoneNumber})
-            updateUserProfile(phoneNumber, updatedUser)
-            isDriver && updateOrderStatus(order.orderId , {...order, rated : true}) //set rated to true if I'm rating a driver
-            setRatingsVisible(false)
+            // updateUserProfile(phoneNumber, updatedUser)
+            // isDriver && updateOrderStatus(order.orderId , {...order, rated : true}) //set rated to true if I'm rating a driver
+            // setRatingsVisible(false)
         }
 
         return (

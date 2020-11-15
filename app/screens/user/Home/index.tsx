@@ -9,7 +9,7 @@ import OrderIcon from '../../../assets/icons/OrderIcon';
 import BikeIcon from '../../../assets/icons/BikeIcon';
 import { Colors } from '../../../constants';
 import _ from "lodash"
-import { withAppContext, IContextProps, mockOrder } from '../../../AppContext';
+import { withAppContext, IContextProps, mockOrder, testDriver } from '../../../AppContext';
 import { StackScreenProps } from '@react-navigation/stack';
 import ProfileLoad from '../Auth/ProfileLoad';
 import { CurrentUserContext } from '../../../Store';
@@ -36,7 +36,7 @@ type Props = IProps & IContextProps & StackScreenProps<IProps>;
 const Home: any = (props: Props) => {
   const [isNewUserModalVisible, setNewUserModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { setAlertData, setShowAlert, orderNumber, setOrderNumber, currentUser ,order } = props.context
+  const { setAlertData, setShowAlert, orderNumber, setOrderNumber, setRatingsVisible, setUserInRating, currentUser ,order } = props.context
   
 
   useEffect(() => {
@@ -66,8 +66,6 @@ const Home: any = (props: Props) => {
       </Modal>
     )
   }
-  const randomNum =  Math.floor(Math.random() * Math.floor(100))
-
 
   const processTrackOrder = () => {
     const {context : {setOrder ,order}} = props
@@ -76,7 +74,6 @@ const Home: any = (props: Props) => {
     .ref(`orders/${orderNumber}`)
     .once('value')
     .then(snapshot => {
-        
       if(!_.isEmpty(snapshot.val())){
           setOrder(snapshot.val())
           props.navigation.navigate("OrderProgress")
@@ -101,7 +98,9 @@ const Home: any = (props: Props) => {
   return [
     renderNewUserModal(),
     <SafeAreaView style={styles.mainWrapper} >
-      <ScrollView style={{backgroundColor : "#fff", flex : 1,}} >
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        style={{backgroundColor : "#fff", flex : 1,}} >
         <View style={{flex : 1}}>
           <View style={{height : 300, width : "90%",alignSelf : "center" }}>
               <ImageBackground source={ images.banner } resizeMode="cover" style={{ width: "100%", height: "100%" }}/>
@@ -153,9 +152,9 @@ const Home: any = (props: Props) => {
                 <Btn 
                   disabled={!orderNumber}
                   onPress={() =>  {
-                  
+                    // setUserInRating(testDriver)
+                    // setRatingsVisible(true)
                     orderNumber && processTrackOrder()
-                
                   }}
                   style={[styles.btnStyle, { width: 64, opacity : orderNumber ? 1 : 0.8, flex: 0, height: 52, borderRadius: 0, backgroundColor: Colors.primaryOrange, paddingHorizontal: 0 }]}>
                   {loading ? <Bubbles size={"large"} style={{width : 24, height : 24}} color={Colors.primaryOrange} /> :
