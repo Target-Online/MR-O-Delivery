@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "MR O DELIVERY",
+    "description": "MR O DELIVERY",
+    "slug": "mr-o-delivery",
+    "privacy": "unlisted",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "1.6.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#fb9011"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.mrodelivery.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to allow users to update profile prictures. Your photos will not be shared without your permission.",
+        "NSPhotoLibraryUsageDescription": "This app uses the camera to allow users to update profile prictures. Your photos will not be shared without your permission."
+      }
+    }
+  }
+}
