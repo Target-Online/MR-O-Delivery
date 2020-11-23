@@ -152,8 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     marginRight: theme.SIZES.BASE / 2,
     borderRadius: 4,
-    height: 19,
-    width: 38,
+    height: 19
   },
   seller: {
     marginRight: theme.SIZES.BASE / 2,

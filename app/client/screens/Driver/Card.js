@@ -47,11 +47,11 @@ export default function Card({ request }) {
                     <View style={styles.priceAndDate}>
                         {request && (request.status.driverHasConfirmedPrices || request.isPickUp) &&
                             <React.Fragment>
-                                <Text bold>{`N${request.isPickUp ? request.actualCost : request.actualCost + request.shoppingCost}`}</Text>
+                                <Text>{`N${request.isPickUp ? request.actualCost : request.actualCost + request.shoppingCost}`}</Text>
                                 <Text>{' | '}</Text>
                             </React.Fragment>
                         }
-                        <Text bold>{request.isPickUp ? 'PICK-UP' : 'SHOPPING'}</Text>
+                        <Text>{request.isPickUp ? 'PICK-UP' : 'SHOPPING'}</Text>
                         {request && (request.isCashPayment || request.isCardPayment) && (
                             <React.Fragment>
                                 <Text>{' | '}</Text>

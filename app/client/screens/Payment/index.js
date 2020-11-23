@@ -14,12 +14,13 @@ import { set, update } from "app/client/api";
 import Summary from './Summary';
 import { styles } from './styles';
 import PaystackWebView from './PaystackWebView';
-import { 
+import {
     UsersContext,
-    SessionContext, 
+    SessionContext,
     CurrentUserContext,
 } from "app/client/Store";
 import { sendPushNotifications } from '../../utils/expo-notifications';
+import { toastError } from '../../utils/notifications';
 
 export default function Payment(props) {
     const [users] = useContext(UsersContext);
@@ -31,7 +32,7 @@ export default function Payment(props) {
 
     const PaymentOption = ({ children, isSelected }) => (
         <View style={styles.paymentOptionContainer}>
-            <View style={[styles.paymentOptionChild , { borderColor: isSelected ? "#20d86d" : "rgba(0,0,0,0.09)"}]}>
+            <View style={[styles.paymentOptionChild, { borderColor: isSelected ? "#20d86d" : "rgba(0,0,0,0.09)" }]}>
                 {children}
             </View>
             <View style={styles.verifiedIcon} >
@@ -49,19 +50,19 @@ export default function Payment(props) {
     )
 
     const onSubmitRequest = () => {
-        if(request.isPickUp){
-            if(request.isSubmitted) update("requests", request.id, { 
+        if (request.isPickUp) {
+            if (request.isSubmitted) update("requests", request.id, {
                 status: { isWaitingForDriverConfirmation: true }
             });
-            else  setRequest({ 
-                    ...request, 
-                    id: set("requests", {  
-                        ...request,
-                        isCashPayment: isCashPayment,
-                        isCardPayment: !isCashPayment,   
-                        status: { isWaitingForDriverConfirmation: true }
-                    }), 
-                    isSubmitted: true 
+            else setRequest({
+                ...request,
+                id: set("requests", {
+                    ...request,
+                    isCashPayment: isCashPayment,
+                    isCardPayment: !isCashPayment,
+                    status: { isWaitingForDriverConfirmation: true }
+                }),
+                isSubmitted: true
             });
 
             sendPushNotifications(
@@ -72,9 +73,9 @@ export default function Payment(props) {
 
             props.navigation.navigate("Finding Driver");
         }
-        else if(request.isShopping && (isCashPayment || request.isPaymentComplete)){
+        else if (request.isShopping && (isCashPayment || request.isPaymentComplete)) {
             update("requests", request.id, {
-                currentStep: 3, 
+                currentStep: 3,
                 isCashPayment: isCashPayment,
                 isCardPayment: !isCashPayment
             });
@@ -84,58 +85,61 @@ export default function Payment(props) {
 
     return (
         <ScrollView >
-        <Block flex style={styles.container}>
-            <LinearGradient style={styles.pageBackgroundColor} colors={['#fff', '#fff', '#FDD39F', '#FB9211', '#FB9211']} />
-            <Summary />
-            <Block row style={[styles.paymentOptions, { top: request.isShopping ? height / 2.3 : height / 2.7 }]}>
-                <TouchableHighlight onPress={() => setCashPayment(Platform.constants.Release <= 5.1)}>
-                    <PaymentOption isSelected={!isCashPayment}>
-                        <MastercardIcon />
-                    </PaymentOption>
-                </TouchableHighlight>
-                <TouchableOpacity onPress={() => !request.isPaymentComplete &&  setCashPayment(true)}>
-                    <PaymentOption isSelected={isCashPayment}>
-                        <CashIcon />
-                    </PaymentOption>
-                </TouchableOpacity>
-            </Block>
-            {isCashPayment
-                ? <Block row style={styles.paymentActions}>
-                    <CashOption />
+            <Block flex style={styles.container}>
+                <LinearGradient style={styles.pageBackgroundColor} colors={['#fff', '#fff', '#FDD39F', '#FB9211', '#FB9211']} />
+                <Summary />
+                <Block row style={[styles.paymentOptions, { top: request.isShopping ? height / 2.3 : height / 2.7 }]}>
+                    <TouchableHighlight onPress={() => {
+                        if (Platform.constants.Release <= 5.1) toastError('Card payment not support on this device')
+                        else setCashPayment(false)
+                    }}>
+                        <PaymentOption isSelected={!isCashPayment}>
+                            <MastercardIcon />
+                        </PaymentOption>
+                    </TouchableHighlight>
+                    <TouchableOpacity onPress={() => !request.isPaymentComplete && setCashPayment(true)}>
+                        <PaymentOption isSelected={isCashPayment}>
+                            <CashIcon />
+                        </PaymentOption>
+                    </TouchableOpacity>
                 </Block>
-                : <Block row style={styles.billingEmail}>
-                    <TextInput
-                        label={'Billing Email'}
-                        onClear={() => setEmail("")}
-                        onChangeText={value => setEmail(value)}
-                        value={email}
-                    />
-                </Block>
-            }
-            {isCashPayment || request.isPaymentComplete
-                ?  <TouchableHighlight style={styles.continueButton} onPress={() => onSubmitRequest()}>
+                {isCashPayment
+                    ? <Block row style={styles.paymentActions}>
+                        <CashOption />
+                    </Block>
+                    : <Block row style={styles.billingEmail}>
+                        <TextInput
+                            label={'Billing Email'}
+                            onClear={() => setEmail("")}
+                            onChangeText={value => setEmail(value)}
+                            value={email}
+                        />
+                    </Block>
+                }
+                {isCashPayment || request.isPaymentComplete
+                    ? <TouchableHighlight style={styles.continueButton} onPress={() => onSubmitRequest()}>
                         <Block center>
                             <Text style={styles.text}> Continue </Text>
                         </Block>
                     </TouchableHighlight>
-                :   <TouchableHighlight 
-                            style={[styles.payNow, { backgroundColor: validateEmail(email) ? '#369946' : '#FFCB9D' }]} 
-                            onPress={() => validateEmail(email) ? setShowPayButtonVisible(true) : toastInfo('Please enter billing email.')
+                    : <TouchableHighlight
+                        style={[styles.payNow, { backgroundColor: validateEmail(email) ? '#369946' : '#FFCB9D' }]}
+                        onPress={() => validateEmail(email) ? setShowPayButtonVisible(true) : toastInfo('Please enter billing email.')
                         }>
                         <Block center>
                             <Text style={styles.text}> Pay Now </Text>
                         </Block>
                     </TouchableHighlight>
-            }
-            {showPayButton && (
-                <PaystackWebView 
-                    email={email}
-                    showPayButton={showPayButton}
-                    setShowPayButtonVisible={setShowPayButtonVisible}
-                    onSubmitRequest={onSubmitRequest}
-                />
-            )}
-        </Block>
+                }
+                {showPayButton && (
+                    <PaystackWebView
+                        email={email}
+                        showPayButton={showPayButton}
+                        setShowPayButtonVisible={setShowPayButtonVisible}
+                        onSubmitRequest={onSubmitRequest}
+                    />
+                )}
+            </Block>
         </ScrollView>
     )
 }
