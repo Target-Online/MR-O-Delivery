@@ -5,6 +5,7 @@ import { Block, Text, theme } from 'galio-framework';
 import { Images } from '../../constants';
 import { HeaderHeight } from '../../../constants/utils';
 import PhoneSignin from './PhoneSignIn';
+import EmailSignIn from './EmailSignIn';
 
 const { height } = Dimensions.get('screen');
 
@@ -21,7 +22,10 @@ export default props => (
           <Image source={Images.MROLogo} style={styles.MROLogo} />
         </Block>
         <Block>
-          <PhoneSignin {...props} />
+          {Platform.constants.Release <= 5.1 
+            ? <EmailSignIn {...props} />
+            : <PhoneSignin {...props} />
+          }
         </Block>
         <Block middle row style={{ marginTop: height / 7 }}>
           <Text color="white" size={16}>

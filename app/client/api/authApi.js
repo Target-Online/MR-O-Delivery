@@ -1,6 +1,6 @@
 import * as firebase from "firebase";
 
-import { onSuccess, onError, toastSuccess } from '../utils/notifications'
+import { toastSuccess, toastError } from '../utils/notifications'
 
 import appsettings from "../../appsettings.json";
 import { update, db } from "./index";
@@ -17,9 +17,9 @@ export const verifyPhoneNumber = async (phoneNumber, recaptchaVerifier, setVerif
       recaptchaVerifier.current
     );
     setVerificationId(verificationId);
-    onSuccess("Verification code sent to your phone.");
+    toastSuccess("Verification code sent to your phone.");
   } catch (err) {
-    onError(err.message);
+    toastError(err.message);
   }
 }
 
@@ -30,30 +30,30 @@ export const signInWithCredential = async (verificationId, verificationCode, nav
       verificationCode
     );
     await firebase.auth().signInWithCredential(credential);
-    onSuccess("Phone authentication successful 👍");
+    toastSuccess("Phone authentication successful 👍");
     navigation.navigate('Home')
   } catch (err) {
-    onError(err.message);
+    toastError(err.message);
   }
 }
 
+export const signInWithEmailAndPassword = (user, navigation) => firebase.auth()
+    .signInWithEmailAndPassword(user.email, user.password)
+    .then(() => navigation.navigate('Home'))
+    .catch(error => {
+      if(error.code === 'auth/user-not-found'){
+        firebase
+        .auth()
+        .createUserWithEmailAndPassword(user.email, user.password)
+        .then(() => navigation.navigate('Home'))
+        .catch(error => toastError(error.message))
+      }
+      else toastError(error.message)
+    })    
 
-export const signOut = () => {
-  firebase
-    .auth()
-    .signOut()
-    .then(() => {
-      toastSuccess("Signed out successfully");
-      //window.location.reload();
-    });
-};
+export const logout = () => firebase.auth().signOut().then(() => toastSuccess("Signed out successfully"));
 
-export const updateAuthUser = async (data) => {
-  await firebase.auth().currentUser.updateProfile({
-    ...data,
-  });
-  onSuccess("Account updated successfully");
-}
+export const updateAuthUser = data => firebase.auth().currentUser.updateProfile(data)
 
 export const updateUser = (id, data) => {
   update('users', id, data);

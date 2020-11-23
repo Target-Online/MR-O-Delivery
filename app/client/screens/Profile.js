@@ -65,12 +65,14 @@ export default function Profile(props) {
                         </Text>
                       )}
                     </Block>
+                    {currentUser.address &&
                     <Block>
                       <Text color={theme.COLORS.MUTED} size={16}>
                         <Icon name="map-marker" family="font-awesome" color={theme.COLORS.MUTED} size={16} />
                         {` ${currentUser.address.formatted_address.split(',')[0]} ${currentUser.address.formatted_address.split(',')[1]}`.substring(0, 19)}
                       </Text>
                     </Block>
+                    }
                   </Block>
                 </Block>
                 <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)']} style={styles.gradient} />

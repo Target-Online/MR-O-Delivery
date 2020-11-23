@@ -11,7 +11,7 @@ export default function Card({ request }) {
     return (
         <TouchableHighlight>
             <Block center style={styles.conatiner}>
-                {currentUser.isDriver
+                {currentUser && currentUser.isDriver
                     ? <Block center style={styles.cardDriverProfile}>
                         <Image source={request.customer.photoUrl ? { uri: request.customer.photoUrl } : Images.photoPlaceHolder} style={styles.avatar} />
                         <Text> {request.customer.displayName} </Text>

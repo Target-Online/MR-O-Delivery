@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, ScrollView, TouchableHighlight, TouchableOpacity, Text } from 'react-native';
+import { View, ScrollView, TouchableHighlight, TouchableOpacity, Platform, Text } from 'react-native';
 import { Block } from 'galio-framework';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -9,7 +9,7 @@ import MastercardIcon from 'app/assets/icons/MastercardIcon'
 import VerifiedIcon from 'app/assets/icons/VerfiedIcon';
 import { TextInput } from 'app/client/components';
 import { toastInfo } from 'app/client/utils/notifications';
-import { validateEmail } from 'app/client/utils/validattions';
+import { validateEmail } from 'app/client/utils/validations';
 import { set, update } from "app/client/api";
 import Summary from './Summary';
 import { styles } from './styles';
@@ -88,7 +88,7 @@ export default function Payment(props) {
             <LinearGradient style={styles.pageBackgroundColor} colors={['#fff', '#fff', '#FDD39F', '#FB9211', '#FB9211']} />
             <Summary />
             <Block row style={[styles.paymentOptions, { top: request.isShopping ? height / 2.3 : height / 2.7 }]}>
-                <TouchableHighlight onPress={() => setCashPayment(false)}>
+                <TouchableHighlight onPress={() => setCashPayment(Platform.constants.Release <= 5.1)}>
                     <PaymentOption isSelected={!isCashPayment}>
                         <MastercardIcon />
                     </PaymentOption>

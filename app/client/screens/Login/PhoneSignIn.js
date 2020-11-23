@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Dimensions, Text, TouchableOpacity, Platform } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { theme } from 'galio-framework';
 
@@ -33,7 +33,9 @@ const PhoneSignIn = props => {
           <Button
             textStyle={{ fontSize: 12 }}
             style={styles.button}
-            onPress={() => !verificationId ? verifyPhoneNumber(phoneNumber, recaptchaVerifier, setVerificationId) : signInWithCredential(verificationId, verificationCode, props.navigation)}
+            onPress={() => !verificationId 
+              ? verifyPhoneNumber(phoneNumber, recaptchaVerifier, setVerificationId) 
+              : signInWithCredential(verificationId, verificationCode, props.navigation)}
           >
             {!verificationId ? "Submit" : "Confirm Code"}
           </Button>

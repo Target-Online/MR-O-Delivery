@@ -20,7 +20,7 @@ export const SessionContext = React.createContext({});
 if (!firebase.apps.length)
   firebase.initializeApp(appsettings[appsettings.environment].firebaseConfig);
 
-const Store = ({ children }) => {
+export default function Store({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [request, setRequest] = useState({ currentStep: 0 });
   const [users, setUsers] = useReducer(rootReducer.setStateReducer, initalState);
@@ -34,20 +34,33 @@ const Store = ({ children }) => {
   
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        var dbUser = users.data.find(u => u.id == user.phoneNumber);
-        if (dbUser == undefined && !users.inProgress) {
-          newUser("users", user.phoneNumber, user.providerData[0]);
-          setCurrentUser({ ...user, isNew: true });
-        } else setCurrentUser(dbUser);
+        var dbUser = users.data.find(u => u.id === user.phoneNumber || u.email === user.email);
+
+        if (!dbUser && !users.inProgress) {
+          var isEmailRegistered = user.email != '';
+          
+          newUser("users", isEmailRegistered 
+            ? user.email.replace(/[^0-9a-z]/gi, '') 
+            : user.phoneNumber, { 
+              ...user.providerData[0], 
+              isEmailRegistered: isEmailRegistered 
+            })
+
+            setCurrentUser({ 
+              ...user, 
+              isNew: true, 
+              isEmailRegistered: isEmailRegistered 
+            });
+        } 
+        else setCurrentUser(dbUser);
       }
     });
   
-    return;
   }, [users.inProgress]);
 
   return (
     <CurrentUserContext.Provider value={[currentUser, setCurrentUser]}>
-      <UsersContext.Provider value={[users, setUsers, users.inProgress]}>
+      <UsersContext.Provider value={[users, users.inProgress]}>
         <RequestsContext.Provider value={[requests, setRequets]}>
           <SessionContext.Provider value={[request, setRequest]}>
             {children}
@@ -57,4 +70,3 @@ const Store = ({ children }) => {
     </CurrentUserContext.Provider>
   );
 };
-export default Store;

@@ -9,7 +9,7 @@ export const about = [
         description: 
             `Email: info@mrodelivery.com
             \nPhone: 09046659629 / 07042556007
-            \nAddress: No.3 Olise Okolie Street, Asaba, Delta State, Nigeria`
+            \nAddress: No.3 Olise Okolie Street, Asaba, Delta State, Nigeria.`
     }
 ]
 
@@ -110,12 +110,11 @@ export const termsAndConditions = [
             \nThe app is currently available on Android & iOS – the requirements for both systems(and for any additional systems we decide to extend the availability of the app to) may change, and you’ll need to download the updates if you want to keep using the app.
             \nMR O Delivery does not promise that it will always update the app so that it is relevant to you and/or works with the Android & iOS version that you have installed on your device. However, you promise to always accept updates to the application when offered to you, We may also wish to stop providing the app, and may terminate use of it at any time without giving notice of termination to you.
             \nUnless we tell you otherwise, upon any termination, (a) the rights and licenses granted to you in these terms will end; (b) you must stop using the app, and (if needed) delete it from your device.`
-
     },
     {
         title: 'Changes to This Terms and Conditions',
         description: 
         `We may update our Terms and Conditions from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Terms and Conditions on this page.
-        \nThese terms and conditions are effective as of 2020-11-21`
+        \nThese terms and conditions are effective as of 2020-11-21.`
     }
 ]

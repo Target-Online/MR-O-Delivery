@@ -50,7 +50,7 @@ export default function ParcelDetails(props) {
                 <ScrollView style={{ paddingVertical: 24, minHeight: height }} >
                     <Input
                         right
-                        value={request && request.fromLocation.formatted_address.substring(0, 50)}
+                        value={request && request.fromLocation && request.fromLocation.formatted_address.substring(0, 50)}
                         editable={false}
                         color={materialTheme.COLORS.PRIMARY}
                         style={{ borderRadius: 3, borderColor: materialTheme.COLORS.DEFAULT }}
@@ -59,7 +59,7 @@ export default function ParcelDetails(props) {
                     <Input
                         right
                         editable={false}
-                        value={request && request.toLocation.formatted_address.substring(0, 50)}
+                        value={request && request.toLocation && request.toLocation.formatted_address.substring(0, 50)}
                         color={materialTheme.COLORS.PRIMARY}
                         style={{ borderRadius: 3, color: materialTheme.COLORS.PRIMARY, borderColor: materialTheme.COLORS.DEFAULT }}
                         iconContent={<SimpleLineIcons size={16} color={theme.COLORS.ICON} name="location-pin" />}

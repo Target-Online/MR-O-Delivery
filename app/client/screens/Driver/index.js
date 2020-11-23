@@ -13,21 +13,10 @@ import RequestDetailsCard from './Card';
 import { styles } from './styles';
 import DriverToastMessages from './toastMessages';
 import Rating from '../Rating';
-import { _updateUserAvatar } from '../../utils/imageUtils';
-import {
-    CurrentUserContext,
-    RequestsContext,
-    UsersContext,
-    SessionContext
-} from '../../Store';
-import {
-    packageCollected,
-    shoppingComplete,
-    arrivedAtShoppingCenter,
-    shoppingDelivered,
-    packageDelivered
-} from './processMilestones';
 import { toastInfo } from '../../utils/notifications';
+import { _updateUserAvatar } from '../../utils/imageUtils';
+import { CurrentUserContext, RequestsContext, UsersContext, SessionContext } from '../../Store';
+import { packageCollected, shoppingComplete, arrivedAtShoppingCenter, shoppingDelivered, packageDelivered } from './processMilestones';
 
 const { width, height } = Dimensions.get('screen');
 

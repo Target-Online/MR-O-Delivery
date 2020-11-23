@@ -4,6 +4,7 @@ import { Block, Text, theme } from "galio-framework";
 
 import Icon from "./Icon";
 import materialTheme from "../constants/Theme";
+import { logout } from '../api/authApi';
 
 const proScreens = [
   "Woman",
@@ -98,7 +99,10 @@ class DrawerItem extends React.Component {
     const { focused, title, navigation } = this.props;
 
     return (
-      <TouchableOpacity style={{ height: 55 }} onPress={() => navigation.navigate(title)}>
+      <TouchableOpacity style={{ height: 55 }} onPress={() => {
+          if(title === 'Logout') logout()
+          navigation.navigate(title)
+        }}>
         <Block
           flex
           row

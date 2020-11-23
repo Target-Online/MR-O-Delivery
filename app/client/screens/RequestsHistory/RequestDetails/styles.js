@@ -1,11 +1,10 @@
 import { StyleSheet, Platform } from "react-native";
 
 import { height, width } from 'app/client/constants/utils';
-import { color } from "react-native-reanimated";
 
 export const styles = StyleSheet.create({
     container: {
-        height: height,
+        minHeight: height,
         width: width,
         backgroundColor: 'white',
         flex: 1,
@@ -71,6 +70,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         flexDirection: "row",
         alignItems: "flex-end",
+        justifyContent: 'center',
         width: '100%',
         paddingHorizontal: 100
     },

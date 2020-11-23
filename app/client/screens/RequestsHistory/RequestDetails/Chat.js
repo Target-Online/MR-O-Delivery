@@ -5,6 +5,7 @@ import { RequestsContext, CurrentUserContext } from "app/client/Store";
 import { sendPushNotifications } from 'app/client/utils/expo-notifications';
 import { update } from 'app/client/api';
 import { toastInfo } from '../../../utils/notifications';
+import { Images } from "app/client/constants";
 
 export default function ChatRoom (props) {
     const [requests] = useContext(RequestsContext);
@@ -43,7 +44,7 @@ export default function ChatRoom (props) {
             user={{ 
                 ...currentUser, 
                 _id: currentUser.id, 
-                avatar: currentUser.photoUrl 
+                avatar: currentUser.photoUrl ? currentUser.photoUrl : Images.photoPlaceHolder
             }}
         />
     )

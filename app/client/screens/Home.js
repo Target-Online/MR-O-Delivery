@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   overlayBottomButton: {
     position: 'absolute',
     bottom: 50,
-    width: width - 30,
+    width: width * 0.99,
   },
   overlayTopSearch: {
     position: 'absolute',
@@ -197,5 +197,5 @@ const styles = StyleSheet.create({
   },
   textInput: {
       color: materialTheme.COLORS.PRIMARY,
-  },
+  }
 });

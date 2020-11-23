@@ -11,8 +11,8 @@ import IncomingRequest from './Driver/IncomingRequest';
 const { height, width } = Dimensions.get('screen');
 
 const Onboarding = props => {
-  const [users] = useContext(UsersContext);
-  const [currentUser, ,userLoading] = useContext(CurrentUserContext);
+  const [users, inProgress] = useContext(UsersContext);
+  const [currentUser] = useContext(CurrentUserContext);
 
   const driver = currentUser && users.data.find(user => user.id === currentUser.id)
 
@@ -36,17 +36,11 @@ const Onboarding = props => {
       <Block flex space="between" style={styles.padded}>
       <LinearGradient
         colors={['white', '#FB9211', '#FB9211']}
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          height: height,
-        }}
+        style={styles.linearGradient}
       />
         <Block flex space="around" style={{ zIndex: 2, marginTop: 100 }}>
-          {userLoading
-            ? <ActivityIndicator style={{ marginTop: userLoading ? 0 : 100 }} size="large" color="white" />
+          {inProgress
+            ? <ActivityIndicator style={{ marginTop: inProgress ? 0 : 100 }} size="large" color="white" />
             : (
               <Block row space="around">
                 <TouchableOpacity onPress={() => props.navigation.navigate('Login')}>
@@ -95,5 +89,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     fontFamily: 'galioExtra',
     borderRadius: 10
+  },
+  linearGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: height
   }
 });

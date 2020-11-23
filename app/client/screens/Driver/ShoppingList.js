@@ -106,7 +106,7 @@ export default function ShoppingList(props) {
     return (
         <ScrollView contentContainerStyle={{ minheight: height }}>
             {request.shoppingList && request.shoppingList.map((item, index) => <ItemCard item={item} key={index} />)}
-            {currentUser.isDriver
+            {currentUser && currentUser.isDriver
                 ? !request.status.driverHasConfirmedPrices &&
                 <TouchableOpacity onPress={() => onSubmit()} style={[styles.button, { margin: 15, alignSelf: 'center', width: '97%', backgroundColor: materialTheme.COLORS.PRIMARY }]}>
                     <Text size={13} color='white'>Submit</Text>

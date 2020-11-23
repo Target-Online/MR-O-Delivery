@@ -15,16 +15,18 @@ export default function Card({
     return (
         <TouchableOpacity onPress={() => props.navigation.navigate('Request Details', { request: request })}>
             <Block center style={styles.conatiner}>
-                <Block center style={styles.cardDriverProfile}>
-                    {currentUser.isDriver
-                        ? <Image source={request.customer.photoUrl ? { uri: request.customer.photoUrl } : Images.photoPlaceHolder} style={styles.avatar} />
-                        : <Image source={request.driver.photoUrl ? { uri: request.driver.photoUrl } : Images.photoPlaceHolder} style={styles.avatar} />
-                    }
-                    {currentUser.isDriver
-                        ? <Text> {request.customer.displayName} </Text>
-                        : <Text> {request.driver.displayName} </Text>
-                    }
-                </Block>
+                {currentUser &&
+                    <Block center style={styles.cardDriverProfile}>
+                        {currentUser.isDriver
+                            ? <Image source={request.customer.photoUrl ? { uri: request.customer.photoUrl } : Images.photoPlaceHolder} style={styles.avatar} />
+                            : <Image source={request.driver.photoUrl ? { uri: request.driver.photoUrl } : Images.photoPlaceHolder} style={styles.avatar} />
+                        }
+                        {currentUser.isDriver
+                            ? <Text> {request.customer.displayName} </Text>
+                            : <Text> {request.driver.displayName} </Text>
+                        }
+                    </Block>
+                }
                 <Block center style={styles.tripDetailsContainer}>
                     <View style={styles.locationPointsContaier}>
                         <View style={styles.fromToArrow}>
@@ -48,15 +50,15 @@ export default function Card({
                     <View style={styles.priceAndDate}>
                         {request && (request.status.driverHasConfirmedPrices || request.isPickUp) &&
                             <React.Fragment>
-                                <Text bold>{`N${request.isPickUp ? request.actualCost : request.actualCost + request.shoppingCost}`}</Text>
+                                <Text>{`N${request.isPickUp ? request.actualCost : request.actualCost + request.shoppingCost}`}</Text>
                                 <Text>{' | '}</Text>
                             </React.Fragment>
                         }
-                        <Text>{moment(request.createdAt).format("DD MMM YYYY HH:mm")}</Text>
+                        <Text>{request.isPickUp ? 'PICK-UP' : 'SHOPPING'}</Text>
                         {request && (request.isCashPayment || request.isCardPayment) && (
                             <React.Fragment>
-                            <Text>{' | '}</Text>
-                            <Text>{request.isCashPayment ? 'CASH' : 'CARD'}</Text>
+                                <Text>{' | '}</Text>
+                                <Text>{request.isCashPayment ? 'CASH' : 'CARD'}</Text>
                             </React.Fragment>
                         )}
                     </View>

@@ -24,7 +24,7 @@ export default function About() {
         )
       })}
       <View style={styles.underline} />
-      <Text style={[styles.serviceDescriptionText, { marginTop: 24 }]} > Powered by :</Text>
+      <Text style={[styles.serviceDescriptionText, { marginTop: 24 }]} > Powered by</Text>
       <RnImg
         resizeMode={"contain"}
         source={Images.TargetOnlineLogo}

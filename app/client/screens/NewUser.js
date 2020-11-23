@@ -23,7 +23,7 @@ const NewUser = ({
     const [errorsVisible, setErrorVisible] = useState(false)
     const [userInfo, setUserInfo] = useState({
         displayName: currentUser.displayName ? currentUser.displayName : '',
-        email: currentUser.email ?  currentUser.email : ''
+        email: currentUser.email ? currentUser.email : ''
     });
 
     const validations = () => {
@@ -35,17 +35,17 @@ const NewUser = ({
     }
 
     const onSubmit = () => {
-        if(validations()) {
-            update("users", currentUser.phoneNumber, userInfo);
+        if (validations()) {
+            update("users", currentUser.isEmailRegistered ? currentUser.email.replace(/[^+0-9a-z]/gi, '') : currentUser.phoneNumber, userInfo);
             setVisible(false)
-            setCurrentUser({...currentUser, isNew: false })
+            setCurrentUser({ ...currentUser, ...userInfo, isNew: false })
         }
     }
 
     const displayError = message => errorsVisible && <Text style={styles.inputErrror}>{message}</Text>
 
     useEffect(() => {
-        if(currentUser.isNew || !currentUser.address || !currentUser.address.formatted_address) setVisible(true);
+        if (currentUser.isNew || !currentUser.address) setVisible(true);
     }, [])
 
     return (
@@ -72,19 +72,34 @@ const NewUser = ({
                         placeholderTextColor={materialTheme.COLORS.DEFAULT}
                         style={{ borderRadius: 3, borderColor: materialTheme.COLORS.DEFAULT }}
                         iconContent={<SimpleLineIcons size={16} color={theme.COLORS.ICON} name="user" />}
-                        onChangeText={name => setUserInfo({...userInfo, displayName: name })}
+                        onChangeText={name => setUserInfo({ ...userInfo, displayName: name })}
                     />
                     {!userInfo.displayName && displayError('Enter your name')}
-                    <Input
-                        right
-                        value={userInfo.email}
-                        placeholder="Email"
-                        color={materialTheme.COLORS.PRIMARY}
-                        placeholderTextColor={materialTheme.COLORS.DEFAULT}
-                        style={{ borderRadius: 3, color: materialTheme.COLORS.PRIMARY, borderColor: materialTheme.COLORS.DEFAULT }}
-                        iconContent={<SimpleLineIcons size={16} color={theme.COLORS.ICON} name="envelope" />}
-                        onChangeText={email => setUserInfo({...userInfo, email: email })}
-                    />
+                    {currentUser.isEmailRegistered
+                        ? <React.Fragment>
+                            <Input
+                                right
+                                value={userInfo.phoneNumber}
+                                placeholder="+234..."
+                                color={materialTheme.COLORS.PRIMARY}
+                                placeholderTextColor={materialTheme.COLORS.DEFAULT}
+                                style={{ borderRadius: 3, color: materialTheme.COLORS.PRIMARY, borderColor: materialTheme.COLORS.DEFAULT }}
+                                iconContent={<SimpleLineIcons size={16} color={theme.COLORS.ICON} name="phone" />}
+                                onChangeText={phoneNumber => !currentUser.phoneNumber && setUserInfo({ ...userInfo, phoneNumber: phoneNumber })}
+                            />
+                            {!userInfo.phoneNumber && displayError('Enter phone number')}
+                        </React.Fragment>
+                        : <Input
+                            right
+                            value={userInfo.email}
+                            placeholder="Email"
+                            color={materialTheme.COLORS.PRIMARY}
+                            placeholderTextColor={materialTheme.COLORS.DEFAULT}
+                            style={{ borderRadius: 3, color: materialTheme.COLORS.PRIMARY, borderColor: materialTheme.COLORS.DEFAULT }}
+                            iconContent={<SimpleLineIcons size={16} color={theme.COLORS.ICON} name="envelope" />}
+                            onChangeText={email => !currentUser.email && setUserInfo({ ...userInfo, email: email })}
+                        />
+                    }
                     <View style={styles.locationSearchContainer}>
                         <GooglePlacesAutocomplete
                             placeholder={'Address'}
@@ -136,13 +151,14 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 40,
         borderRadius: 4,
+        borderWidth: 1,
+        borderColor: 'white',
         backgroundColor: materialTheme.COLORS.PRIMARY,
         alignItems: "center",
         justifyContent: "center",
         padding: 15,
         marginTop: 40,
-        alignItems: 'center',
-        borderRadius: 5
+        alignItems: 'center'
     },
     submitText: {
         fontSize: 13,
@@ -190,7 +206,7 @@ const styles = StyleSheet.create({
         color: materialTheme.COLORS.PRIMARY,
     },
     inputErrror: {
-        color: 'red', 
+        color: 'red',
         paddingHorizontal: 5
     }
 });

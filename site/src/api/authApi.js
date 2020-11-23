@@ -13,6 +13,15 @@ export const uiConfig = {
   signInOptions: [firebase.auth.PhoneAuthProvider.PROVIDER_ID],
 };
 
+export const mobileUIConfig = {
+  signInFlow: "popup",
+  signInSuccessUrl: "/",
+  signInOptions: [firebase.auth.PhoneAuthProvider.PROVIDER_ID],
+  callbacks: {
+    signInSuccessWithAuthResult: () => false
+  }
+};
+
 export const signOut = () => {
   firebase
     .auth()

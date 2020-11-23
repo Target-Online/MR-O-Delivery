@@ -27,21 +27,15 @@ import ContactUsSection from "./Sections/ContactUs.js";
 import DriveSection from "./Sections/Drive.js";
 import AppAdvertSection from "./Sections/FooterPoster.js";
 import UpdateUserName from "./Sections/UpdateUserName.js";
-import { CurrentUserContext } from "Store.js";
 
 const dashboardRoutes = [];
 
 const useStyles = makeStyles(styles);
 
 export default function LandingPage(props) {
-  const [currentUser] = useContext(CurrentUserContext);
   const [UpdateUserNameVisible, setUpdateUserNameVisible] = useState(false);
   const classes = useStyles();
   const { ...rest } = props;
-
-  useEffect(() => {
-    if (currentUser && !currentUser.displayName) setUpdateUserNameVisible(true);
-  }, [currentUser]);
 
   return (
     <div>
@@ -79,7 +73,7 @@ export default function LandingPage(props) {
                     style={{ background: "#fb9011", width: 220 }}
                     size="lg"
                   >
-                    Place Pickup
+                    Shopping
                   </CustomButton>
                 </ScrollIntoView>
                 <ScrollIntoView selector="#download-app-now">
@@ -94,7 +88,7 @@ export default function LandingPage(props) {
                     }}
                     variant="outlined"
                   >
-                    Place Delivery
+                    Pickup
                   </Button>
                 </ScrollIntoView>
               </span>

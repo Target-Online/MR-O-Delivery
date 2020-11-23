@@ -66,9 +66,11 @@ export default function LoginPage(props) {
                 <form className={classes.form}>
                   <CardHeader
                     style={{
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
                       backgroundImage: "url(" + logo + ")",
                       height: 150,
-                      backgroundSize: "cover",
+                      backgroundSize: "contain",
                     }}
                     className={classes.cardHeader}
                   />

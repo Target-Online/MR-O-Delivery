@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, Text, StyleSheet, ActivityIndicator, Platform } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -10,8 +10,8 @@ const RequestsHistory = props => {
     const [requests] = useContext(RequestsContext);
     const [activeRequest] = useContext(SessionContext);
     const [currentUser] = useContext(CurrentUserContext);
-    
-    const currentUserRequests = requests.data.filter(r => (r.status.inProgress || r.status.isComplete) && (r.customer.id === currentUser.id || r.driver.id == currentUser.id) )
+    const [currentUserRequests, setCurrentUserRequests] = useState([]);
+
     const requestAccepted = activeRequest && requests.data.some(r => activeRequest.id == r.id && r.status.isAcceptedByDriver)
 
     useEffect(() => {
@@ -20,9 +20,15 @@ const RequestsHistory = props => {
         }
     }, [requestAccepted])
 
+    useEffect(() => {
+        if(currentUser){
+            setCurrentUserRequests(requests.data.filter(r => (r.status.inProgress || r.status.isComplete) && (r.customer.id === currentUser.id || r.driver.id == currentUser.id) ))
+        }
+    },[currentUser])
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
-          {requests.inProgress
+          {requests.inProgress || !currentUser
             ? <ActivityIndicator style={{ height: '82%' }} size="large" color="#FB9211" />
             : currentUserRequests.reverse().map(r => <Card request={r} props={props}/>)
           }

@@ -57,7 +57,7 @@ export function AppStack() {
           name="Home"
           component={currentUser && currentUser.isDriver ? Driver : Home}
         />
-        {!currentUser.isDriver  && (
+        {currentUser && !currentUser.isDriver  && (
           <Drawer.Screen
             name="Profile"
             component={ProfileStack}

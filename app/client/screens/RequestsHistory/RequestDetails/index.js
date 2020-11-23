@@ -73,7 +73,7 @@ const RequestsDetails = props => {
                 </View>
             </View>
             <View style={styles.requestInfoContainer}>
-                {currentUser.isDriver
+                {currentUser && currentUser.isDriver
                     ? <View style={styles.driverInfoContainer}>
                         <Image source={request.customer.photoUrl ? { uri: request.customer.photoUrl } : Images.photoPlaceHolder} style={styles.driverPhoto} />
                         <View style={{ padding: 20 }}>
