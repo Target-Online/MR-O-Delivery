@@ -58,7 +58,8 @@
     "react-native-webview": "9.4.0",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
-    "yup": "^0.29.3"
+    "yup": "^0.29.3",
+    "expo-keep-awake": "~8.2.1"
   },
   "resolutions": {
     "deprecated-react-native-listview": "0.0.6"

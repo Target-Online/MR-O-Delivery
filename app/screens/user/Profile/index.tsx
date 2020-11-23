@@ -37,9 +37,7 @@ class Logout extends Component<Props> {
           <View style={{ flexDirection : 'row' , alignItems : 'center', width : '100%', height : 96,paddingHorizontal : 24 }}>
         
               <Btn
-                  onPress={()=> {
-
-                  }}
+                  onPress={()=> {}}
                   >
                     <View
                       style={{width : 40,height: 40, borderRadius : 20,backgroundColor : "grey", borderWidth : 0.75, borderColor : "#fff",marginBottom : 12}}
@@ -117,10 +115,14 @@ class Logout extends Component<Props> {
             this.props.navigation.navigate("AboutUs")
           }
         },
-        // { displayName : 'Help', 
-        //   icon :  <icons.HelpIcon></icons.HelpIcon>,
-        //   onPress : () =>  {}
-        // },
+        { displayName : 'Privacy Policy', 
+          icon :  <icons.PrivacyPolicyIcon></icons.PrivacyPolicyIcon>,
+          onPress : () =>  {}
+        },
+        { displayName : 'Terms and Conditions', 
+        icon :  <icons.TsCsIcon></icons.TsCsIcon>,
+        onPress : () =>  {}
+      },
         { displayName : 'Logout', 
           icon :  <icons.LogoutIcon fill={"#000"}></icons.LogoutIcon>,
           onPress : () =>  {}

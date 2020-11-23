@@ -6,12 +6,12 @@ import NavigationStack  from './UserNavigationStack'
 import DriverNavigationStack  from './DriverNavigationStack'
 import { IUser, withAppContext, IContextProps } from '../AppContext'
 import _ from 'lodash'
+import { useKeepAwake } from 'expo-keep-awake';
 
 type IProps =  IContextProps  & { user : any; profile : IUser; }
 const AppNavigator : any = (props: IProps) => {
 
-    const [loading, setLoading] = useState<boolean>(false);
-    const {currentUser, loadingUser ,users }  = props.context
+    const {currentUser, users}  = props.context
     const driverCheck = (phoneNumber : string) =>{
       let res = users.data.find(u =>  u.id == phoneNumber && u.isDriver)
       return !_.isEmpty(res)
@@ -30,18 +30,16 @@ const AppNavigator : any = (props: IProps) => {
       )
     }
 
+    useKeepAwake()
+
     return [
       <StatusBar backgroundColor ={Colors.focusColor}
         barStyle = 'dark-content'
         hidden = {false}
         key={1}
-       />,
-        users.inProgress ? renderLoader() : currentUser ? renderStack() : <AuthStack  />
+      />,
+      users.inProgress ? renderLoader() : currentUser ? renderStack() : <AuthStack  />
     ]
-    
 }
 
-
 export default withAppContext(AppNavigator)
-
-// FIXME: Use Strings and Metrics file. Rmoeve inline styles.

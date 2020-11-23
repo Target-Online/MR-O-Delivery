@@ -1,6 +1,6 @@
-import { Body, Button, H1, Header, Left, Right, Text, View } from 'native-base';
+import { Body, Text, View } from 'native-base';
 import * as React from 'react';
-import { Image, TouchableOpacity as Btn, TextStyle, SafeAreaView ,ScrollView, BackHandler, StyleSheet } from 'react-native';
+import { Image, TouchableOpacity as Btn, SafeAreaView , BackHandler, StyleSheet } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
@@ -11,20 +11,14 @@ interface IProps {
   subtitle?: string;
   noMargin?: boolean;
   contentPadding?: string | number;
-  noShadow?: boolean;
-  right?: React.ReactNode;
   noHeader?: boolean;
   scroll?: boolean;
   backRoute?: string;
   onBackPress?: () => void;
-  enableBack?: boolean;
-  totalProducts?: Number;
-  accordion_data?: any;
-  styledTitle?: TextStyle;
-  offsetNumber?: number | null;
   onEndReached?: () => void;
   onScroll?: () => void;
 }
+
 const shadow =  {
   shadowColor: '#000000',
   shadowOpacity: 0.05,
@@ -78,20 +72,6 @@ class BackScreen extends React.Component<Props, IState> {
     }
   }
 
-  handleScroll = (event: any) => {
-    if (
-      event.nativeEvent!.contentOffset.y > this.props.offsetNumber! &&
-      !this.state.border
-    ) {
-      this.setState({ border: true });
-    } else if (
-      event.nativeEvent!.contentOffset.y < this.props.offsetNumber! &&
-      this.state.border
-    ) {
-      this.setState({ border: false });
-    }
-  };
-
   render() {
     
     const {title, children,scroll } = this.props
@@ -99,13 +79,13 @@ class BackScreen extends React.Component<Props, IState> {
     return (
       <SafeAreaView style={{flex : 1 , backgroundColor : "white"}}>
         <View style={styles.topBarStyles}>
-                <Btn style={styles.backBtnStyle} onPress={()=> this.navigateBack()}>
-                  <Ionicons name="md-arrow-round-back" color="#000" style={styles.backIcon} size={24} />
-                </Btn>
-                <View style={{alignItems : "center"}}>
-                  <Text style={styles.pageTitle}>{title}</Text>
-                </View>
-                <Btn style={styles.backBtnStyle} onPress={()=>{}} />
+          <Btn style={styles.backBtnStyle} onPress={()=> this.navigateBack()}>
+            <Ionicons name="md-arrow-round-back" color="#000" style={styles.backIcon} size={24} />
+          </Btn>
+          <View style={{alignItems : "center"}}>
+            <Text style={styles.pageTitle}>{title}</Text>
+          </View>
+          <Btn style={styles.backBtnStyle} onPress={()=>{}} />
         </View>
         <KeyboardAvoidingScrollView 
           showsVerticalScrollIndicator={false}

@@ -10,6 +10,9 @@ import GoogleIcon from './GoogleIcon'
 import LocationIcon from './LocationIcon'
 import HomeIcon from './HomeIcon'
 import LogoutIcon from './LogoutIcon'
+import TsCsIcon from './TsCsIcon'
+import PrivacyPolicyIcon from './PrivacyPolicyIcon'
+
 export default {
   OrderIcon,
   HelpIcon,
@@ -22,5 +25,7 @@ export default {
   BagIcon,
   HomeIcon,
   InfoIcon,
+  TsCsIcon,
+  PrivacyPolicyIcon,
   LogoutIcon
 }
