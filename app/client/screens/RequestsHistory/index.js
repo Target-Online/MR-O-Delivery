@@ -30,7 +30,9 @@ const RequestsHistory = props => {
         <ScrollView contentContainerStyle={styles.container}>
           {requests.inProgress || !currentUser
             ? <ActivityIndicator style={{ height: '82%' }} size="large" color="#FB9211" />
-            : currentUserRequests.reverse().map(r => <Card request={r} props={props}/>)
+            : currentUserRequests
+                .sort((a, b) => b.createdAt - a.createdAt)
+                .map(r => <Card request={r} props={props}/>)
           }
           {currentUserRequests.length === 0 && <Text style={styles.noDataText}>No requests history.</Text>}
           <LinearGradient style={styles.lineGradient} colors={['#fff', '#fff', '#FDD39F', '#FB9211', '#FB9211']} />

@@ -39,10 +39,13 @@ const PhoneSignIn = props => {
           </Button>
 
           {!!verificationId &&
-            <TouchableOpacity style={styles.codeResedMessageContainer} onPress={() => verifyPhoneNumber(phoneNumber, recaptchaVerifier, setVerificationId)}>
-              <Text style={styles.codeDidYouReceiveMessage}>SMS received?</Text>
-              <Text style={styles.codeResedMessage}>Click here to re-send</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <TouchableOpacity style={styles.codeResedMessageContainer} onPress={() => setVerificationId('')}>
+                <Text style={styles.actionsText}>Change number</Text>
+              </TouchableOpacity><TouchableOpacity style={styles.codeResedMessageContainer} onPress={() => verifyPhoneNumber(phoneNumber, recaptchaVerifier, setVerificationId)}>
+                <Text style={styles.actionsText}>Resend code</Text>
+              </TouchableOpacity>
+            </View>
           }
         </View>
       </React.Fragment>
@@ -62,11 +65,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     marginTop: 15
   },
-  codeDidYouReceiveMessage: {
-    color: 'orange',
-    fontWeight: 'bold'
-  },
-  codeResedMessage: {
+  actionsText: {
     color: 'orange',
     fontWeight: 'bold',
     textDecorationLine: 'underline'

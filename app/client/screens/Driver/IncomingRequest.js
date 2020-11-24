@@ -21,7 +21,12 @@ export default function IncomingRequests(props) {
     incomingRequest ? setVisible(true) : setVisible(false);
   }, [requests])
 
-  useEffect(() => { incomingRequest && _playSound() }, [incomingRequest])
+  useEffect(() => {
+    if(incomingRequest){
+      setVisible(true)
+      _playSound()
+    }
+  }, [incomingRequest])
 
   const _playSound = async () => {
     const soundObject = new Audio.Sound();

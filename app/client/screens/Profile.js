@@ -21,7 +21,7 @@ export default function Profile(props) {
   const [photoUpdateInProgress, setPhotoUpdateStatus] = useState(false);
 
   const currentUserRequests = requests.data.filter(request => request.customer.id === currentUser.id)
-  const recentRequest = currentUserRequests.reverse()[0];
+  const recentRequest = currentUserRequests.sort((a, b) => b.createdAt - a.createdAt)[0];
   const shoppingRequests = currentUserRequests.filter(request => request.isShopping);
   const pickupRequests = currentUserRequests.filter(request => request.isPickUp);
 

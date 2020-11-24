@@ -28,7 +28,7 @@ export default function ShoppingList(props) {
     })
 
     const onEditItemAvailability = (item) => {
-        if (currentUser.isDriver && !request.status.driverHasConfirmedPrices) {
+        if (currentUser.isDriver && request.status && !request.status.driverHasConfirmedPrices) {
             setRequest({
                 ...request,
                 shoppingList:
