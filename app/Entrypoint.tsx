@@ -1,12 +1,12 @@
 import { ActivityIndicator, View } from 'react-native'
 import React from 'react'
-import Navigator from './navigation'
-import AppContextProvider, { withAppContext, ContextConsumer, IContextProps } from './AppContext'
-import AlertModal from './components/AlertModal'
+import Navigator from './src/navigation'
+import AppContextProvider, { withAppContext, ContextConsumer, IContextProps } from './src/context/AppContext'
+import AlertModal from './src/components/AlertModal'
 import Store from './Store'
-import NoConnection from './components/NoConnection'
-import RatingsModal from './components/RatingsModal'
-import  Colors  from './constants/colors'
+import NoConnection from './src/components/NoConnection'
+import RatingsModal from './src/components/RatingsModal'
+import  Colors  from './src/constants/colors'
 
 type IProps = IContextProps
 
@@ -48,7 +48,12 @@ const AppComp : React.SFC = () => {
     <Store>
     <AppContextProvider>  
     <ContextConsumer>
-      {(c) => <App context={c} /> }
+      {(c) => (
+      // <App context={c} />
+      <View style={{width : "100%", height : "100%", backgroundColor : "green"}}>
+
+      </View>
+      ) }
       </ContextConsumer>  
     </AppContextProvider>
     </Store>

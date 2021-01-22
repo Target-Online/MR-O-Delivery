@@ -2,8 +2,8 @@ import React, { useState, useEffect, useReducer } from "react";
 import firebase from "firebase";
 
 import appsettings from "./appsettings.json";
-import * as api from "./api/index";
-import * as rootReducer from "./utils/rootReducer";
+import * as api from "@api/index";
+import * as rootReducer from "./src/utils/rootReducer";
 
 const initalState = {
   data: [],

@@ -1,12 +1,10 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { AppRegistry, Image } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
 import { Block, GalioProvider } from 'galio-framework';
-import { NavigationContainer } from '@react-navigation/native';
-
-import { Images, articles, nowTheme } from './constants';
+import { Images, articles, nowTheme } from '@constants';
 import Entrypoint from './Entrypoint';
 import appsettings from "./appsettings.json";
 import * as firebase from "firebase";
@@ -41,7 +39,7 @@ function cacheImages(images) {
   });
 }
 
-export default class App extends React.Component {
+class App extends React.Component {
   state = {
     isLoadingComplete: false,
     fontLoaded: false
@@ -79,13 +77,13 @@ export default class App extends React.Component {
   }
 
   _loadResourcesAsync = async () => {
-    await Font.loadAsync({
-      'montserrat-regular': require('./assets/font/Montserrat-Regular.ttf'),
-      'montserrat-bold': require('./assets/font/Montserrat-Bold.ttf')
-    });
+    // await Font.loadAsync({
+    //   'montserrat-regular': require('@assets/font/Montserrat-Regular.ttf'),
+    //   'montserrat-bold': require('@assets/font/Montserrat-Bold.ttf')
+    // });
 
-    this.setState({ fontLoaded: true });
-    return Promise.all([...cacheImages(assetImages)]);
+    // this.setState({ fontLoaded: true });
+    // return Promise.all([...cacheImages(assetImages)]);
   };
 
   _handleLoadingError = error => {
@@ -98,3 +96,6 @@ export default class App extends React.Component {
     }
   };
 }
+AppRegistry.registerComponent('main',() => App);
+
+export default App

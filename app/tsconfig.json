@@ -8,10 +8,19 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
-    "rootDir": "./",
     "baseUrl": "./",
-    "typeRoots": [
-      "./types",
-  ]
+    "paths": {
+      "@screens/*": ["src/screens"],
+      "@components/*": ["components/*"],
+      "@navigation": ["src/navigation"],
+      "@constants/*": ["constants/*"],
+      "@assets/*": ["src/assets"],
+      "@context/*": ["src/context"],
+      "@utils/*": ["src/utils"],
+      "@actions/*": ["src/actions"],
+      "@api/*": ["src/api"],
+      "@layouts/*": ["src/layouts"],
+    },
+    "typeRoots": ["src/types",]
   }
 }
