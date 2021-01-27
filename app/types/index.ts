@@ -100,3 +100,4 @@ export interface IAppContext{
         updateOrderStatus : (id : string, order : IOrder) => void;
 }
 
+export type OrderState = "pending" | "shopping" | "shopping" | "collected" | "confirmed" | "delivered"

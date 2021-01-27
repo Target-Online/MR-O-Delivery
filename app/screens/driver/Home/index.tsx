@@ -1,44 +1,35 @@
 
 import React from 'react';
-import {
-  Modal,StyleSheet,TouchableOpacity as Btn,View,Image as RnImg,
+import { Modal,TouchableOpacity as Btn,View,Image as RnImg,
   Text,StatusBar , ImageBackground, Linking, Platform} from 'react-native';
 import { Switch } from 'native-base'
 import images from '../../../assets/images'
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
-import { withAppContext, IAppContext, IOrder, mockOrder, testDriver } from '../../../AppContext';
+import { withAppContext, testDriver } from '../../../AppContext';
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import BagIcon from '../../../assets/icons/BagIcon'
 import OnlineIcon from '../../../assets/icons/OnlineIcon'
 import OfflineIcon from '../../../assets/icons/OfflineIcon'
 import LocationIcon from '../../../assets/icons/LocationIcon';
-import DriverConfirmIcon from '../../../assets/icons/DriverConfirmIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
 import Inactive from  '../../../components/Inactive'
 import ConfirmItems from '../OrderProgress/ConfirmItems';
 import strings from '../../../constants/strings';
+import styles from './styles'
+import DeliveredOrder from './DeliveredOrder';
+import { OrderState , IAppContext, IOrder , } from 'types';
 
-const shadow =  {
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 2
-    },
-    elevation: 10
-  }
-
-type IProps = IAppContext & StackNavigationProp;
+type IProps = IAppContext & StackNavigationProp<any>;
 
 interface IState {
   isModalVisible: boolean;
   isOnline?: boolean;
   isVacant?: boolean;
   isActive?: boolean;
-  newState : "pending"| "shopping" | "confirmed" | "collected" | "delivered" ; 
+  newState : OrderState ; 
   order?: IOrder;
   status?: "offline" | "vacant" | "busy";
   orderId?: string;
@@ -60,7 +51,7 @@ class Home extends React.Component<IProps, IState> {
         isVacant : false,
         status,
         newState : "pending",
-        order : null
+        order : undefined
       }
     }
 
@@ -82,15 +73,11 @@ class Home extends React.Component<IProps, IState> {
           const orderId = snapshot.key
           const {status , driver } = order
 
-          console.log({status})
-          
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
-
             this.setState({newState : "pending"})
             playSound()
             this.recordNewOrderOfFocus(order, orderId)
             
-            //listen to order updates
             this.onOrderUpdated = database()
             .ref(`/orders/${orderId}`)
             .on('value', (snapshot: { val: () => any; key: any; }) => {
@@ -114,8 +101,6 @@ class Home extends React.Component<IProps, IState> {
             this.setState({isOnline , isVacant , isActive})
           }         
       })
-
-
     }
 
     setMyOrder = (theOrder : IOrder) => {
@@ -134,7 +119,7 @@ class Home extends React.Component<IProps, IState> {
       this.setState({isModalVisible : false})
     }
 
-    changeOrderProgress = (newState : "pending" | "shopping" | "shopping" | "collected" | "confirmed" | "delivered") => { 
+    changeOrderProgress = (newState : OrderState) => { 
       const { orderId } = this.state
       const { context : {updateOrderStatus, order } } = this.props
       const nowNow = moment(new Date()).toString()
@@ -177,7 +162,7 @@ class Home extends React.Component<IProps, IState> {
       const isShopping = orderType === "Shopping"
 
       return(
-        <View style={{flexDirection : "row", height: 56, width : "100%",alignItems : "center"}}>
+        <View style={styles.parcelDetailsWrapper}>
           {isShopping ? <BagIcon width={30} height={30} /> : <ParcelIcon width={30} height={30} />}
           <View style={{marginLeft : 8}}>
             <Text style={{fontSize : 12,}}>{isShopping? "Shopping from :" :  name}</Text>
@@ -204,7 +189,6 @@ class Home extends React.Component<IProps, IState> {
 
       if(order){
         const {pickUpAddress, dropOffAddress , orderType} = order || { pickUpAddress : {}, dropOffAddress : {} }
-        const isShopping = orderType === "Shopping"
         return(
           <View style={styles.modalInnerContainer}>
             <View style={styles.newReqContainer}>
@@ -316,17 +300,6 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
-    renderPaymmentMethod = (cashPayment : boolean) => {
-      return (
-        <>
-          <View style={styles.paymentMethod}>
-              <Text style={{fontWeight : "bold", fontSize :12, color : "green" }} >{cashPayment || true ? "Cash Payement" : "Card Payment"}</Text>
-          </View>
-          {cashPayment && <Text style={{fontSize : 8, color : "red", marginTop: 8}}>*Please remember to collect cash upon deliver</Text> }
-        </>
-      )
-    }
-
     renderOrderItemsConfirmation = () => {
       return (
         <ConfirmItems onConfirmed={()=>{
@@ -335,47 +308,20 @@ class Home extends React.Component<IProps, IState> {
         />)
     }
 
-
     renderDeliveredOrder = () =>{
 
       const {order : {total , paymentMethod , distance , customer}} = this.state
-      const {context : {currentUser :{ displayName, profilePicURL}, updateDriverStatus, sendRequest,setRatingsVisible, setUserInRating}} = this.props
+      const {context : { updateDriverStatus, setRatingsVisible, setUserInRating}} = this.props
 
-      return(
-        <View style={styles.modalInnerContainer}>
-          <View style={[styles.newReqContainer, {height : 430}]}>
-            {this.renderCustomerCard()}
-            <View style={{ height: 100, justifyContent :"flex-start", alignItems : "center", backgroundColor : "#fff",paddingTop : 24 }}>
-              <DriverConfirmIcon/>
-              <Text style={{alignSelf : "center" ,fontSize : 18, color : Colors.overlayDark80}}> Trip Complete </Text> 
-              <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30 ,fontSize : 12}]} >Amount due </Text>
-              <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4, fontSize : 11, fontWeight : "bold" }]} >
-                {`N${total}`}
-              </Text>
-              <Text style={[styles.activeTextStyle, {color : Colors.overlayDark30, fontSize :12}]}>Distance Travelled </Text>
-              <Text style={[styles.activeTextStyle, {color : Colors.primaryOrange,marginVertical: 4,marginBottom : 16,fontSize : 11, fontWeight : "bold" }]}> 
-                {`${distance} km`} 
-              </Text>
-              {this.renderPaymmentMethod(paymentMethod == "cash")}            
-              <View style={styles.addressesWrapper}>               
-              </View>
-            </View>
-
-            <View style={[styles.bottomBtnswrapper,{flexDirection : "column",alignItems : "center" } ]}>
-              <Btn onPress={()=>{
-                  updateDriverStatus({isVacant : true})
-                  this.setState({isModalVisible : false})
-
-                  setUserInRating(customer)
-                  setRatingsVisible(true)
-                }} 
-                style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange ,width : 192}]} >
-                <Text  style={styles.acceptDeclineText} > Done </Text>
-              </Btn>
-
-            </View>
-          </View>
-        </View>
+        return(
+          <DeliveredOrder 
+            onDone={()=>{
+              updateDriverStatus({isVacant : true})
+              this.setState({isModalVisible : false})
+              setUserInRating(customer)
+              setRatingsVisible(true)
+            }}  
+          />
       )
     }
 
@@ -398,8 +344,7 @@ class Home extends React.Component<IProps, IState> {
           visible={isModalVisible}
           onRequestClose={()=> this.closeModal()}
         >
-          {newState === "pending" ? 
-            this.renderNewRequestDecision() : 
+          {newState === "pending" ? this.renderNewRequestDecision() : 
             ["confirmed", "collected"].includes(newState) ? this.renderOrderInProgress():
             this.renderDeliveredOrder()
           }
@@ -412,29 +357,18 @@ class Home extends React.Component<IProps, IState> {
 
       if(!isOnline){  //if going offline, confirm change
          setAlertData({title : "Change Status" , text : strings.confirmStateChange, buttons : [ 
-          {label : "Yes",onPress : ()=>{
-            updateDriverStatus({isOnline})
-          }} , { label :  "No", onPress : ()=>{} } ]})
+          {label : "Yes",onPress : ()=>{updateDriverStatus({isOnline})}} , { label :  "No", onPress : ()=>{} } ]})
           return setShowAlert(true)
       }
       
       updateDriverStatus({isOnline})
-      if (isOnline){
-        updateDriverStatus({isVacant : true})
-      }
- 
+      if (isOnline){ updateDriverStatus({isVacant : true})}
     }
 
     render(){
       const {context : {currentUser :{ displayName, profilePicURL}, sendRequest,setRatingsVisible, setUserInRating}} = this.props
       const {isOnline , newState} = this.state
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
-      const randomNum =  Math.floor(Math.random() * Math.floor(1000))
-      const testUser = {
-        phoneNumber : "+27662359664",
-        displayName : "Mnotho test user"
-      }
-
 
       if (newState === "shopping"){
         return this.renderOrderItemsConfirmation()
@@ -485,7 +419,6 @@ class Home extends React.Component<IProps, IState> {
                     onPress={ async () => {
                       setUserInRating(testDriver)
                       setRatingsVisible(true)
-                
                     }}    
                   >
                     <Text style={{color : "#fff"}} > Add Mock Order</Text>
@@ -494,175 +427,6 @@ class Home extends React.Component<IProps, IState> {
             </View>    
       ]
     }
-
 };
 
 export default withAppContext(Home)
-
-
-const styles = StyleSheet.create({
-    activeTextStyle:{
-        color : 'red'
-    },
-    switchWrapper : {
-      flexDirection : "row", justifyContent: "flex-end",
-      width : "100%" , alignItems : "center",
-      paddingHorizontal : 24 ,position: "absolute",
-      top :24
-    },
-    displayName : {
-      fontSize : 20, fontWeight : "700", 
-      color : "#fff",alignSelf : "flex-start" 
-    },
-    topHeaderWrapper : {
-      width : "100%",justifyContent:"flex-end",
-      alignItems : "flex-start",height: "35%",
-      paddingHorizontal : 24,paddingBottom : 32
-    },
-    displayPic : {
-      borderRadius : 20 , height : 40,
-      width:  40
-    },
-    imgWrapper : {
-      width : 40,height: 40, 
-      borderRadius : 20,backgroundColor : "grey", 
-      borderWidth : 0.75, borderColor : "#fff",marginBottom : 12
-    },
-    switchLabel : {
-      fontSize : 16, fontWeight : "bold",
-      marginRight : 16 
-    },
-    welcomeText : {
-      fontSize : 16, fontWeight : "400",
-      color : "#fff",alignSelf : "flex-start" 
-    },
-    routeSummaryRow :{ 
-      height: 122,flexDirection : "row", 
-      alignItems : "center", justifyContent :"flex-start",
-      paddingVertical : 8 
-    },
-    addMockOrder : {
-      width : 120,height:46 ,
-      justifyContent : "center" , alignItems : "center",
-      backgroundColor : Colors.primaryOrange , 
-      borderRadius :3
-    },
-    newReqInnerContainer : { 
-      height: 70, flexDirection : "row", 
-      justifyContent :"flex-start",
-      backgroundColor : "#fff",
-      paddingVertical : 8 
-    },
-    bottom : { 
-      padding : 24, backgroundColor : "#fff",
-      width : "100%", height : "65%", ...shadow , 
-      alignItems : "center",justifyContent : "center",
-      position : "absolute", bottom : 0, borderTopLeftRadius : 24, 
-      borderTopRightRadius: 24
-    },
-    onOffText:{
-      alignSelf : "center",
-      textAlign : "center",
-      color : "#878787",
-      marginVertical : 8,
-    },
-    serviceDescriptionText: {
-      marginVertical :  8,textAlign  :"center",
-      fontSize : 12 , color : "#878787" 
-    },
-    acceptDeclineText : {
-      fontSize : 14,
-      fontWeight : "bold",
-      color : "#fff"
-    },
-    incomingText : {
-      alignSelf : "center", 
-      textAlign : "center", 
-      fontSize : 16 , fontWeight : "bold",
-      color : "red" 
-    },
-    customerHeader : {
-      fontSize : 11,
-      color : "#878787",
-    },
-    paymentMethod : { 
-      borderWidth : 1.25 , borderColor : "green", 
-      width : 100,height:24,marginVertical:2,
-      alignItems : "center",borderRadius : 3, 
-      justifyContent : "center" 
-    },
-    newReqContainer : {
-      width : "100%" , minHeight : 400, maxHeight : 560,
-      borderRadius : 3, backgroundColor : "#fff",
-      paddingTop: 12, paddingHorizontal : 24
-    },
-    bottomBtnswrapper : { 
-      height : 64, width : "100%" ,position : "absolute", 
-      bottom : 4 ,paddingHorizontal : 16,
-      flexDirection : "row", justifyContent :"center", 
-      alignSelf : "center"
-    },
-    path : { 
-      width:1,height:32,borderRadius:4,
-      backgroundColor :"rgba(0,0,0,0.5)"
-    },
-    pickupIconInner : { 
-      width:8,height:8,borderRadius:4,
-      backgroundColor :"#000" 
-    },
-    pickupIconOutter : { 
-      width:14,height:14,
-      justifyContent : "center",alignItems : "center",
-      borderRadius: 7, borderWidth : 1,
-      backgroundColor : "#fff", 
-      borderColor :"#000" 
-    },
-    routePath : {
-      width:  14,marginRight : 8,
-      justifyContent:"space-between",
-      paddingVertical:10 ,
-      alignItems: "center"
-    },
-    modalInnerContainer : { 
-      width : "100%",height: "100%",
-      paddingHorizontal : 16, backgroundColor : "rgba(0,0,0,0.3)", 
-      justifyContent: "center",paddingBottom : 46
-    },
-    container: {
-      flex : 1 , width : "100%", height : "100%",
-      backgroundColor : "#FEFEFE", 
-      alignItems : "center"
-    },
-    addressesWrapper : {flex : 1, height : 122, justifyContent : "space-evenly"},
-    inputWrapper :{ 
-      width: "100%" , height : 54 , borderColor : Colors.primaryOrange ,
-      borderWidth : 1,borderRadius : 8,justifyContent : "space-between" ,
-      flexDirection : "row",alignItems : "center"
-    },
-    btnStyle:{ 
-          height: 46,borderRadius: 4, backgroundColor :"#EDF4F9",width : 150,
-          alignItems : "center",justifyContent : "center",paddingHorizontal : 24 
-    },
-    tabStyle : {backgroundColor : 'white'},
-    orderSummary: {
-      marginTop : 46, height: 180,
-      width: "88%",borderRadius: 3, 
-      justifyContent : "space-between", backgroundColor : "#fff", 
-      padding : 24
-    },
-    addressInputWrapper: { 
-      height : 38, flex :0, 
-      backgroundColor : "rgba(0,0,0,0.04)",
-      borderRadius : 2  ,paddingVertical : 0
-    },
-    addressInput : { 
-      fontSize :  10,
-    },
-    textAreaStyles:{
-      height : 56, borderRadius : 2,
-      borderWidth : 1, borderColor: "#f9f9f9",paddingVertical:2,
-      paddingHorizontal : 12, justifyContent : "center" 
-    },
-  
-  })
-

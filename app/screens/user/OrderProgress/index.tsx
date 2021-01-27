@@ -11,6 +11,7 @@ import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/typ
 import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
 import UserCard from '../../../components/UserCard'
+import shadow from 'utils/shadow'
 const  { height } = Dimensions.get('window')
 
 const customStyles = {
@@ -46,7 +47,7 @@ class Payment extends Component<IProps> {
     }
 
     componentDidMount(){
-        const {context : {order,setOrder , updateDriverStatus, sendRequest,setRatingsVisible, setUserInRating }} = this.props
+        const {context : {order,setOrder,setRatingsVisible, setUserInRating }} = this.props
         const {orderId} = order
         var ref = firebase.database().ref(`orders/${orderId}`);
         ref.on('value', function(snapshot) {
@@ -151,16 +152,6 @@ class Payment extends Component<IProps> {
 }
 
 export default withAppContext(Payment)
-
-const shadow =  {
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 2
-    },
-    elevation: 10
-}
 
 const styles = StyleSheet.create({
     driverName:{

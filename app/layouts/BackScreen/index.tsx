@@ -4,6 +4,7 @@ import { Image, TouchableOpacity as Btn, SafeAreaView , BackHandler, StyleSheet 
 import {Ionicons} from '@expo/vector-icons'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
+import shadow from 'utils/shadow';
 
 interface IProps {
   title?: string;
@@ -19,15 +20,6 @@ interface IProps {
   onScroll?: () => void;
 }
 
-const shadow =  {
-  shadowColor: '#000000',
-  shadowOpacity: 0.05,
-  shadowRadius: 4,
-  shadowOffset: {
-    height: 8
-  },
-  elevation: 8
-}
 
 type Props = IProps &  StackScreenProps<{navigation : any}>;
 

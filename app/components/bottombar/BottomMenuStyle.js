@@ -1,16 +1,7 @@
 import { StyleSheet } from 'react-native'
 import { Colors , Metrics } from '../../constants'
 import { iPhoneLarge } from '../../utils/screenSize'
-const { width ,height } = Metrics.window
-const shadow =  {
-  shadowColor: '#000000',
-  shadowOpacity: 0.15,
-  shadowRadius: 4,
-  shadowOffset: {
-    height: -2
-  },
-  elevation: 10
-}
+
 export default StyleSheet.create({
   base: {
     alignItems: 'center',

@@ -7,4 +7,4 @@ const shadow = {
     },
     elevation: 10
   }
-  export default   shadow
+export default shadow

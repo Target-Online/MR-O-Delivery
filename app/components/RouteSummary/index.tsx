@@ -8,6 +8,7 @@ import Loader from '../../'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import { getDistance, getPreciseDistance } from 'geolib';
 import { GeolibInputCoordinates } from 'geolib/es/types'
+import shadow from 'utils/shadow'
 
 const RouteSummary = (props : IAddressParams) => {
 
@@ -56,17 +57,6 @@ const RouteSummary = (props : IAddressParams) => {
 }
 
 export default RouteSummary
-
-
-const shadow =  {
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 2
-    },
-    elevation: 10
-}
 
 const styles = StyleSheet.create({
     activeTextStyle:{

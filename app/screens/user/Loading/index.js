@@ -1,17 +1,8 @@
-import React, {
-  Component
-} from 'react'
-import {
-  ActivityIndicator,
-  Image,
-  Modal,
-  TouchableOpacity,
-  View
-} from 'react-native'
-import Spinner from 'react-native-spinkit'
-
-import { Cell, Text } from '../../../components'
-import { Colors, Fonts, Metrics } from '../../../constants'
+import React, { Component } from 'react'
+import { ActivityIndicator,StyleSheet, Modal,View } from 'react-native'
+import { Text } from '../../../components'
+import styles from '../../../components/text/styles'
+import { Colors, Fonts } from '../../../constants'
 
 class Loading extends Component {
   constructor (props) {
@@ -27,12 +18,7 @@ class Loading extends Component {
         supportedOrientations={['portrait', 'landscape']}
         visible={visible}
       >
-        <View style={{ paddingTop : 24, backgroundColor: noOverlay ? Colors.white : Colors.overlayLight90 ,position: 'absolute',zIndex: 10, justifyContent: 'center', alignItems : 'center',flex: 1, width : '100%', height : '100%' }}>
-          {/* <ActivityIndicator size="large" color={Colors.tetiaryGrey} /> */}
-          {/* <Spinner
-            color={Colors.secondayGreen}
-            type={'9CubeGrid'}
-          /> */}
+        <View style={[styles.wrapper, {backgroundColor: noOverlay ? Colors.white : Colors.overlayLight90} ]}>
           <ActivityIndicator />
           <Text color={Colors.white}
             font={Fonts.button}
@@ -44,29 +30,11 @@ class Loading extends Component {
   }
 }
 
-
+const styles = StyleSheet.create({
+  wrapper :{ 
+    paddingTop : 24 ,position: 'absolute',
+    zIndex: 10, justifyContent: 'center', 
+    alignItems : 'center',flex: 1, width : '100%', height : '100%' }
+})
 
 export default Loading
-
-// FIXME: Remove inline styles and unused imports
-
-// bold, 
-// contentCenter,
-// contentLeft,
-// contentRight,
-// fontCenter,
-// fontLeft,
-// fontRight,
-// imageCenter,
-// imageHeight,
-// imageLeft,
-// imageRight,
-// imageWidth,
-// numberOfLines,
-// textFont,
-// textCenter,
-// textCenterColor,
-// textLeft,
-// textLeftColor,
-// textRight,
-// textRightColor
