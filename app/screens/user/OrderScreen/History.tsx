@@ -1,23 +1,17 @@
 import React, { useContext } from 'react';
 import moment from 'moment';
 import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  ImageBackground,
-  RefreshControl
-} from 'react-native';
-
+  Text,View, FlatList, TouchableOpacity,
+  ImageBackground, RefreshControl } from 'react-native';
+import {historyStyles as styles} from "./styles"
 import { CurrentUserContext, OrdersContext } from "../../../Store";
-import images from '../../../assets/images'
-import orders from "./testData";
+import images from 'assets/images'
+import strings from '@constants/strings';
 
 const OrderHistory = (props: any) => {
+  
   const [orders] = useContext<any>(OrdersContext);
   const [currentUser] = useContext<any>(CurrentUserContext)
-
   const data = orders.data.filter((o: any) => o.customer && o.customer.id == currentUser.id)
 
   return (
@@ -56,7 +50,7 @@ const OrderHistory = (props: any) => {
             }}
           />
           : <View style={styles.noDataText}>
-            <Text style={{ color: '#fff' }}>No order history.</Text>
+            <Text style={{ color: '#fff' }}>{strings.noOrderHistory}</Text>
           </View>
         }
       </ImageBackground>
@@ -65,64 +59,3 @@ const OrderHistory = (props: any) => {
 }
 
 export default OrderHistory;
-
-const styles = StyleSheet.create({
-  container: {
-    // backgroundColor: "#DCDCDC",
-  },
-  eventList: {
-    marginTop: 20,
-    //backgroundColor: 'rgba(0,0,0,0.3)'
-  },
-  tripDetails: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%'
-  },
-  eventBox: {
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 5,
-    flexDirection: 'row',
-  },
-  eventDate: {
-    flexDirection: 'column',
-  },
-  eventDay: {
-    fontSize: 30,
-    color: "#fff",
-    fontWeight: "600"
-  },
-  eventMonth: {
-    fontSize: 20,
-    color: "#fff",
-    fontWeight: "600",
-  },
-  eventContent: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginLeft: 10,
-    backgroundColor: '#FFFFFF',
-    padding: 10,
-    borderRadius: 10
-  },
-  destination: {
-    fontSize: 15,
-    color: "#646464",
-  },
-  eventDateTime: {
-    fontSize: 18,
-    color: "#151515",
-  },
-  description: {
-    fontSize: 16,
-    color: "#151515",
-  },
-  noDataText: {
-    height: '50%',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-});

@@ -1,4 +1,11 @@
+import { profileLoadStyles } from "screens/user/Auth/styles";
+
 export default {
+  //Common
+
+  continue : "Continue",
+
+  //Order
 
   trackYourOrder : "Track your order",
   sendABike : "Send a bike to go collect and deliver a package to your location.",
@@ -10,9 +17,31 @@ export default {
   couldNotFindOrder : "We couldn't find any request linked to that tracking number.\nPlease check your order number or contact admin for any queries.",
   oops : "Oops...",
   poweredBy : "Powered by :",
+  
+  //Progress
 
+  hasPlacedOrder : "{0} has confirmed the prices and stock availability. Press continue to confirm your order.",
+  waitForConfirmation : "We have to wait for {0} to confirm the prices and stock availability",
+  yourSummary : "Your Order Summary",
+  yourItems : "Items Cost",
+  deliveryFee : "Delivery Fee",
+  orderTotal : "Order Total",
+  trackingNo :  "Order Tracking Number :",
+  delivered : "Delivered",
+  parcelDelivered : "Your parcel has been delivered.",
+  parcelCollected : "Your parcel has been collected and trhe driver is on route to drop it off.",
+  orderConfirmed : "A driver has accepted your order and is  going to collect your parcel.",
+  waitingForDriver : "Waiting for drivers confirmation of your request.",
+  yourShoppingList : "Your Shopping List",
+  confirmYourOrder : "Confirm Your Order",
+  paymentMethod : "Payment Method",
+  noDrivers : "Looks like all our drivers are busy at the moment",
+  driverWillCollect: "The driver will collect a total of ",
+  onDelivery: " on delivery.",
+  haveTheChange: "Please make sure you make the right change with you.",
 
   //About Us
+
   aboutUs : "About Us",
   aim : "Aim",
   vision : "Vision",
@@ -22,6 +51,15 @@ export default {
   aboutUs2 : "To make life easier.",
   aboutUs3 : "A self-reliant delivering company" ,
   aboutUs4 : "We are committed to doing the right thing always. Our values are the foundation for who we are, what we do and how we operate.",
-  aboutUs5 : "Our customers come’s first, they are the reason for our existence. We demonstrate our gratitude by giving them high quality and superior service at all times. "
+  aboutUs5 : "Our customers come’s first, they are the reason for our existence. We demonstrate our gratitude by giving them high quality and superior service at all times.",
 
+  //User and Profile
+  profileLoadTitle : "Register Your Name",
+
+  //History and Details
+  noOrderHistory : "No order history.",
+
+  //Payment
+  proceed : "Proceed",
+  addCard : "Add Card"
 }

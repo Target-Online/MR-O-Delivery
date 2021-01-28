@@ -154,6 +154,3 @@ class ConfirmItems extends Component<IProps> {
 }
 
 export default withAppContext(ConfirmItems)
-
-
-

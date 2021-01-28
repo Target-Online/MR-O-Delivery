@@ -1,6 +1,5 @@
 import {StyleSheet} from "react-native"
 import { Colors } from 'constants'
-import shadow from 'utils/shadow';
 
 const profileLoadStyles = StyleSheet.create({
     saveBtn : { 
