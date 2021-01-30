@@ -15,9 +15,7 @@ import { O2A } from "object-to-array-convert";
 import { registerForPushNotificationsAsync , sendPushNotification } from "api/notifications";
 
 export const ContextConsumer = AppContext.Consumer
-export type IContextProps = {
-    context : IAppContext
-}
+export type IContextProps = { context : IAppContext}
 
 require('firebase/firestore')
 
@@ -34,7 +32,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         const [alertBoxData , setAlertData] = useState<IAlertProps>({  text: "string",buttons : [ {label : "Test",onPress : ()=>{}} ],title : "test title",})
         const [showAlert , setShowAlert] = useState<boolean>(false)
         const [expoPushToken, setExpoPushToken] = useState('')
-        const [currentUser, setCurrentUser] = useState()
+        const [currentUser, setCurrentUser] = useState<IUser>()
         const [loadingUser, setLoadingUser] = useState(true)
         const [order, setOrder] = useState({})
         const [userInRating, setUserInRating] = useState({})
@@ -67,8 +65,7 @@ const AppContextProvider : React.SFC = ({children}) => {
             initSound()
             setLoadingUser(true)
             reloadData()
-            var ref = firebase.database().ref("users");
-            ref.on('value', function(snapshot) {
+            firebase.database().ref("users").on('value', function(snapshot) {
                 const  user = firebase.auth().currentUser
                 setUsers({ type: "setData", data: O2A(snapshot) })
                 storeUser(user)
@@ -81,11 +78,9 @@ const AppContextProvider : React.SFC = ({children}) => {
             firebase.auth().onAuthStateChanged((user: any) => {   
                 storeUser(user)      
                 Notifications.getExpoPushTokenAsync().then((data)=>{
-                    const token = data.data
                     if (user){
-                        const {phoneNumber} = user
-                        firebase.database().ref(`/users/`).child(phoneNumber).update({
-                        expoToken : token})
+                        firebase.database().ref(`/users/`).child(user.phoneNumber).update({
+                        expoToken : data.data})
                     }
                 }).catch(e =>{})
                 setTimeout(()=> setLoadingUser(false) , 3000)           
@@ -105,8 +100,7 @@ const AppContextProvider : React.SFC = ({children}) => {
         }
 
         const getAllDrivers = () => {
-            firebase.database().ref(`/users/`)
-                .once('value').then((snapshot: { val: () => any; }) => {
+            firebase.database().ref(`/users/`).once('value').then((snapshot: { val: () => any; }) => {
                     let users = snapshot.val() 
                     let drivers = []
                     for (var id in users){
@@ -122,60 +116,39 @@ const AppContextProvider : React.SFC = ({children}) => {
 
         const isUserDriver = (phoneNumber : string) =>{
             getAllDrivers()
-            let isDriver = drivers.filter(driver => driver.phoneNumber === phoneNumber ).length > 0
-            return isDriver
+            return drivers.some(driver => driver.phoneNumber === phoneNumber )
         }
         
         const updateOrderStatus = (orderId : string, updatedOrder : IOrder) => {
-            firebase.database()
-            .ref(`/orders/`).child(orderId)
-            .update({...updatedOrder})
-            .then((snapshot: any) => {  
+            firebase.database().ref(`/orders/`).child(orderId).update({...updatedOrder}).then((snapshot: any) => {  
                     setOrder(snapshot.val())             
-                }).catch((err: any)=>{                  
-
-            });
+                }).catch((err: any)=>{ });
         }
 
         const updateDriverStatus = ( update : { key :[string] ; value : boolean}) => {
-            const {phoneNumber} = currentUser
-            firebase.database().ref(`/users/`).child(phoneNumber)
-            .update({...update}).then((snapshot: any) => {  
-                          
-            }).catch((err: any)=>{                  
-            })
+            firebase.database().ref(`/users/`).child(currentUser?.phoneNumber)
+            .update({...update}).then(() => { }).catch((err: any)=>{ })
         }
 
         const toggleDriverAvailability = (phoneNumber : string, updatedDriverState : IUser) => {
-            firebase.database().ref(`/users/`).child(phoneNumber)
-            .set({...updatedDriverState})
-            .then((snapshot: any) => {              
-            }).catch((err: any)=>{          
-            });
+            firebase.database().ref(`/users/`).child(phoneNumber).set({...updatedDriverState}).then((snapshot: any) => {              
+            }).catch((err: any)=>{ });
         }
       
         const sendRequest = async (id : string , theOrder: IOrder, onSuccess : () => void ,onFailure : () => void ) => {
             const orderID = (id)
             setOrder(theOrder)
             setOrderNumber(orderID)
-            firebase.database()
-                .ref(`orders/`).child(orderID)
-                .set({...theOrder,
-                    createdAt : moment(new Date()).toString()
-                })
-                .then((snapshot: any) => {
-                    onSuccess()
-                }).catch((err: any)=>{
-                    onFailure()
-            });
+            firebase.database().ref(`orders/`).child(orderID).set({...theOrder,createdAt : moment(new Date()).toString()})
+            .then((snapshot: any) => {  onSuccess() })
+            .catch((err: any)=>{ onFailure() });
         }
 
         const updateUserProfile = ( id : string, updatedUser :  IUser ) => {
-            firebase.database().ref(`users/${id}`).update(updatedUser).then((ref: any)=>{
-            }).catch((err: any) => {})
+            firebase.database().ref(`users/${id}`).update(updatedUser).then((ref: any)=>{}).catch((err: any) => {})
         }
 
-        const driverCheck = (phoneNumber : string) => users.data.some(u =>  u.id == phoneNumber && u.isDriver)
+        const driverCheck = (phoneNumber : string) => users.data.some((u : IUser) =>  u.id == phoneNumber && u.isDriver)
 
         return (
             <AppContext.Provider
@@ -195,10 +168,9 @@ const AppContextProvider : React.SFC = ({children}) => {
                 {children}
             </AppContext.Provider>
         )
-  };
+};
 
 export default AppContextProvider
-
 
 export const withAppContext = (Component : React.Component) => {
 
@@ -209,7 +181,6 @@ export const withAppContext = (Component : React.Component) => {
             )}
         </ContextConsumer>
     )
-
     return Wrapper
 }
 
