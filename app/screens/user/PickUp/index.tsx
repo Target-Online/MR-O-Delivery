@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput,FlatList } from 'react-native'
+import { Modal, TouchableOpacity as Btn,View,Text,TextInput,FlatList, SafeAreaView } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import TruckIcon from '../../../assets/icons/TruckIcon'
 import PinIcon from '../../../assets/icons/PinIcon'
@@ -9,50 +9,15 @@ import Loader from '../../../components/loader'
 import BackScreen from '../../../layouts/BackScreen'
 import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
-import { SafeAreaView } from 'react-native-safe-area-context'
-
-const shadow =  {
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 2
-    },
-    elevation: 10
-  }
+import Points from 'screens/driver/OrderProgress/Points'
+import strings from '@constants/strings'
+import { IOrder } from 'types'
+import styles from "./styles"
+import AddressInput from '@components/AdressInput'
 
 interface IProps { title?: string;} 
-interface IOrderItem {
-  name : string;
-  description?:string 
-}
-
-export interface IVehicle {
-  registration : string ; 
-  brand : string;
-  model : string;
-}
-
-interface IUser {
-  name : string;
-  vehicel : IVehicle;
-  location ?: any;
-  status : "busy" | "vacant" | "offline"
-}
-
-export interface IOrder {
-  orderId : string;
-  customer : any;
-  pickUpAddress: any;
-  dropOffAddress :  any;
-  driver?: IUser;
-  orderType : "Pick-Up" | "Shopping";
-  status: string;
-  items : any[]
-}
 
 type Props = IProps & StackScreenProps<{navigation : any}> &  IContextProps;
 
@@ -68,8 +33,8 @@ class PickUp extends React.Component<Props, IState> {
     state = {
       isModalVisible : false,
       authType: "signIn",
-      pickUp : "",
-      dropOff : "",
+      pickUp : {},
+      dropOff : {},
       orderType : "Pick-Up",
       item : {
         name : "",
@@ -79,108 +44,60 @@ class PickUp extends React.Component<Props, IState> {
       showPlaces: false
     }
 
-    componentDidMount(){
-    }
-
-    closeModal = () =>{
-      this.setState({isModalVisible : false})
-    }
+    closeModal = () =>{ this.setState({isModalVisible : false})}
 
     renderPlacesModal(){
       const {addressKey} = this.state
       const addressLabel = addressKey === "pickUp" ? "Pick Up Address" : "Delivery Address"
       return(
-        <Modal
-            visible={this.state.showPlaces}
-            animationType="fade"
-            keyboardShouldPersistTaps='always'
-        >
-        <SafeAreaView style={{flex : 1 , width : "100%"}}>
-          <View style={{height : 64, width : "100%",alignItems: "center",flexDirection:"row",justifyContent : "space-between",paddingHorizontal : 16 }} >
-             <Btn 
-                onPress={()=>{ this.setState({showPlaces : false})}}
-                style={{width : 26,height : 26,marginTop :4}}>
-                <Ionicons name="md-arrow-round-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
-             </Btn>
-             <Text>
-               {addressLabel}
-             </Text>
-             <Btn style={{width : 40,height : 40}} ></Btn>
-          </View>
-          <GooglePlacesAutocomplete
-            placeholder="Search"
-
-            onFail={(error)=>{
-            }}
-            minLength={2} // minimum length of text to search
-            autoFocus={false}
-            returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-            listViewDisplayed={false} // true/false/undefined
-            fetchDetails={true}
-            // renderDescription={row => row.description} // custom description render
-            onPress={(data, details) => {
-              this.setState({[addressKey] :  {...data , ...details}})
-              this.setState({showPlaces:false})
-            }}
-            query={{
-              key: 'AIzaSyDQBBCtTFs_pu7bJamKGWgEVaCf5KC_7LA',
-              language: 'en', // language of the results
-            }}
-            nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-            GoogleReverseGeocodingQuery={{
-              // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-            }}
-            GooglePlacesSearchQuery={{
-              // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-              rankby: 'distance',
-              types: 'food',
-            }}
-            filterReverseGeocodingByTypes={[
-              'locality',
-              'administrative_area_level_3',
-            ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-            predefinedPlaces={[homePlace, workPlace]}
-            debounce={200}
-          />
-        </SafeAreaView>
-      </Modal>
+        <Modal visible={this.state.showPlaces} animationType="fade" >
+          <SafeAreaView style={{flex : 1 , width : "100%"}}>
+            <View style={styles.autoComplete} >
+              <Btn onPress={()=>{ this.setState({showPlaces : false})}} style={styles.backBtnStyle}>
+                  <Ionicons name="md-arrow-round-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
+              </Btn>
+              <Text>
+                {addressLabel}
+              </Text>
+              <Btn style={{width : 40,height : 40}} ></Btn>
+            </View>
+            <AddressInput
+              onPress={(data, details) => {
+                this.setState({[addressKey] :  {...data , ...details}})
+                this.setState({showPlaces:false})
+              }}
+            />
+          </SafeAreaView>
+        </Modal>
       )
     }
 
-    openSearchModal(key : string) {
-      this.setState({showPlaces :  true , addressKey : key})
-    }
+    openSearchModal(key : string) { this.setState({showPlaces :  true , addressKey : key})}
   
     renderAddress(){
-
-      const {isModalVisible , authType} = this.state
+      const {isModalVisible } = this.state
       return(
         <Modal 
-          animated
-          key="mod"
+          animated key="mod"
           animationType="slide"
           visible={isModalVisible}
           onRequestClose={()=> this.closeModal()}
         >
           <View style={{width : "100%",flex :1}}>
-            <View style={{width : "100%" , alignItems : "flex-end",paddingVertical: 36,paddingHorizontal  :24, backgroundColor : "#fff", ...shadow}}>
-              <View style={{width: "100%",justifyContent : "space-between", alignSelf : "center",alignItems : "center", flexDirection : "row"}}>
+            <View style={styles.addressTop}>
+              <View style={styles.addressTopRow}>
                 <Btn style={styles.backBtnStyle} onPress={()=> this.closeModal()}>
                   <Icon name="arrow-back" color="#000" style={{fontSize : 24, fontWeight : "600"}} size={24} />
                 </Btn>
                 <View style={{alignItems : "center"}}>
                   <LocationIcon />
-                  <Text style={{fontSize : 16, fontWeight : "600"}}>Set addresses</Text>
+                  <Text style={{fontSize : 16, fontWeight : "600"}}>{strings.setAddresses}</Text>
                 </View>
                 <Btn style={styles.backBtnStyle} onPress={()=> this.closeModal()} />
               </View>
 
-              <View style={{ flexDirection : "row", height : 100,justifyContent:"space-between", marginTop : 16}}>
-                <View style={{width:  20,marginRight : 8,justifyContent:"space-between",paddingVertical:10 ,alignItems: "flex-start"}}>
-                  <View style={{width:8,height:8,borderRadius:4,backgroundColor :"#000" }} />
-                  <View style={{width:1,height:44,marginLeft : 3.5,borderRadius:4,backgroundColor :"rgba(0,0,0,0.5)" }} />
-                  <View style={{width:8,height:8,backgroundColor :"#000" }} />
-                </View>
+              <View style={styles.addressBottom}>
+                <Points/>
                 <View style={{flex:1,justifyContent  :"space-between",backgroundColor : "#fff" }}> 
                     <View style={[styles.textAreaStyles,styles.addressInputWrapper]} >
                           <TextInput placeholder="Pick Up Address"   style={styles.addressInput} />  
@@ -191,7 +108,6 @@ class PickUp extends React.Component<Props, IState> {
                           <Icon name="ios-close-circle-outline"  size={22} />
                     </View>
                 </View>
-
               </View>
             </View>
             <FlatList
@@ -205,121 +121,89 @@ class PickUp extends React.Component<Props, IState> {
                       <Text style={{fontSize : 12,marginLeft : 8, color : "rgba(0,0,0,0.5)"}} >{'city'}</Text>
                     </View>
                   </View>
-                )}        
-            />
-           
+                )}/>
           </View>
         </Modal>
       )
     }
 
-    openModal(authType : string){
-        this.setState({authType, isModalVisible : true})
-    }
+    openModal(authType : string){this.setState({authType, isModalVisible : true})}
 
     renderAddressSelector = (addressVariant:string , key : string ) =>{
-
       const address = this.state[key].address || this.state[key].description
       
       return [  
         <View style={{width : "100%", marginVertical : 8}}>
+          <Text style={styles.addressVariant} >
+            {addressVariant}
+          </Text>
+          <View style={styles.addressVariantTrigger} >
 
-        <Text style={{fontSize : 12, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
-          {addressVariant}
-        </Text>
-        <View style={{width : "100%", height : 43, borderRadius : 8, flexDirection : "row",backgroundColor : "rgba(0,0,0,0.035)",
-              alignItems:"center" ,borderWidth : 2, borderColor: "#f9f9f9", paddingHorizontal : 16 }} >
-
-          <Btn onPress={()=>{
-              this.openSearchModal(key)
-            }} 
-            style={{ flex : 1, height : 43, justifyContent : "center" , paddingVertical : 2}}>
-            <Text numberOfLines={2} style={{ fontSize : 10 , color : address?  "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)"}} >
-              {address || `Select ${addressVariant}`}
-            </Text>
-          </Btn>
-          <PinIcon />
-        </View>
+            <Btn onPress={()=>{ this.openSearchModal(key)}} 
+              style={{ flex : 1, height : 43, justifyContent : "center" , paddingVertical : 2}}>
+              <Text numberOfLines={2} style={{ fontSize : 10 , color : address?  "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)"}} >
+                {address || `Select ${addressVariant}`}
+              </Text>
+            </Btn>
+            <PinIcon />
+          </View>
         </View>
       ]
     }
 
     processOrderPlacement = () => {
-      const {pickUp , dropOff ,item : {name , description},item, orderType} = this.state
-      if (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item)){
-
-
-      }
+      const {pickUp , dropOff ,item : {name , description},item } = this.state
+      if (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item)) return
       else{
-        const {context : {profile ,setOrder,currentUser,generateOrderId}} = this.props
+        const {context : { setOrder,currentUser,generateOrderId}} = this.props
         const {phoneNumber, displayName} = currentUser
         const orderId = generateOrderId(phoneNumber)
 
         const newOrder : IOrder = {
             orderId,
-            // orderType ,
-            driver : {},
             pickUpAddress : pickUp,
             dropOffAddress : dropOff,
-            items : [{
-              name,
-              description
-            }],
+            items : [{ name, description}],
             customer : {phoneNumber,displayName},
             total : 1250,
             status : "pending"
-            
         }
         setOrder(newOrder)
         this.props.navigation.navigate("Payment")
-
       }
-      
     }
 
     render(){
 
-        const {pickUp , dropOff ,item : {name , description},item, orderType} = this.state
-        const {context : {profile , order,setOrder,currentUser,generateOrderId}} = this.props
-        const {phoneNumber} = currentUser
-        const orderId = generateOrderId(phoneNumber)
+        const {pickUp , dropOff ,item : {name , description},item } = this.state
         const dislabled = (_.isEmpty(pickUp) || _.isEmpty(dropOff) || _.isEmpty(item) || !name || !description)
         return [
           this.renderPlacesModal(),
           <Loader visible={false} /> ,          
           <BackScreen
             {...this.props}
-            title="Request Delivery"
+            title={strings.requestDelivery}
           >
-            <View style={{flex : 1, paddingHorizontal : 24}}>
-              <View style={{width : "100%", height:  140, flexDirection : "row",justifyContent:"flex-end" ,alignItems : "center"}}>
-                <View style={{transform:[ {scaleX : -1 }], alignSelf: "flex-start", marginTop : 8,marginBottom : 24 }}>
-                  <TruckIcon />
-                </View>
+            <View style={styles.container}>
+              <View style={styles.top}>
+                <View style={styles.truckIcon}><TruckIcon /></View>
               </View>
             
-              <Text style={styles.pickUpHeading} >
-                  {"Pick up & Drop off"}
-              </Text>
-              <Text style={{fontSize : 12, fontWeight : "400", color : "rgba(0,0,0,0.5)",alignSelf : "flex-start" }} >
-                  {"We will pick up documents, goods, electronics,groceries and whatever you need and drop off wherever you want!"}
-              </Text>
+              <Text style={styles.pickUpHeading} >{strings.pickUpTitle}</Text>
+              <Text style={styles.weWillPickUp} >{strings.weWillPickUp}</Text>
 
               <View style={{ paddingVertical : 24}} >
                 {this.renderAddressSelector("Pick-up Address","pickUp")}
                 {this.renderAddressSelector("Drop-off Address","dropOff")}
-                <Text style={{fontSize : 12, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
-                  {"Parcel Details"}
+                <Text style={styles.parcelDetails} >
+                  {strings.parcelDetails}
                 </Text>
                 <View style={[styles.textAreaStyles,{height : 42,marginVertical : 8,paddingVertical: 2}]} >              
                     <TextInput 
                       value={name}
-                      onChangeText={(text)=> { 
-                        const item  = {name : text, description}
-                        this.setState({item })
-                       }}
-                      placeholder={"Item Name"} 
-                      style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "center"}}
+                      onChangeText={(name)=> { this.setState({item : {name, description}})}}
+                      placeholder={strings.itemName} 
+                      style={styles.itemName}
                     />        
                 </View>
                 <View style={styles.textAreaStyles} >              
@@ -331,93 +215,27 @@ class PickUp extends React.Component<Props, IState> {
                         this.setState({item})
                        }}
                       multiline  
-                     style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "top"}} />        
+                     style={styles.itemDescriptionInput} />        
                 </View>
                 <Btn 
-                    disabled={dislabled}
-                      onPress={()=>{ 
-                          this.processOrderPlacement()
-                      }} 
-                      style={{width : "100%", height : 42 , opacity : dislabled ? 0.6 : 1,  borderRadius : 4, marginTop : 12,
-                      backgroundColor : "#F57301",alignItems : "center", justifyContent : "center" 
-                      }}>
-                    <Text style={{fontSize :  13 ,color : "#fff" , fontWeight : "600"}}>
-                      Continue
-                    </Text>
+                  disabled={dislabled}
+                  onPress={()=>{ this.processOrderPlacement()}}   style={[styles.continue,{opacity : dislabled ? 0.6 : 1}]}>
+                  <Text style={styles.continueTxt}>{strings.continue} </Text>
                 </Btn>
               </View>
             </View>  
           </BackScreen>
         ]
     }
-
 };
-
-const randomNum =  Math.floor(Math.random() * Math.floor(100));
 
 export default withAppContext(PickUp)
 
-const styles = StyleSheet.create({
-    activeTextStyle:{
-        color : 'red'
-    },
-    backBtnStyle:{
-      alignSelf : "flex-start",
-      width : 30,height: 30
-    },
-    pickUpHeading: {
-      fontSize : 22, fontWeight : "700",
-      color : "rgba(0,0,0,0.8)",
-      alignSelf : "flex-start",
-      marginBottom : 8 
-    },
-    addressResultsItem : { 
-      height :  54, borderBottomColor : "rgba(0,0,0,0.09)", 
-      borderBottomWidth :  0.5, flexDirection : "row",
-      alignItems : "center",
-    },
-    addressInputWrapper: { 
-      height : 38, flex :0, 
-      backgroundColor : "rgba(0,0,0,0.04)",
-      borderRadius : 2  ,paddingVertical : 0
-    },
-    addressInput : { 
-      flex : 1 ,
-      fontSize :  14, height: "100%",
-      textAlignVertical : "center"
-    },
-    textAreaStyles:{
-      flex : 1, height : 243, 
-      borderRadius : 8,paddingVertical: 16,
-      flexDirection : "row",backgroundColor : "rgba(0,0,0,0.035)",
-      alignItems:"center" ,borderWidth : 2, borderColor: "#f9f9f9", 
-      paddingHorizontal : 16 
-    },
-    container: {
-      flex : 1 ,
-      paddingTop : 42,
-      backgroundColor : "#FEFEFE", 
-      paddingHorizontal : 24,
-      paddingVertical : 36,
-      alignItems : "center"
-    },
-    btnStyle:{ 
-      width: 250, height: 86,
-      borderRadius: 3, ...shadow,
-      backgroundColor :"#fff",alignItems : "center",
-      justifyContent : "flex-start", 
-      flexDirection : "row", paddingHorizontal : 24 
-    },
-    tabStyle : { 
-      backgroundColor : 'white'}
-  
-  })
-
-  const homePlace = {
-    description: 'Home',
-    geometry: { location: { lat: 48.8152937, lng: 2.4597668 } },
-  };
-  const workPlace = {
-    description: 'Work',
-    geometry: { location: { lat: 48.8496818, lng: 2.2940881 } },
-  };
+const homePlace = {
+  description: 'Home',
+  geometry: { location: { lat: 48.8152937, lng: 2.4597668 } },
+};
+const workPlace = {
+  description: 'Work',
+  geometry: { location: { lat: 48.8496818, lng: 2.2940881 } },
+};

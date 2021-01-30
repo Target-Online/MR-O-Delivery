@@ -17,6 +17,15 @@ export default {
   couldNotFindOrder : "We couldn't find any request linked to that tracking number.\nPlease check your order number or contact admin for any queries.",
   oops : "Oops...",
   poweredBy : "Powered by :",
+  itemName : "Item Name",
+  parcelDetails : "Parcel Details",
+  addItem : "Add Item",
+  descriptionQty : "Description/Quantity",
+  storeInstructions : "Store instructions",
+  storeDetails : "Store Details",
+  weWillBuy : "We will buy the items you need and drop off wherever you want!",
+  shopAndDrop : "Shop & Drop off",
+  storeName : "Store Name",
   
   //Progress
 
@@ -39,6 +48,8 @@ export default {
   driverWillCollect: "The driver will collect a total of ",
   onDelivery: " on delivery.",
   haveTheChange: "Please make sure you make the right change with you.",
+  setAddresses : "Set addresses",
+  emptyBasketCopy : "Add items to your shopping list and\nlet's get you what you need.",
 
   //About Us
 
@@ -54,12 +65,20 @@ export default {
   aboutUs5 : "Our customers come’s first, they are the reason for our existence. We demonstrate our gratitude by giving them high quality and superior service at all times.",
 
   //User and Profile
+
   profileLoadTitle : "Register Your Name",
+  pickUpTitle : "Pick up & Drop off",
 
   //History and Details
+
   noOrderHistory : "No order history.",
+  weWillPickUp : "We will pick up documents, goods, electronics,groceries and whatever you need and drop off wherever you want!",
+  requestDelivery : "Request Delivery",
 
   //Payment
+
   proceed : "Proceed",
-  addCard : "Add Card"
+  addCard : "Add Card",
+
+
 }

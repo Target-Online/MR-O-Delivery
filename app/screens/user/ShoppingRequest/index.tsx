@@ -1,37 +1,28 @@
 
 import React from 'react'
-import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput,FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import { Modal,TouchableOpacity as Btn,View,Text,TextInput,FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import TruckIcon from '../../../assets/icons/TruckIcon'
 import PinIcon from '../../../assets/icons/PinIcon'
 import BagIcon from '../../../assets/icons/BagIcon'
 import { AntDesign } from '@expo/vector-icons';
 import Loader from '../../../components/loader'
 import BackScreen from '../../../layouts/BackScreen'
-import { IContextProps, mockOrder, withAppContext } from '../../../AppContext'
+import { IContextProps, withAppContext } from '../../../AppContext'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../../../constants'
-import { IOrder, IUser } from 'types'
+import {  IUser } from 'types'
 import AddItemPrompt from './AddItemComponent'
 import { getPreciseDistance } from 'geolib';
 import { GeolibInputCoordinates } from 'geolib/es/types'
 import { getOrderTotal, showNoDriversAlert } from  '../../../utils/orderModules'
 import ShoppingListItem from '../../../components/ShoppingListItem'
 import { database } from 'firebase'
-
-const shadow =  {
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 2
-    },
-    elevation: 10
-  }
+import strings from '@constants/strings'
+import styles from "./styles"
+import AddressInput from '@components/AdressInput'
 
 interface IProps { title?: string;} 
 
@@ -74,7 +65,6 @@ class ShoppingRequest extends React.Component<Props, IState> {
         <Modal
             visible={this.state.showPlaces}
             animationType="fade"
-            keyboardShouldPersistTaps='always'
         >
           <SafeAreaView style={{flex : 1 , width : "100%"}}>
             <View style={styles.placesModalHeader} >
@@ -88,87 +78,42 @@ class ShoppingRequest extends React.Component<Props, IState> {
               </Text>
               <Btn style={{width : 40,height : 40}} ></Btn>
             </View>
-            <GooglePlacesAutocomplete
-              placeholder="Search"
-
-              onFail={(error)=>{
-
-              }}
-              minLength={2} // minimum length of text to search
-              autoFocus={false}
-              returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-              listViewDisplayed={false} // true/false/undefined
-              fetchDetails={true}
-              // renderDescription={row => row.description} // custom description render
+            <AddressInput
               onPress={(data, details) => {
                 this.setState({[addressKey] :  {...data , ...details}})
                 this.setState({showPlaces:false})
               }}
-
-              query={{
-                // available options: https://developers.google.com/places/web-service/autocomplete
-                key: 'AIzaSyDQBBCtTFs_pu7bJamKGWgEVaCf5KC_7LA',
-                language: 'en', // language of the results
-                // types: '(cities)', // default: 'geocode'
-              }}
-
-              nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-              GoogleReverseGeocodingQuery={{
-                // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-              }}
-              GooglePlacesSearchQuery={{
-                // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-                rankby: 'distance',
-                types: 'food',
-              }}
-              filterReverseGeocodingByTypes={[
-                'locality',
-                'administrative_area_level_3',
-              ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-              predefinedPlaces={[homePlace, workPlace]}
-              debounce={200}
             />
           </SafeAreaView>
       </Modal>
       )
     }
 
-    openSearchModal(key : string) {
-      this.setState({showPlaces :  true , addressKey : key})
-    }
+    openSearchModal(key : string) { this.setState({showPlaces :  true , addressKey : key}) }
   
-    openModal(authType : string){
-        this.setState({authType, isModalVisible : true})
-    }
+    openModal(authType : string){ this.setState({authType, isModalVisible : true})}
 
-    renderLoader(){
-      const {loaderVisible} = this.state
-      return(
-          <Loader visible={loaderVisible === true} button={{text : "Cancel" , onPress :()=>{}}} text={"Requesting a driver"} />)
-    }
+    renderLoader = () => <Loader visible={this.state.loaderVisible} button={{text : "Cancel" , onPress :()=>{}}} text={"Requesting a driver"} />
 
     renderAddressSelector = (addressVariant:string , key : string ) =>{
-
       const address = this.state[key].address || this.state[key].description
       
       return [  
         <View style={{width : "100%", marginVertical : 8}}>
-
-        <Text style={{fontSize : 12, fontWeight : "700", color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", marginBottom : 8 }} >
-          {addressVariant}
-        </Text>
-        <View style={styles.addressSelector} >
-
-          <Btn onPress={()=>{
-              this.openSearchModal(key)
-            }} 
-            style={{ flex : 1, height : 43, justifyContent : "center" , paddingVertical : 2}}>
-            <Text numberOfLines={2} style={{ fontSize : 10 , color : address?  "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)"}} >
-              {address || `Select ${addressVariant}`}
-            </Text>
-          </Btn>
-          <PinIcon />
-        </View>
+          <Text style={styles.addressVariant} >
+            {addressVariant}
+          </Text>
+          <View style={styles.addressSelector} >
+            <Btn onPress={()=>{
+                this.openSearchModal(key)
+              }} 
+              style={{ flex : 1, height : 43, justifyContent : "center" , paddingVertical : 2}}>
+              <Text numberOfLines={2} style={{ fontSize : 10 , color : address?  "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)"}} >
+                {address || `Select ${addressVariant}`}
+              </Text>
+            </Btn>
+            <PinIcon />
+          </View>
         </View>
       ]
     }
@@ -181,10 +126,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
 
     convertLocation = (location : {lat: string, lng:string}) => ({ latitude : location.lat, longitude : location.lng})
 
-    getTotalDistance = (pickUp: GeolibInputCoordinates, dropOff: GeolibInputCoordinates) =>{
-        var dis = getPreciseDistance(pickUp,dropOff)+ 300 //distance off by 200 metres
-        return (dis)/1000
-    }
+    getTotalDistance = (pickUp: GeolibInputCoordinates, dropOff: GeolibInputCoordinates) => (getPreciseDistance(pickUp,dropOff)+ 300 )/1000
 
     processRequest = () => {
 
@@ -216,9 +158,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
               myOrder.driver = freeDrivers[0]
               setOrder(myOrder)
               sendRequest(orderId, myOrder, ()=>{
-                this.onOrderUpdated = database()
-                .ref(`/orders/${orderId}`)
-                .on('value', (snapshot: { val: () => any; key: any; }) => {
+                this.onOrderUpdated = database().ref(`/orders/${orderId}`).on('value', (snapshot: { val: () => any; key: any; }) => {
                   const order = snapshot.val()
                   if(order){
                     if (order.status === "confirmed"){
@@ -239,13 +179,10 @@ class ShoppingRequest extends React.Component<Props, IState> {
       }
     }
 
-    newItemPrompt = () => {
-      this.setState({showPrompt : true})
-    }
+    newItemPrompt = () => { this.setState({showPrompt : true})}
 
     removeItem = (index : number) => {
-      const {items} = this.state
-      let itemsCopy = [...items]
+      let itemsCopy = [...this.state.items]
       delete itemsCopy[index]
       itemsCopy = itemsCopy.filter((i)=> i)
       this.setState({items : itemsCopy})
@@ -266,14 +203,10 @@ class ShoppingRequest extends React.Component<Props, IState> {
 
     renderListEmpty = () => {
       return(
-          <View 
-            style={{ width : "100%", height : 180,
-              alignItems : "center",justifyContent : "center"
-            }}
-          >
+          <View style={styles.emptyList}>
             <BagIcon />
             <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
-              {"Add items to your shopping list and\nlet's get you what you need."}
+              {strings.emptyBasketCopy}
             </Text>
           </View>
         )
@@ -288,11 +221,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
           this.renderPlacesModal(),
           this.renderAddItemPrompt(),
           <Loader text={"Requesting a driver."} onCancel={()=> this.handleCancel()} visible={loaderVisible} />,          
-          <BackScreen
-            {...this.props}
-            inputRefs={[this.storeDetsRef, this.storeInstructionsRef]}
-            title="Request Delivery"
-          >
+          <BackScreen {...this.props} title="Request Delivery">
             <View style={{flex : 1, paddingHorizontal : 24}}>
               <View style={{width : "100%", height:  140, flexDirection : "row",justifyContent:"flex-end" ,alignItems : "center"}}>
                 <View style={{transform:[ {scaleX : -1 }], alignSelf: "flex-start", marginTop : 8,marginBottom : 24 }}>
@@ -300,18 +229,14 @@ class ShoppingRequest extends React.Component<Props, IState> {
                 </View>
               </View>
             
-              <Text style={styles.pickUpHeading} >
-                  {"Shop & Drop off"}
-              </Text>
-              <Text style={styles.subHead} >
-                  {"We will buy the items you need and drop off wherever you want!"}
-              </Text>
+              <Text style={styles.pickUpHeading} >{strings.shopAndDrop}</Text>
+              <Text style={styles.subHead} >{strings.weWillBuy}</Text>
 
               <View style={{ paddingVertical : 24}} >
                 {this.renderAddressSelector("Store Address","pickUp")}
                 {this.renderAddressSelector("Delivery Address","dropOff")}
                 <Text style={styles.subtitles} >
-                  {"Store Details"}
+                  {strings.storeDetails}
                 </Text>
                 <KeyboardAvoidingView 
                   behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -321,10 +246,8 @@ class ShoppingRequest extends React.Component<Props, IState> {
                   <TextInput 
                     ref={r => { this.storeDetsRef = r }}
                     value={storeName}
-                    onChangeText={(storeName)=> { 
-                      this.setState({storeName})
-                    }}
-                    placeholder={"Store Name"} 
+                    onChangeText={(storeName)=> {  this.setState({storeName})}}
+                    placeholder={strings.storeName} 
                     style={{ fontSize :  12, height: "100%", flex : 1 ,textAlignVertical : "center"}}
                   />     
                   </TouchableWithoutFeedback>     
@@ -337,7 +260,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
                     <TextInput 
                       ref={r => { this.storeInstructionsRef = r }}
                       value={instructions}
-                      placeholder={"Store instructions"}  
+                      placeholder={strings.storeInstructions}  
                       onChangeText={(instructions)=> { 
                         this.setState({instructions})
                        }}
@@ -350,9 +273,7 @@ class ShoppingRequest extends React.Component<Props, IState> {
                 <Text style={styles.subtitles} >{"Shopping List"}</Text>
                 <FlatList 
                     data={items}
-                    contentContainerStyle={{
-                      flex : 1,width : "100%"
-                    }}
+                    contentContainerStyle={{flex : 1,width : "100%" }}
                     ListEmptyComponent={this.renderListEmpty()}
                     style={{flex : 1, width : "100%"}}
                     renderItem={({item,index})=>(
@@ -364,12 +285,10 @@ class ShoppingRequest extends React.Component<Props, IState> {
                 </Btn>
 
                 <Btn disabled={dislabled}
-                    onPress={()=>{ 
-                          this.processRequest()
-                    }} 
+                    onPress={()=>{  this.processRequest()}} 
                       style={[styles.continueBtn, {opacity : dislabled ? 0.6 : 1}]}>
                     <Text style={styles.continueBtnText}>
-                      Continue
+                      {strings.continue}
                     </Text>
                 </Btn>
               </View>
@@ -377,119 +296,9 @@ class ShoppingRequest extends React.Component<Props, IState> {
           </BackScreen>
         ]
     }
-
 };
 
-
 export default withAppContext(ShoppingRequest)
-
-const styles = StyleSheet.create({
-    activeTextStyle:{
-        color : 'red'
-    },
-    itemInput : { 
-      fontSize :  12, height: 56,
-      flex : 1, textAlignVertical : "center"
-    },
-    addressSelector : {
-      width : "100%", height : 43,
-      borderRadius : 8, flexDirection : "row",
-      backgroundColor : "rgba(0,0,0,0.035)",
-      alignItems:"center" ,borderWidth : 2, 
-      borderColor: "#f9f9f9", paddingHorizontal : 16
-    },
-    closeIcon : {
-      width : 50 ,height : 50,
-      borderRadius : 25 , position: "absolute" ,
-      top: 4,right: 4,alignItems : "center",justifyContent : "center"
-    },
-    placesModalHeader: { 
-      height : 64, width : "100%",
-      alignItems: "center",flexDirection:"row",
-      justifyContent : "space-between",
-      paddingHorizontal : 16 
-    },
-    addItemWrapper : {
-      width : "90%",paddingHorizontal :  24,
-      height : 260, borderRadius : 4,
-      backgroundColor : "white"
-    },
-    continueBtn : {
-      width : "100%", height : 42 , borderRadius : 4, marginTop : 12,
-    backgroundColor : "#F57301",alignItems : "center", justifyContent : "center" 
-    },
-    continueBtnText : {
-      fontSize :  13 ,color : "#fff" , 
-      fontWeight : "600"
-    },
-    backBtnStyle:{
-      alignSelf : "flex-start",
-      width : 30,height: 30
-    },
-    subHead : {
-      fontSize : 12, fontWeight : "400", 
-      color : "rgba(0,0,0,0.5)",
-      alignSelf : "flex-start" 
-    },
-    subtitles :{
-      fontSize : 12, fontWeight : "700",
-      color : "rgba(0,0,0,0.8)",alignSelf : "flex-start", 
-      marginBottom : 8 
-    },
-    addItemBtn : {
-      height :42,width : 42,alignSelf : "center",marginVertical : 4,
-      borderRadius: 21, backgroundColor : Colors.primaryOrange, 
-      justifyContent : "center",
-      alignItems : "center",...shadow
-    },
-    pickUpHeading: {
-      fontSize : 22, fontWeight : "700",
-      color : "rgba(0,0,0,0.8)",
-      alignSelf : "flex-start",
-      marginBottom : 8 
-    },
-    addressResultsItem : { 
-      height :  54, borderBottomColor : "rgba(0,0,0,0.09)", 
-      borderBottomWidth :  0.5, flexDirection : "row",
-      alignItems : "center",
-    },
-    addressInputWrapper: { 
-      height : 38, flex :0, 
-      backgroundColor : "rgba(0,0,0,0.04)",
-      borderRadius : 2  ,paddingVertical : 0
-    },
-    addressInput : { 
-      flex : 1 ,
-      fontSize :  14, height: "100%",
-      textAlignVertical : "center"
-    },
-    textAreaStyles:{
-      flex : 1, height : 103, 
-      borderRadius : 8,paddingVertical: 16,
-      flexDirection : "row",backgroundColor : "rgba(0,0,0,0.035)",
-      alignItems:"center" ,borderWidth : 2, borderColor: "#f9f9f9", 
-      paddingHorizontal : 16 , marginVertical : 8
-    },
-    container: {
-      flex : 1 ,
-      paddingTop : 42,
-      backgroundColor : "#FEFEFE", 
-      paddingHorizontal : 24,
-      paddingVertical : 36,
-      alignItems : "center"
-    },
-    btnStyle:{ 
-      width: 250, height: 86,
-      borderRadius: 3, ...shadow,
-      backgroundColor :"#fff",alignItems : "center",
-      justifyContent : "flex-start", 
-      flexDirection : "row", paddingHorizontal : 24 
-    },
-    tabStyle : { 
-      backgroundColor : 'white'
-    }
-  }
-)
 
 const homePlace = {
     description: 'Home',

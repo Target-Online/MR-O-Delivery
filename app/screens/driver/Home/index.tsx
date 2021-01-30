@@ -66,9 +66,7 @@ class Home extends React.Component<IProps, IState> {
       const {context : {currentUser :{phoneNumber , isActive, isOnline, isVacant} , playSound , setOrder}} = this.props
 
       this.setState({isOnline , isVacant , isActive})
-      this.onChildAdded = database()
-        .ref('/orders')
-        .on('child_added', async (snapshot: { val: () => any; key: any; }) => {
+      this.onChildAdded = database().ref('/orders').on('child_added', async (snapshot: { val: () => any; key: any; }) => {
           const order = snapshot.val()
           const orderId = snapshot.key
           const {status , driver } = order
@@ -92,9 +90,7 @@ class Home extends React.Component<IProps, IState> {
           }    
       })        
 
-      this.onDriverUpdated = database()
-        .ref(`/users/${phoneNumber}`)
-        .on('value', (snapshot: { val: () => any; key: any; }) => {
+      this.onDriverUpdated = database().ref(`/users/${phoneNumber}`).on('value', (snapshot: { val: () => any; key: any; }) => {
           const driver = snapshot.val()
           if(driver){
             const {isOnline, isVacant , isActive}  = driver
@@ -310,7 +306,7 @@ class Home extends React.Component<IProps, IState> {
 
     renderDeliveredOrder = () =>{
 
-      const {order : {total , paymentMethod , distance , customer}} = this.state
+      const {order : { customer }} = this.state
       const {context : { updateDriverStatus, setRatingsVisible, setUserInRating}} = this.props
 
         return(
@@ -325,19 +321,13 @@ class Home extends React.Component<IProps, IState> {
       )
     }
 
-    renderInactiveModal = () =>{
-        const { isActive } = this.state
-        return(
-          <Inactive isActive={isActive} />
-        )
-    }
+    renderInactiveModal = () =>  <Inactive isActive={this.state.isActive} />
 
     renderNewOrderModal = () => {
 
-      const {isModalVisible , newState,} = this.state
+      const {isModalVisible , newState} = this.state
       return(
         <Modal 
-          animated
           key="mod"
           transparent
           animationType="fade"
