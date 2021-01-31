@@ -1,4 +1,6 @@
+import { Colors } from "constants/"
 import {StyleSheet} from "react-native"
+import shadow from "utils/shadow"
 
 const styles = StyleSheet.create({
     emptyList : { 

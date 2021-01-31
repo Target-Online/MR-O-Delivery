@@ -1,4 +1,17 @@
-export const sendPushNotification = async =>() {
+import Constants from "expo-constants";
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+})
+  
+
+export const sendPushNotification = async () => {
     await Notifications.presentNotificationAsync({
             title: "New incoming request",
             body: '',
@@ -6,7 +19,7 @@ export const sendPushNotification = async =>() {
     })
 }
   
-export const registerForPushNotificationsAsync = async =>() {
+ export const registerForPushNotificationsAsync = async () => {
     let token;
 
     if (Constants.isDevice) {

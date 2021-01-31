@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet } from "react-native"
 import { theme } from "galio-framework"
-import { width } from "@constants/utils";
+import { width } from "constants/utils";
 
 const historyStyles = StyleSheet.create({
     container: {

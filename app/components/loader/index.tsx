@@ -1,9 +1,6 @@
 
 import React from 'react';
-import {  Modal, StyleSheet,Text,
-  TouchableOpacity as Btn,View,Dimensions, 
-} from 'react-native';
-import shadow from 'utils/shadow';
+import {  Modal, StyleSheet,Text,TouchableOpacity as Btn,View,Dimensions } from 'react-native';
 import PhoneIcon from '../../assets/icons/PhoneIcon';
 const Pulse = require('react-native-pulse').default
 
@@ -15,10 +12,7 @@ interface IProps {
 
 type Props = IProps;
 const {width} = Dimensions.get("window")
-interface IState {
-  isModalVisible: boolean;
-  authType:string;
-}
+interface IState { isModalVisible: boolean; authType:string;}
 class Loader extends React.Component<Props, IState> {
   
     render(){
@@ -53,9 +47,6 @@ class Loader extends React.Component<Props, IState> {
 export default Loader
 
 const styles = StyleSheet.create({
-    activeTextStyle:{
-        color : 'red'
-    },
     cancelBtn : {
       width : 160 , height : 36, 
       borderColor : '#F57301', borderRadius : 3,

@@ -12,10 +12,10 @@ import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/typ
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
 import Points from 'screens/driver/OrderProgress/Points'
-import strings from '@constants/strings'
+import strings from 'constants/strings'
 import { IOrder } from 'types'
 import styles from "./styles"
-import AddressInput from '@components/AdressInput'
+import AddressInput from 'components/AdressInput'
 
 interface IProps { title?: string;} 
 

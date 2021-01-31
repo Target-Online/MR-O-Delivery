@@ -8,25 +8,20 @@ import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/typ
 import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
 import UserCard from '../../../components/UserCard'
-import { styles } from " ./styles"
+import { styles } from './styles'
 import Points from 'screens/driver/OrderProgress/Points'
-import strings from '@constants/strings'
+import strings from 'constants/strings'
 import { OrderState } from 'types'
-const  { height } = Dimensions.get('window')
 
-type IProps = IContextProps &
-StackScreenProps<{navigation : any}> ;
+type IProps = IContextProps & StackScreenProps<{navigation : any}> ;
 
 class Payment extends Component<IProps> {
-    constructor (props) {
-      super(props)
-    }
+    constructor (props) { super(props) }
 
     componentDidMount(){
         const {context : {order,setOrder,setRatingsVisible, setUserInRating }} = this.props
         const {orderId} = order
-        var ref = firebase.database().ref(`orders/${orderId}`);
-        ref.on('value', function(snapshot) {
+        firebase.database().ref(`orders/${orderId}`).on('value', function(snapshot) {
             const order = snapshot.val()
             if(order){ 
                 setOrder(order) 

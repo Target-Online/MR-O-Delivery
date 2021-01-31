@@ -9,7 +9,7 @@ import { withAppContext, IContextProps } from '../../../AppContext';
 import { StackScreenProps } from '@react-navigation/stack';
 import BackScreen from '../../../layouts/BackScreen';
 import styles from "./styles"
-import strings from '@constants/strings';
+import strings from 'constants/strings';
 
 interface IProps { title?: string; }
 

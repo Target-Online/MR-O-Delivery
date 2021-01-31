@@ -1,9 +1,9 @@
 import React from "react"
 import { Image as RnImg,View,Text } from 'react-native';
-import { Colors } from '../../../constants';
 import styles from './styles'
 import { IAppContext, IOrder } from "types";
 import images from '../../../assets/images'
+import { withAppContext } from "../../../AppContext";
 
 interface Props {
     order : IOrder;
@@ -13,14 +13,14 @@ interface Props {
 const CustomerCard : React.FC<Props> = (props) =>  {  
     
         const {context : {order}} = props
-        const { customer , distance,paymentMethod ,items} = order || {}
+        const { customer , distance,paymentMethod } = order || {}
         const {displayName , firstname} = customer || {}
         const profilePicURL = ""
         const cardSource = profilePicURL || images.headShot
   
         return(
-          <View style={{borderBottomWidth : 0.75 , borderBottomColor : Colors.overlayDark10,flexDirection : "row" , height : 74, alignItems : "center", width: "100%"}} >  
-            <View style={{width : 40, height : 40, borderRadius : 20, backgroundColor : Colors.overlayDark10 ,marginRight: 12}} >
+          <View style={styles.customerCard} >  
+            <View style={styles.headShot} >
               <RnImg style={{width : "100%", height : "100%"}} source={cardSource} />
             </View>
             <View style={{height : "100%",width : "100%",justifyContent : "center"}}>

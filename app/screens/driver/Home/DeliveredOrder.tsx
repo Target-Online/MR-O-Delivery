@@ -5,7 +5,7 @@ import DriverConfirmIcon from '../../../assets/icons/DriverConfirmIcon';
 import styles from './styles'
 import { IAppContext, IOrder } from "types";
 import CustomerCard from "./CustomerCard";
-import { withAppContext } from "AppContext";
+import { withAppContext } from "../../../AppContext";
 
 interface Props {
     order : IOrder;

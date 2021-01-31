@@ -24,7 +24,7 @@ export const notify = async () => {
 }
 
 export const initSound = async () => {
-    try { await soundObject.loadAsync(require('./assets/audio/notif_tone.mp3')); 
+    try { await soundObject.loadAsync(require('../assets/audio/notif_tone.mp3')); 
     }
     catch (error) { }
 }

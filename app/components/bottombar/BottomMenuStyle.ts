@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native'
+import shadow from 'utils/shadow'
 import { Colors , Metrics } from '../../constants'
-import { iPhoneLarge } from '../../utils/screenSize'
+import { iPhoneLarge } from 'utils/screenSize'
 
 export default StyleSheet.create({
   base: {
     alignItems: 'center',
-    backgroundColor: Colors.bottom_menu_background,
+    backgroundColor: Colors.white,
     flexDirection: 'row',
     height: 53,
     justifyContent: 'center',
@@ -20,7 +21,7 @@ export default StyleSheet.create({
 
   },
   blocker: {
-    backgroundColor: Colors.blackout,
+    backgroundColor: Colors.black,
     height: '100%',
     left: 0,
     position: 'absolute',
@@ -60,10 +61,7 @@ export default StyleSheet.create({
     zIndex : 2
   },
 
-  roundButton: {
-    // position: 'relative',
-    // bottom: -50
-  },
+  roundButton: {},
 
   roundButtonContainer: {
     alignItems: 'center',

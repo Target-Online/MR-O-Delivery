@@ -12,8 +12,8 @@ import { GeolibInputCoordinates } from 'geolib/es/types'
 import RouteSummary from '../../../components/RouteSummary'
 import { showNoDriversAlert } from  '../../../utils/orderModules'
 import { database } from 'firebase'
-import strings from '@constants/strings'
-import routes from '@constants/routes'
+import strings from 'constants/strings'
+import routes from 'constants/routes'
 
 type IProps = IContextProps &
 StackScreenProps<{navigation : any}>

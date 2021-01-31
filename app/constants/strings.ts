@@ -26,6 +26,7 @@ export default {
   weWillBuy : "We will buy the items you need and drop off wherever you want!",
   shopAndDrop : "Shop & Drop off",
   storeName : "Store Name",
+  addItemsYouNeed :  "Add items to your shopping list and\nlet's get you what you need.",
   
   //Progress
 

@@ -9,7 +9,7 @@ import { getOrderTotal, showNoDriversAlert } from  'utils/orderModules'
 import UserCard from 'components/UserCard'
 import ShoppingListItem from 'components/ShoppingListItem'
 import { Colors } from 'constants'
-import strings from '@constants/strings'
+import strings from 'constants/strings'
 import {progressStyles as styles} from "./styles"
 
 type IProps = IContextProps &

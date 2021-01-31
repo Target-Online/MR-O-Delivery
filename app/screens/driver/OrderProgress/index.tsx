@@ -11,7 +11,7 @@ import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/typ
 import StepIndicator from 'react-native-step-indicator';
 import firebase from 'firebase'
 import {progressStyles as styles , customStyles} from "./styles"
-import UserCard from '@components/UserCard'
+import UserCard from 'components/UserCard'
 import Points from './Points'
 
 const  { height } = Dimensions.get('window')

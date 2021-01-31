@@ -1,6 +1,7 @@
 import { Dimensions, StyleSheet } from 'react-native'
-import { Colors } from '../../../constants'
+import { Colors , StatusHeight } from '../../../constants'
 import shadow from 'utils/shadow';
+import { Constants } from 'expo';
 const { width } = Dimensions.get("window")
 
 const styles = StyleSheet.create({
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   },
   mainWrapper: {
     flex : 1 ,backgroundColor : "#fff",
-    marginTop: Constants.statusBarHeight,
+    marginTop: StatusHeight,
     paddingBottom : 24  
   },
   serviceDescriptionText: {

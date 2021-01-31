@@ -1,4 +1,5 @@
 import {StyleSheet} from "react-native"
+import shadow from "utils/shadow"
 
 const styles = StyleSheet.create({
     backBtnStyle:{
@@ -15,7 +16,9 @@ const styles = StyleSheet.create({
       justifyContent:"space-between", marginTop : 16
     },
     addressTop: {
-      width : "100%" , alignItems : "flex-end",paddingVertical: 36,paddingHorizontal  :24, backgroundColor : "#fff", ...shadow
+      width : "100%" , alignItems : "flex-end",
+      paddingVertical: 36,paddingHorizontal  :24, 
+      backgroundColor : "#fff", ...shadow
     },
     addressVariantTrigger : {
       width : "100%", height : 43, 

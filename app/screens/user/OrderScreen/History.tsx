@@ -6,7 +6,7 @@ import {
 import {historyStyles as styles} from "./styles"
 import { CurrentUserContext, OrdersContext } from "../../../Store";
 import images from 'assets/images'
-import strings from '@constants/strings';
+import strings from 'constants/strings';
 
 const OrderHistory = (props: any) => {
   

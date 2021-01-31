@@ -20,9 +20,9 @@ import { GeolibInputCoordinates } from 'geolib/es/types'
 import { getOrderTotal, showNoDriversAlert } from  '../../../utils/orderModules'
 import ShoppingListItem from '../../../components/ShoppingListItem'
 import { database } from 'firebase'
-import strings from '@constants/strings'
+import strings from 'constants/strings'
 import styles from "./styles"
-import AddressInput from '@components/AdressInput'
+import AddressInput from 'components/AdressInput'
 
 interface IProps { title?: string;} 
 

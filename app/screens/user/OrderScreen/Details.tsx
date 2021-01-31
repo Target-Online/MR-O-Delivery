@@ -5,7 +5,7 @@ import { Block, theme, Icon } from "galio-framework"
 import MapView, { Marker } from 'react-native-maps'
 import nowTheme from "../../../constants/Theme"
 import * as images from '../../../assets/images'
-import strings from "@constants/strings"
+import strings from "constants/strings"
 const { width } = Dimensions.get("window")
 
 const TripDetails = (props: any) => {

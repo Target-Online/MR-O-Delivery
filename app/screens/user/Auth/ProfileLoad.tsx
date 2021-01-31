@@ -9,7 +9,7 @@ import BackScreen from 'layouts/BackScreen'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
 import { updateUser } from 'api/authApi'
 import {profileLoadStyles as styles } from "./styles"
-import strings from '@constants/strings'
+import strings from 'constants/strings'
 
 interface IProps {
     title?: string;

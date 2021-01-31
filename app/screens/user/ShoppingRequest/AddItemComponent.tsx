@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Modal,StyleSheet,TouchableOpacity as Btn,View,Text,TextInput } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash'
-import strings from '@constants/strings';
+import strings from 'constants/strings';
 
 interface IProps {
     showPrompt : boolean;

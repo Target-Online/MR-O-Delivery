@@ -1,13 +1,7 @@
 
+import { Colors } from 'constants/'
 import React, { Component} from 'react'
-import { View, Text , TouchableOpacity as Btn, ScrollView, StyleSheet} from 'react-native'
-import ParcelIcon from '../../assets/icons/ParcelIcon'
-import { withAppContext, IContextProps, IAddress } from '../AppContext'
-import BackScreen from '../../layouts/BackScreen'
-import Loader from '../../'
-import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types'
-import { getDistance, getPreciseDistance } from 'geolib';
-import { GeolibInputCoordinates } from 'geolib/es/types'
+import { View, Text } from 'react-native'
 
 const ShoppingListEmpty = () => {
 

@@ -13,7 +13,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import ProfileLoad from '../Auth/ProfileLoad';
 import firebase from 'firebase'
 import styles from "./styles"
-import strings from '@constants/strings';
+import strings from 'constants/strings';
 import { IOrder } from 'types';
 
 
