@@ -34,6 +34,7 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
     const { userInRating : {isDriver, phoneNumber, displayName}, updateUserProfile,
     updateOrderStatus, setRatingsVisible,currentUser, ratingsVisible , order } = props.context
 
+    console.log({userInRating : props.context.userInRating})
     const ratingCompleted = (rating : number) => { setRating(rating)}
 
     const getStoredUserRating = async (id: string) =>  firebase.database().ref(`/users/${id}`).once('value')
@@ -42,6 +43,7 @@ const RatingModal  : React.SFC<IProps>  = (props) => {
 
         const author = { phoneNumber : currentUser.phoneNumber, displayName : currentUser.displayName}
         const latestComment = { author, comment }
+
         getStoredUserRating(phoneNumber).then((snap)=>{
             const userToRate = snap.val()
             const { userRating , comments } = userToRate

@@ -21,6 +21,10 @@ import strings from '../../../constants/strings';
 import styles from './styles'
 import DeliveredOrder from './DeliveredOrder';
 import { OrderState , IAppContext, IOrder , } from 'types';
+import { string } from 'prop-types';
+import CustomerCard from './CustomerCard';
+import OrderInTransit from './OrderInTransit';
+import IncomingOrder from './IncomingOrder';
 
 type IProps = IAppContext & StackNavigationProp<any>;
 
@@ -29,7 +33,7 @@ interface IState {
   isOnline?: boolean;
   isVacant?: boolean;
   isActive?: boolean;
-  newState : OrderState ; 
+  orderStatus : OrderState ; 
   order?: IOrder;
   status?: "offline" | "vacant" | "busy";
   orderId?: string;
@@ -50,13 +54,12 @@ class Home extends React.Component<IProps, IState> {
         isOnline : false,
         isVacant : false,
         status,
-        newState : "pending",
+        orderStatus : "pending",
         order : undefined
       }
     }
 
     recordNewOrderOfFocus = (newOrder : IOrder , orderId : string) => {     
-      const {context : {order}} = this.props
       this.setMyOrder(newOrder)
       this.setState({isModalVisible : true, order: newOrder, orderId })
     }
@@ -72,17 +75,15 @@ class Home extends React.Component<IProps, IState> {
           const {status , driver } = order
 
           if(status === "pending" && driver && driver.id === phoneNumber){ //and I'm the driver
-            this.setState({newState : "pending"})
+            this.setState({orderStatus : "pending"})
             playSound()
             this.recordNewOrderOfFocus(order, orderId)
             
-            this.onOrderUpdated = database()
-            .ref(`/orders/${orderId}`)
-            .on('value', (snapshot: { val: () => any; key: any; }) => {
+            this.onOrderUpdated = database().ref(`/orders/${orderId}`).on('value', (snapshot: { val: () => any; key: any; }) => {
               const order = snapshot.val()
               if(order){
                  if (order.status == "cancelled"){
-                   this.setState({ isModalVisible : false, newState : "pending", order : null})
+                   this.setState({ isModalVisible : false, orderStatus : "pending", order : null})
                  }
                 setOrder(order)
               }         
@@ -111,46 +112,21 @@ class Home extends React.Component<IProps, IState> {
       database().ref(`/orders'${orderId}`).off('value', this.onOrderUpdated)    
     }
 
-    closeModal = () =>{
-      this.setState({isModalVisible : false})
-    }
+    closeModal = () =>{  this.setState({isModalVisible : false})}
 
-    changeOrderProgress = (newState : OrderState) => { 
+    changeOrderProgress = (orderStatus : OrderState) => { 
       const { orderId } = this.state
       const { context : {updateOrderStatus, order } } = this.props
       const nowNow = moment(new Date()).toString()
-      const addOn = newState === "confirmed" ? {confirmedAt : nowNow} : (newState === "collected" ? {collectedAt : nowNow} : newState === "delivered" ? {deliveredAt : nowNow} : {})
-      const updatedOrder = {...order, status : newState , ...addOn  }
+      const addOn = orderStatus === "confirmed" ? {confirmedAt : nowNow} : (orderStatus === "collected" ? {collectedAt : nowNow} : orderStatus === "delivered" ? {deliveredAt : nowNow} : {})
+      const updatedOrder = {...order, status : orderStatus , ...addOn  }
       this.setState({order :  updatedOrder})
       updateOrderStatus(orderId,updatedOrder)
-      this.setState({newState})
+      this.setState({orderStatus})
     }
 
-    renderCustomerCard = () => {
-
-      const {context : {order}} = this.props
-      const { customer , distance,paymentMethod ,items} = order || {}
-      const {displayName , firstname} = customer || {}
-      const profilePicURL = ""
-      const cardSource = profilePicURL || images.headShot
-
-      return(
-        <View style={{borderBottomWidth : 0.75 , borderBottomColor : Colors.overlayDark10,flexDirection : "row" , height : 74, alignItems : "center", width: "100%"}} >  
-          <View style={{width : 40, height : 40, borderRadius : 20, backgroundColor : Colors.overlayDark10 ,marginRight: 12}} >
-            <RnImg style={{width : "100%", height : "100%"}} source={cardSource} />
-          </View>
-          <View style={{height : "100%",width : "100%",justifyContent : "center"}}>
-     
-            <Text style={styles.customerHeader} >{displayName || firstname}</Text>
-            <Text style={styles.customerHeader} >{`${distance} km`}  
-              <Text style={[styles.activeTextStyle,{marginLeft : 32}]} >{` ${paymentMethod || "Cash"} Payment`}</Text>
-            </Text>
-
-          </View>
-        </View>
-      )
-    }
-
+    renderCustomerCard = () =>  <CustomerCard />
+  
     renderParcelDetails = () => {
 
       const {order , order :{ orderType , storeName}} = this.state
@@ -178,121 +154,41 @@ class Home extends React.Component<IProps, IState> {
       Linking.openURL(url); 
     }
 
-    renderNewRequestDecision = () => {
-
-      const { order,newState } = this.state
+    renderIncomindOrder = () => {
       const {context : {updateDriverStatus}} = this.props
-
-      if(order){
-        const {pickUpAddress, dropOffAddress , orderType} = order || { pickUpAddress : {}, dropOffAddress : {} }
         return(
-          <View style={styles.modalInnerContainer}>
-            <View style={styles.newReqContainer}>
-              {newState === "pending" && <Text style={styles.incomingText}>Incoming Request</Text>}
-              {this.renderCustomerCard()}
-              {this.renderParcelDetails()}
-              <View style={styles.routeSummaryRow}> 
-                  <View style={styles.routePath}>
-                    <View style={styles.pickupIconOutter} >
-                      <View style={styles.pickupIconInner} />
-                    </View>              
-                    <View style={styles.path} />
-                    <View style={{width:8,height:8,alignItems : "center" }} >
-                      <LocationIcon width={12} height={12} />
-                    </View>
-                  </View>
-                  <View style={styles.addressesWrapper}>
-                      <View style={styles.textAreaStyles} >
-                          <Text style={[styles.addressInput,{fontSize :11, color : "grey"}]} >Pickup</Text>
-                          <Text numberOfLines={2} style={styles.addressInput} >
-                              {pickUpAddress.description}
-                          </Text>    
-                      </View>
-                      <View style={{height : 1,backgroundColor: "white", width: "100%",alignSelf : "center"}}></View>
-                      <View style={styles.textAreaStyles} >
-                          <Text style={[styles.addressInput,{fontSize :11, color : "grey"}]} >Drop-Off</Text>
-                          <Text numberOfLines={2} style={styles.addressInput} >
-                            {dropOffAddress.description}
-                          </Text>   
-                      </View>
-                  </View>
-                </View>
-
-              <View style={styles.bottomBtnswrapper}>
-                <Btn 
-                  onPress={()=> {
-                    updateDriverStatus({isVacant : false})
-                    this.changeOrderProgress("confirmed")                 
-                  }} 
-                  style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange}]} 
-                >
-                  <Text  style={styles.acceptDeclineText} > Accept </Text>
-                </Btn>
-              </View>
-            </View>
-          </View>
+          <IncomingOrder 
+            onAccept={()=> {
+              updateDriverStatus({isVacant : false})
+              this.changeOrderProgress("confirmed")                 
+            }} 
+            style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange}]} 
+          />
         )
-      }
-      return null
     }
 
     renderOrderInProgress = () =>{
 
-      const {newState, } = this.state
+      const {orderStatus, } = this.state
       const {order : {pickUpAddress, dropOffAddress , orderType ,  customer }} = this.props.context
-      const orderCollected = newState === "collected"
+      const orderCollected = orderStatus === "collected"
       const isGroceries =  orderType === "Shopping"
 
       return(
-        <View style={styles.modalInnerContainer}>
-         <View style={styles.newReqContainer}>
-           {this.renderCustomerCard()}
-           {this.renderParcelDetails()}
-          <Text style={{alignSelf : "center" , marginVertical : 4}} >{
-            !orderCollected ? (isGroceries ? `Head to the store and purchase ${customer.displayName}'s items` : "On route to collect the parcel") :
-             "Dropping off the parcel "} 
-          </Text>
-          <View style={styles.newReqInnerContainer}>        
-              <View style={[styles.routePath,{height : 42} ]}>
-                <View style={{width:8,height:8,alignItems : "center" }} >
-                  <LocationIcon width={12} height={12} />
-                </View>
-              </View>
-              <View style={[styles.addressesWrapper,{height : 42}]}>                
-                  <View style={styles.textAreaStyles} >
-                      <Text style={[styles.addressInput,{fontSize :12, color : "grey"}]} > {orderCollected? "Drop-Off" : isGroceries ? "Store Address" : "Pick-Up"}</Text>
-                      <Text numberOfLines={2} style={styles.addressInput} >
-                        {orderCollected ? dropOffAddress.description : pickUpAddress.description }
-                      </Text>   
-                  </View>
-              </View>
-            </View>
-
-            <View style={[styles.bottomBtnswrapper,{flexDirection : "column",height : 130,alignItems : "center" } ]}>
-              <Btn
-                onPress={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress , orderCollected ? "Delivery Address" : "Collection Address")}
-              style={[styles.btnStyle , { backgroundColor : "#fff", borderWidth : 1 , borderColor : Colors.overlayDark70 ,width : 192} ]}>
-                <Text style={[styles.acceptDeclineText,{color : Colors.overlayDark70, }]} > Get Directions </Text>
-              </Btn>
-              <Btn onPress={()=>{ 
-                if (isGroceries){
-                    if (newState == "collected"){ this.changeOrderProgress("delivered")  }
-                    else{
-                      this.changeOrderProgress("shopping")  
-                      this.setState({isModalVisible : false})
-                    }
+        <OrderInTransit
+          orderStatus={orderStatus}
+          onGetDirections={() => this._handlePressDirections(orderCollected ? dropOffAddress : pickUpAddress , orderCollected ? strings.deliveryAddress : strings.collectionAddress)}
+          onButtonPress={()=>{ 
+            if (isGroceries){
+                if (orderStatus == "collected"){ this.changeOrderProgress("delivered")  }
+                else{
+                  this.changeOrderProgress("shopping")  
+                  this.setState({isModalVisible : false})
                 }
-                else{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}
-                }
-              } 
-                style={[styles.btnStyle, {backgroundColor : Colors.primaryOrange, width : 192,marginTop:4 }]} >
-                <Text  style={styles.acceptDeclineText} >
-                  {orderCollected ? "Confirm Delivery" : isGroceries ? "View Shopping List" : "Confirm Collection"}
-                </Text>
-              </Btn>
-            </View>
-          </View>
-        </View>
+            }
+            else{ this.changeOrderProgress(orderCollected ? "delivered" : "collected")}}
+          } 
+        />
       )
     }
 
@@ -325,7 +221,7 @@ class Home extends React.Component<IProps, IState> {
 
     renderNewOrderModal = () => {
 
-      const {isModalVisible , newState} = this.state
+      const {isModalVisible , orderStatus} = this.state
       return(
         <Modal 
           key="mod"
@@ -334,8 +230,8 @@ class Home extends React.Component<IProps, IState> {
           visible={isModalVisible}
           onRequestClose={()=> this.closeModal()}
         >
-          {newState === "pending" ? this.renderNewRequestDecision() : 
-            ["confirmed", "collected"].includes(newState) ? this.renderOrderInProgress():
+          {orderStatus === "pending" ? this.renderIncomindOrder() : 
+            ["confirmed", "collected"].includes(orderStatus) ? this.renderOrderInProgress():
             this.renderDeliveredOrder()
           }
         </Modal>
@@ -357,10 +253,10 @@ class Home extends React.Component<IProps, IState> {
 
     render(){
       const {context : {currentUser :{ displayName, profilePicURL}, sendRequest,setRatingsVisible, setUserInRating}} = this.props
-      const {isOnline , newState} = this.state
+      const {isOnline , orderStatus} = this.state
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
 
-      if (newState === "shopping"){
+      if (orderStatus === "shopping"){
         return this.renderOrderItemsConfirmation()
       }
       return [
@@ -379,7 +275,7 @@ class Home extends React.Component<IProps, IState> {
                   </View>
                 </Btn>
                 <Text style={styles.welcomeText} >
-                  Welcome Back,               
+                  {strings.welcomeBack}              
                 </Text>
                 <Text style={styles.displayName} >
                   {displayName}
@@ -390,26 +286,21 @@ class Home extends React.Component<IProps, IState> {
             <View style={styles.bottom} >              
                   <View style={styles.switchWrapper} >
                     <Text style={styles.switchLabel} >
-                     {isOnline ? "Online" : "Offline"}
+                     {isOnline ? strings.online : strings.offline}
                     </Text>
                     <View style={{marginHorizontal: 8}} />
-                    <Switch onValueChange={()=> this.toggleOnline(isOnline ? false : true)} 
-                        value={isOnline} style={{width : 24}} 
-                    />
+                    <Switch onValueChange={()=> this.toggleOnline(isOnline ? false : true)} value={isOnline} style={{width : 24}} />
                   </View>
                   <View style={{width : "100%",height : 78,alignItems : "center"}}> 
                     {isOnline ? <OnlineIcon /> : <OfflineIcon />}
                     <Text style={styles.onOffText}>
-                      {isOnline ? "Currently accepting requests" :
-                      "You're offline and won't receive any requests"}
+                      {isOnline ? strings.currentlyAccepting :
+                      strings.youreOffline}
                     </Text>
                   </View>
                   <Btn
                     style={styles.addMockOrder}
-                    onPress={ async () => {
-                      setUserInRating(testDriver)
-                      setRatingsVisible(true)
-                    }}    
+                    onPress={() => { }}    
                   >
                     <Text style={{color : "#fff"}} > Add Mock Order</Text>
                   </Btn>

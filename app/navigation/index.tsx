@@ -1,12 +1,13 @@
-import React, { Component, useContext, useState, useEffect } from 'react'
+import React from 'react'
 import { StatusBar, View, ActivityIndicator } from 'react-native'
 import { Colors } from '../constants'
 import AuthStack from './AuthStack'
 import NavigationStack  from './UserNavigationStack'
 import DriverNavigationStack  from './DriverNavigationStack'
-import { IUser, withAppContext, IContextProps } from '../AppContext'
+import { withAppContext, IContextProps } from '../AppContext'
 import _ from 'lodash'
 import { useKeepAwake } from 'expo-keep-awake';
+import { IUser } from 'types'
 
 type IProps =  IContextProps  & { user : any; profile : IUser; }
 const AppNavigator : any = (props: IProps) => {
@@ -17,12 +18,12 @@ const AppNavigator : any = (props: IProps) => {
       return !_.isEmpty(res)
     }
 
-    function renderStack(){
+    const renderStack = () => {
       const isDriver = driverCheck(currentUser.phoneNumber)
       return isDriver ? <DriverNavigationStack isDriver={isDriver} /> : <NavigationStack isDriver={isDriver} />
     }
 
-    function renderLoader(){
+    const renderLoader = () => {
       return (
         <View style={{flex : 1 , width : "100%" , height : "100%", justifyContent : "center"}}>
             <ActivityIndicator size={"large"} color={Colors.primaryOrange}  />

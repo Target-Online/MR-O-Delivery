@@ -1,9 +1,32 @@
 import { profileLoadStyles } from "screens/user/Auth/styles";
 
 export default {
+
+  //Driver
+  
+  currentlyAccepting :  "Currently accepting requests" ,
+  youreOffline : "You're offline and won't receive any requests",
+  welcomeBack : "Welcome Back, ",
+  confirmStateChange : "You're going offline and won't be receiving any requests",
+  getDirections : " Get Directions ",
+  goPurchase : `Head to the store and purchase {0}'s items`,
+  onRouteCollect : "On route to collect the parcel",
+  droppingOff : "Dropping off the parcel",
+  dropOff : "Drop-Off",
+  pickUp : "Pickup",
+  incomingRequest : "Incoming Request",
+  confirmDelivery : "Confirm Delivery",
+  viewList : "View Shopping List",
+  confirmCollection : "Confirm Collection",
+  collectionAddress : "Collection Address", 
+
   //Common
 
   continue : "Continue",
+  online : "Online",
+  offline : "Offline",
+  deliveryAddress : "Delivery Address",
+  accept : "Accept",
 
   //Order
 

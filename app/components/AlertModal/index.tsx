@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PickerItemProps, TextStyle,TouchableHighlight, View, Modal, Text, StyleProp, ViewStyle, StyleSheet, Dimensions } from 'react-native';
+import { TouchableHighlight, View, Modal, Text, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from "react-native-animatable"
 import { Colors } from '../../constants';
@@ -50,7 +50,6 @@ const AlertModal  : React.SFC<IProps>  = (props) => {
                         <View style={[styles.btnsWrapper , noButtons > 1 && {flexDirection : "row",justifyContent: "space-around"}]}>
                             {buttons && buttons.map(({label,onPress})=> (
                                 <TouchableHighlight
-                                    // rippleSize={290}
                                     underlayColor={"#DFE3E8"}
                                     onPress={()=>{ 
                                         onPress && onPress()

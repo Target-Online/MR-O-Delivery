@@ -1,6 +1,7 @@
 
+import strings from 'constants/strings'
 import { Colors } from 'constants/'
-import React, { Component} from 'react'
+import React from 'react'
 import { View, Text } from 'react-native'
 
 const ShoppingListEmpty = () => {
@@ -12,9 +13,8 @@ const ShoppingListEmpty = () => {
           alignItems : "center",justifyContent : "center"
         }}
       >
-          {/* <BagIcon /> */}
           <Text style={{textAlign : "center",marginVertical : 8 , color : Colors.overlayDark70}}>
-           {"Add items to your shopping list and\nlet's get you what you need."}
+           {strings.addItemsYouNeed}
           </Text>
       </View>
 

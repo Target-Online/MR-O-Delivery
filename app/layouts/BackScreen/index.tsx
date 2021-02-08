@@ -1,6 +1,6 @@
-import { Body, Text, View } from 'native-base';
+import { Text, View } from 'native-base';
 import * as React from 'react';
-import { Image, TouchableOpacity as Btn, SafeAreaView , BackHandler, StyleSheet } from 'react-native';
+import { TouchableOpacity as Btn, SafeAreaView , BackHandler, StyleSheet } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 import { StackScreenProps } from '@react-navigation/stack/lib/typescript/src/types';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
@@ -12,7 +12,6 @@ interface IProps {
   scroll?: boolean;
   onBackPress?: () => void;
 }
-
 
 type Props = IProps &  StackScreenProps<{navigation : any}>;
 
@@ -45,7 +44,6 @@ class BackScreen extends React.Component<Props> {
   }
 
   render() {
-    
     const {title, children,scroll } = this.props
 
     return (
@@ -63,7 +61,7 @@ class BackScreen extends React.Component<Props> {
           showsVerticalScrollIndicator={false}
           scrollEnabled={scroll} 
         >
-            {children}
+          {children}
         </KeyboardAvoidingScrollView>
       </SafeAreaView>
     );
@@ -71,7 +69,6 @@ class BackScreen extends React.Component<Props> {
 }
 
 export default (BackScreen);
-
 
 const styles = StyleSheet.create({
     activeTextStyle:{
