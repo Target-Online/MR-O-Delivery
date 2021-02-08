@@ -54,7 +54,7 @@ export default {
   //Progress
 
   hasPlacedOrder : "{0} has confirmed the prices and stock availability. Press continue to confirm your order.",
-  waitForConfirmation : "We have to wait for {0} to confirm the prices and stock availability",
+  waitForConfirmation : "We have to wait for {0} to confirm if they're happy with the prices and stock availability",
   yourSummary : "Your Order Summary",
   yourItems : "Items Cost",
   deliveryFee : "Delivery Fee",

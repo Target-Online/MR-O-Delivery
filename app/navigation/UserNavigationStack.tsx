@@ -1,6 +1,5 @@
 import React from 'react'
 import Payment from '../screens/user/Payment'
-import Contact from '../screens/user/Contact'
 import Home from '../screens/user/Home'
 import Profile from '../screens/user/Profile'
 import PickUp from '../screens/user/PickUp'
@@ -49,7 +48,6 @@ function RNApp() {
         <Tab.Screen name="OrderDetails" component={OrderDetails} />
         <Tab.Screen name="Profile" component={ProfileStack} />
         <Tab.Screen name="Receipts" component={OrderHistory} />
-        <Tab.Screen name="Contact" component={Contact} />
       </Tab.Navigator>
     </NavigationContainer>
   );

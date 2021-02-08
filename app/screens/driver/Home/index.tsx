@@ -6,12 +6,11 @@ import { Switch } from 'native-base'
 import images from '../../../assets/images'
 import DeliveryGuyIcon from '../../../assets/icons/DeliveryGuyIcon';
 import { Colors } from '../../../constants';
-import { withAppContext, testDriver } from '../../../AppContext';
+import { withAppContext } from '../../../AppContext';
 import ParcelIcon from '../../../assets/icons/ParcelIcon'
 import BagIcon from '../../../assets/icons/BagIcon'
 import OnlineIcon from '../../../assets/icons/OnlineIcon'
 import OfflineIcon from '../../../assets/icons/OfflineIcon'
-import LocationIcon from '../../../assets/icons/LocationIcon';
 import { database } from 'firebase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import moment from 'moment';
@@ -21,10 +20,10 @@ import strings from '../../../constants/strings';
 import styles from './styles'
 import DeliveredOrder from './DeliveredOrder';
 import { OrderState , IAppContext, IOrder , } from 'types';
-import { string } from 'prop-types';
 import CustomerCard from './CustomerCard';
 import OrderInTransit from './OrderInTransit';
 import IncomingOrder from './IncomingOrder';
+import { mockOrder } from 'utils/mocks';
 
 type IProps = IAppContext & StackNavigationProp<any>;
 
@@ -130,7 +129,7 @@ class Home extends React.Component<IProps, IState> {
     renderParcelDetails = () => {
 
       const {order , order :{ orderType , storeName}} = this.state
-      const {name, description ,} = order.items[0]
+      const {name, description} = order.items[0]
       const isShopping = orderType === "Shopping"
 
       return(
@@ -158,6 +157,7 @@ class Home extends React.Component<IProps, IState> {
       const {context : {updateDriverStatus}} = this.props
         return(
           <IncomingOrder 
+            order={this.state.order}
             onAccept={()=> {
               updateDriverStatus({isVacant : false})
               this.changeOrderProgress("confirmed")                 
@@ -252,7 +252,7 @@ class Home extends React.Component<IProps, IState> {
     }
 
     render(){
-      const {context : {currentUser :{ displayName, profilePicURL}, sendRequest,setRatingsVisible, setUserInRating}} = this.props
+      const {context : {currentUser :{ displayName, profilePicURL}, sendRequest, generateOrderId }, } = this.props
       const {isOnline , orderStatus} = this.state
       const imgSrc =  profilePicURL ? {uri : profilePicURL} : images.headShot
 
@@ -274,12 +274,8 @@ class Home extends React.Component<IProps, IState> {
                     <RnImg style={styles.displayPic} resizeMode="cover" source={imgSrc} />
                   </View>
                 </Btn>
-                <Text style={styles.welcomeText} >
-                  {strings.welcomeBack}              
-                </Text>
-                <Text style={styles.displayName} >
-                  {displayName}
-                </Text>
+                <Text style={styles.welcomeText} >{strings.welcomeBack}</Text>
+                <Text style={styles.displayName} >{displayName}</Text>
                 </View>
             </ImageBackground>
           
@@ -300,7 +296,9 @@ class Home extends React.Component<IProps, IState> {
                   </View>
                   <Btn
                     style={styles.addMockOrder}
-                    onPress={() => { }}    
+                    onPress={() => {
+                      sendRequest(generateOrderId(), mockOrder, ()=>{},()=>{})
+                     }}    
                   >
                     <Text style={{color : "#fff"}} > Add Mock Order</Text>
                   </Btn>

@@ -20,7 +20,7 @@ interface Props {
 const OrderInTransit : React.FC<Props> = (props) =>  {  
     
     const { orderStatus , onGetDirections , onButtonPress} = props    
-    const {order : {pickUpAddress, dropOffAddress , orderType ,  customer }} = props.context
+    const {order : {pickUpAddress, dropOffAddress , orderType ,  customer } , order} = props.context
     const orderCollected = orderStatus === "collected"
     const isGroceries =  orderType === "Shopping"
 
@@ -28,7 +28,7 @@ const OrderInTransit : React.FC<Props> = (props) =>  {
       <View style={styles.modalInnerContainer}>
        <View style={styles.newReqContainer}>
         <CustomerCard />
-        <ParcelDetails order={props.order} />
+        <ParcelDetails order={order} />
         <Text style={{alignSelf : "center" , marginVertical : 4}} >{
           !orderCollected ? (isGroceries ? strings.goPurchase.replace("{0}",customer.displayName) : strings.onRouteCollect) :
            strings.droppingOff} 

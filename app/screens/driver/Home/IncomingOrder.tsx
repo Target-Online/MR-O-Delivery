@@ -11,8 +11,7 @@ import ParcelDetails from "components/ParcelDetails";
 
 interface Props {
     order : IOrder;
-    context : IAppContext
-    onDone : () =>  void;
+    onAccept : () =>  void;
 }
 
 const IncomingOrder : React.FC<Props> = (props) =>  {  
@@ -69,4 +68,4 @@ const innStyles =  StyleSheet.create({
     underline : {height : 1,backgroundColor: "white", width: "100%",alignSelf : "center"}
 })
 
-export default withAppContext(IncomingOrder)
+export default (IncomingOrder)
