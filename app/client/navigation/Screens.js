@@ -149,7 +149,7 @@ export function Driver() {
 
 export function ShoppingList() {
   return (
-    <Stack.Navigator mode="card"  initialRouteName="Shopping List"  headerMode="screen">
+    <Stack.Navigator mode="card" initialRouteName="Shopping List" headerMode="screen">
       <Stack.Screen
         name="Shopping List"
         component={ShoppingListScreen}
@@ -225,10 +225,6 @@ export function ShoppingDetails() {
 export default function OnboardingStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="none">
-      <Stack.Screen
-        name="Onboarding"
-        component={OnboardingScreen}
-      />
       <Stack.Screen
         name="Login"
         component={LoginScreen}

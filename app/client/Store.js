@@ -27,35 +27,36 @@ export default function Store({ children }) {
   const [requests, setRequets] = useReducer(rootReducer.setStateReducer, initalState);
 
   useEffect(() => {
-    if(users.inProgress) {
-       api.getCollection("users", setUsers);
-       api.getCollection("requests", setRequets);
+    if (users.inProgress) {
+      api.getCollection("users", setUsers);
+      api.getCollection("requests", setRequets);
     }
-  
+
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         var dbUser = users.data.find(u => u.id === user.phoneNumber || u.email === user.email);
 
         if (!dbUser && !users.inProgress) {
           var isEmailRegistered = user.email != '';
-          
-          newUser("users", isEmailRegistered 
-            ? user.email.replace(/[^0-9a-z]/gi, '') 
-            : user.phoneNumber, { 
-              ...user.providerData[0], 
-              isEmailRegistered: isEmailRegistered 
-            })
 
-            setCurrentUser({ 
-              ...user, 
-              isNew: true, 
-              isEmailRegistered: isEmailRegistered 
-            });
-        } 
+          newUser("users", isEmailRegistered
+            ? user.email.replace(/[^0-9a-z]/gi, '')
+            : user.phoneNumber, {
+            ...user.providerData[0],
+            isEmailRegistered: isEmailRegistered
+          })
+
+          setCurrentUser({
+            ...user,
+            isNew: true,
+            isEmailRegistered: isEmailRegistered
+          });
+        }
         else setCurrentUser(dbUser);
       }
     });
-  
+
+    return () => {}
   }, [users.inProgress]);
 
   return (
@@ -63,7 +64,7 @@ export default function Store({ children }) {
       <UsersContext.Provider value={[users, users.inProgress]}>
         <RequestsContext.Provider value={[requests, setRequets]}>
           <SessionContext.Provider value={[request, setRequest]}>
-            {children}
+              {children}
           </SessionContext.Provider>
         </RequestsContext.Provider>
       </UsersContext.Provider>

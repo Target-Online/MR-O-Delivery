@@ -20,11 +20,11 @@
     "@react-navigation/drawer": "~5.8.2",
     "@react-navigation/native": "~5.5.0",
     "@react-navigation/stack": "~5.4.1",
-    "expo": "^39.0.4",
-    "expo-asset": "~8.2.0",
+    "expo": "^39.0.5",
+    "expo-asset": "^8.2.2",
     "expo-av": "~8.6.0",
     "expo-constants": "~9.2.0",
-    "expo-firebase-recaptcha": "^1.2.0",
+    "expo-firebase-recaptcha": "^1.3.0",
     "expo-font": "~8.3.0",
     "expo-image-picker": "~9.1.1",
     "expo-in-app-purchases": "~9.0.0",
@@ -35,7 +35,7 @@
     "firebase": "7.9.0",
     "galio-framework": "~0.6.3",
     "geolib": "^3.3.1",
-    "native-base": "^2.13.14",
+    "native-base": "^2.15.2",
     "object-to-array-convert": "^1.1.0",
     "react": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.3.tar.gz",
@@ -47,9 +47,9 @@
     "react-native-maps": "0.27.1",
     "react-native-paystack-webview": "^3.2.1",
     "react-native-pulse": "^1.0.7",
-    "react-native-ratings": "^7.3.0",
-    "react-native-razorpay": "^2.2.1",
-    "react-native-reanimated": "~1.13.0",
+    "react-native-ratings": "^7.4.0",
+    "react-native-razorpay": "^2.2.3",
+    "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "3.1.4",
     "react-native-screens": "~2.10.1",
     "react-native-simple-dialogs": "^1.4.0",
@@ -59,11 +59,13 @@
     "react-native-webview": "10.7.0"
   },
   "devDependencies": {
-    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-plugin-module-resolver": "^4.1.0",
     "babel-preset-expo": "^8.3.0",
-    "cross-env": "~7.0.0",
+    "cross-env": "^7.0.3",
     "expo-cli": "~3.11.7",
-    "jest-expo": "^39.0.0"
+    "jest-expo": "^39.0.0",
+    "typescript": "~3.9.2",
+    "@types/react-native": "~0.63.2"
   },
   "bugs": {
     "url": "https://github.com/creativetimofficial/material-kit-react-native/issues"

@@ -29,9 +29,7 @@ export const signInWithCredential = async (verificationId, verificationCode, nav
       verificationId,
       verificationCode
     );
-    await firebase.auth().signInWithCredential(credential);
-    toastSuccess("Phone authentication successful 👍");
-    navigation.navigate('Home')
+    await firebase.auth().signInWithCredential(credential).then(() => navigation.navigate('App'))
   } catch (err) {
     toastError(err.message);
   }

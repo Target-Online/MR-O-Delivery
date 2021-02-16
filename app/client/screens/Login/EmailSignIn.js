@@ -14,6 +14,12 @@ export default function EmailSignIn(props) {
   return (
     <ScrollView contentContainerStyle={{ padding: 22 }}>
       <TextInput
+        keyboardType="phone-pad"
+        placeholder={"+234..."}
+        onChangeText={value => setUser({ ...user, phoneNumber: value })}
+        value={user.phoneNumber}
+      />
+      <TextInput
         placeholder='Email'
         style={styles.textInput}
         onChangeText={value => setUser({ ...user, email: value })}
@@ -50,13 +56,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textDecorationLine: 'underline'
   },
-  textInput: { 
-    marginBottom: 5, 
-    height: 40, 
-    borderColor: 'gray', 
-    borderWidth: 1, 
-    backgroundColor: 'white', 
-    padding: 10, 
-    color: materialTheme.COLORS.PRIMARY 
+  textInput: {
+    marginBottom: 5,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    padding: 10,
+    color: materialTheme.COLORS.PRIMARY
   }
 })

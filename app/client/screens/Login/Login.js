@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, TouchableOpacity, ImageBackground, Image, StyleSheet, StatusBar, Dimensions, Platform, TouchableOpacityBase } from 'react-native';
+import { Keyboard, TouchableOpacity, ImageBackground, Image, StyleSheet, StatusBar, Dimensions, Platform } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
 
 import { Images } from '../../constants';
@@ -22,7 +22,7 @@ export default props => (
             <Image source={Images.MROLogo} style={styles.MROLogo} />
           </Block>
           <Block>
-            {Platform.constants.Release <= 5.1
+            {Platform.constants.Release == 5.1
               ? <EmailSignIn {...props} />
               : <PhoneSignin {...props} />
             }
