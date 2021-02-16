@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, Text, TouchableOpacity } from "react-native";
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner  } from "expo-firebase-recaptcha";
 import { theme } from 'galio-framework';
 
 import { ArButton as Button, TextInput } from '../../components';
 import { firebaseConfig, verifyPhoneNumber, signInWithCredential } from '../../api/authApi'
 
-const { width } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
+const attemptInvisibleVerification = true;
 
 const PhoneSignIn = props => {
   const recaptchaVerifier = useRef(null);
@@ -14,12 +15,14 @@ const PhoneSignIn = props => {
   const [verificationId, setVerificationId] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
 
+  
   return (
     <View style={{ padding: 22, marginTop: 50 }}>
       <React.Fragment>
         <FirebaseRecaptchaVerifierModal
           ref={recaptchaVerifier}
           firebaseConfig={firebaseConfig}
+          attemptInvisibleVerification={attemptInvisibleVerification}
         />
         <View >
           <TextInput
@@ -49,6 +52,15 @@ const PhoneSignIn = props => {
           }
         </View>
       </React.Fragment>
+      <View>
+      {attemptInvisibleVerification && (
+        <FirebaseRecaptchaBanner
+          linkStyle={styles.firebaseRecaptchabannerLink} 
+          textStyle={styles.firebaseRecaptchabannerText} 
+          style={styles.firebaseRecaptchabanner} 
+        />
+      )}
+      </View>
     </View>
   );
 }
@@ -69,5 +81,18 @@ const styles = StyleSheet.create({
     color: 'orange',
     fontWeight: 'bold',
     textDecorationLine: 'underline'
+  },
+  firebaseRecaptchabanner: {
+    top: height * 0.15
+  },
+  firebaseRecaptchabannerLink: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'none'
+  },
+  firebaseRecaptchabannerText: {
+    color: 'white',
+    margin: 10,
+    textAlign: 'center'
   }
 })

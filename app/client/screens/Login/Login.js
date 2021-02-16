@@ -27,6 +27,7 @@ export default props => (
               : <PhoneSignin {...props} />
             }
           </Block>
+          
           <Block middle row style={{ marginTop: height / 7 }}>
             <Text color="white" size={16}>
               Coded by
