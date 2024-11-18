@@ -32,7 +32,7 @@
     "expo-location": "~9.0.0",
     "expo-notifications": "~0.7.2",
     "expo-permissions": "~9.3.0",
-    "firebase": "7.9.0",
+    "firebase": "10.9.0",
     "galio-framework": "~0.6.3",
     "geolib": "^3.3.1",
     "native-base": "^2.15.2",
